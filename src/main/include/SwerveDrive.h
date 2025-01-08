@@ -41,7 +41,7 @@ private:
     float maxRot = moduleMaxRot;
 
     // TODO: Rename to Point2d
-    std::array<Translation2d, 4> wheelPs = {Translation2d(trackWidth, wheelBase), Translation2d(trackWidth, -wheelBase), Translation2d(-trackWidth, wheelBase), Translation2d(-trackWidth, -wheelBase)};
+    std::array<Translation2d, 4> wheelPs = {Translation2d(trackWidthNumber, wheelBase), Translation2d(trackWidthNumber, -wheelBase), Translation2d(-trackWidthNumber, wheelBase), Translation2d(-trackWidthNumber, -wheelBase)};
 
     SwerveDriveKinematics m_kinematics = SwerveDriveKinematics(wheelPs);
     NavX &mGyro; 

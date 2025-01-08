@@ -16,7 +16,7 @@
 #define moduleMaxRot 2.0 // 9.678 / 2, Radians/sec
 
 // Drivebase Measurements
-#define trackWidth 2.375          // feet
+#define trackWidthNumber 2.375          // feet
 #define wheelBase 2.375           // feet
 #define moduleDriveRatio 6.12     // L3
 #define wheelRadiusInches 2       // inches
