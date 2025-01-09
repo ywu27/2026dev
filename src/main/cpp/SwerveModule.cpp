@@ -31,6 +31,8 @@ void SwerveModule::initMotors()
     steerCTR.Reset();
 
     driveMotor.init();
+
+    steerMotor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
 float SwerveModule::getSteerAngleSetpoint()
