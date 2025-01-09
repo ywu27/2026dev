@@ -29,8 +29,8 @@ public:
     int steerID;
     int driveID;
 
-    rev::spark::SparkMax *steerMotor;
-    rev::spark::SparkMaxConfig *config{};
+    rev::spark::SparkMax steerMotor;
+    rev::spark::SparkMaxConfig config{};
     // rev::spark::SparkMax *driveMotor;
     TalonFXMotor driveMotor;
 

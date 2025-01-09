@@ -1,7 +1,7 @@
 #include "SwerveModule.h"
 #include <string>
 
-SwerveModule::SwerveModule(int steerMotorID, int driveMotorID, int cancoderID) : steerMotor(new rev::spark::SparkMax(steerMotorID, rev::spark::SparkMax::MotorType::kBrushless)),
+SwerveModule::SwerveModule(int steerMotorID, int driveMotorID, int cancoderID) : steerMotor(rev::spark::SparkMax(steerMotorID, rev::spark::SparkMax::MotorType::kBrushless)),
                                                                                  driveMotor(TalonFXMotor(driveMotorID)),
                                                                                  steerEnc(CAN_Coder(cancoderID)),
                                                                                  steerCTR(frc::PIDController(steerP, steerI, steerD))
@@ -13,14 +13,14 @@ SwerveModule::SwerveModule(int steerMotorID, int driveMotorID, int cancoderID) :
 void SwerveModule::initMotors()
 {
     // Resetting Motor settings, Encoders, putting it in brake mode
-    steerMotor->ClearFaults();
-    config->Inverted(true); // steerMotor->SetInverted(true)
+    steerMotor.ClearFaults();
+    config.Inverted(true); // steerMotor->SetInverted(true)
 
     // Makes motor stiff(coast mode lets it run freely)
-    config->SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
+    config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
 
     // Keep the motor limit at under 20A
-    config->SmartCurrentLimit(maxSteerCurrent);
+    config.SmartCurrentLimit(maxSteerCurrent);
 
     // Setpoints to initial encoder positions/speeds
     steerAngleSetpoint = steerEnc.getAbsolutePosition().getRadians();
@@ -179,7 +179,7 @@ void SwerveModule::run()
     if (moduleInhibit) // Thread is in standby mode
     {
         currentSteerOutput = 0.0;
-        steerMotor->StopMotor();
+        steerMotor.StopMotor();
         driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
     }
 
@@ -199,7 +199,7 @@ void SwerveModule::run()
         if (!ControlUtil::epsilonEquals(newSteerOutput, currentSteerOutput)) // Save some CAN buffer
         {
             currentSteerOutput = newSteerOutput;
-            steerMotor->Set(currentSteerOutput);
+            steerMotor.Set(currentSteerOutput);
         }
 
         if (driveMode == POSITION)
