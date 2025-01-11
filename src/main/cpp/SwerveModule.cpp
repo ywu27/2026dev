@@ -14,7 +14,13 @@ void SwerveModule::initMotors()
 {
     // Resetting Motor settings, Encoders, putting it in brake mode
     steerMotor.ClearFaults();
-    config.Inverted(true); // steerMotor->SetInverted(true)
+
+    config.closedLoop.SetFeedbackSensor(rev::spark::ClosedLoopConfig::FeedbackSensor::kPrimaryEncoder);
+    config.closedLoop.P(0.3);
+    config.closedLoop.I(0);
+    config.closedLoop.D(0);
+
+    config.Inverted(true);
 
     // Makes motor stiff(coast mode lets it run freely)
     config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);

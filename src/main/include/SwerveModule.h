@@ -30,18 +30,14 @@ public:
     int driveID;
 
     rev::spark::SparkMax steerMotor;
-    rev::spark::SparkMaxConfig config{};
+    rev::spark::SparkMaxConfig config;
     // rev::spark::SparkMax *driveMotor;
     TalonFXMotor driveMotor;
 
     CAN_Coder steerEnc;
     frc::PIDController steerCTR;
 
-    // REV Default Velocity PID values(Drive Motor)
-    float kP = revkP, kI = revkI, kFF = revkFF, kMaxOutput = revkMaxOutput, kMinOutput = revkMinOutput;
     float maxAccumulation = 0.4;
-
-    // PID Controller for Drive Motor
 
     // Timer for acceleration limiting
     frc::Timer aTimer = frc::Timer();
