@@ -38,7 +38,9 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit()
 {
+
   mDrive.state = DriveState::Teleop;
+
   mDrive.enableModules();
   mGyro.init();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
@@ -49,9 +51,14 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic()
 {
-  if (ctr.GetCircleButtonPressed()) {
+  /*if (ctr.GetCircleButtonPressed()) {
     mDrive.autoMove(PI/2, 100);
   }
+  */
+  if (ctr.GetCircleButtonPressed()) {
+    mDrive.mFrontLeft.steerMotor.Set(0.5);
+  }
+
   auto startTime = frc::Timer::GetFPGATimestamp();
   // Controller inputs
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);

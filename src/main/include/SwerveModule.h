@@ -31,7 +31,7 @@ public:
 
     rev::spark::SparkMax steerMotor;
     rev::spark::SparkMaxConfig config;
-    // rev::spark::SparkMax *driveMotor;
+    rev::spark::SparkClosedLoopController PIDController = steerMotor.GetClosedLoopController();
     TalonFXMotor driveMotor;
 
     CAN_Coder steerEnc;

@@ -208,6 +208,7 @@ void SwerveModule::run()
         {
             currentSteerOutput = newSteerOutput;
             steerMotor.Set(currentSteerOutput);
+            //PIDController.SetReference(steerAngleSetpoint, rev::spark::SparkMax::ControlType::kPosition, rev::spark::ClosedLoopSlot::kSlot0); //added
         }
 
         if (driveMode == POSITION)

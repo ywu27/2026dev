@@ -30,7 +30,7 @@ enum DriveState{
 };
 class SwerveDrive
 {
-private:
+public: //CHANGE BACK TO PRIVATE
     SwerveModule mFrontLeft = SwerveModule(FLsteerID, FLdriveID, FL_CAN_ID);
     SwerveModule mFrontRight = SwerveModule(FRsteerID, FRdriveID, FR_CAN_ID);
     SwerveModule mBackLeft = SwerveModule(BLsteerID, BLdriveID, BL_CAN_ID);
