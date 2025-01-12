@@ -193,7 +193,7 @@ void SwerveModule::run()
 
     else
     {
-        if (steerID == 7)
+        if (steerID == 5)
         {
             double vel = driveMotor.getVelocity();
             if (vel > maxVelocityAttained)

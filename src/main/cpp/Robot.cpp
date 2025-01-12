@@ -6,11 +6,13 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/DriverStation.h>
 #include <string>
+#include <cameraserver/CameraServer.h>
 
 void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
+  frc::CameraServer::StartAutomaticCapture();
 
 }
 void Robot::RobotPeriodic()
