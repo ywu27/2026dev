@@ -15,14 +15,7 @@ class Limelight
     // TODO:
     // 1. USE PID to get in front of tag by set distance
     // 2. make fucntion for target area
-    // 3. getFiducialID() use for speaker and amp
-
 private:
-    // update field and robot measurements here / talk to CAD team
-    std::vector<int> speakerCenterIDs = {4, 7};
-    std::vector<int> speakerSideIDs = {3, 8};
-    std::vector<int> ampIDs = {5, 6};
-    std::vector<int> sourceIDs = {1, 2, 9, 10};
     double limelightAngleDegrees = 36;
     double limelightHeightInches = 5;
     double tagHeightInches = 52;
@@ -135,10 +128,5 @@ public:
         output.y = output.z;
         output.z = -tempY;
         return output;
-    }
-
-    bool isSpeakerTagDetected()
-    {
-        return isIn((int)LimelightHelpers::getFiducialID(), speakerCenterIDs);
     }
 };
