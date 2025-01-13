@@ -53,13 +53,6 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic()
 {
-  /*if (ctr.GetCircleButtonPressed()) {
-    mDrive.autoMove(PI/2, 100);
-  }
-  */
-  if (ctr.GetCircleButtonPressed()) {
-    mDrive.mFrontLeft.steerMotor.Set(0.5);
-  }
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   // Controller inputs
@@ -81,27 +74,27 @@ void Robot::TeleopPeriodic()
   bool driveTurning = !(rightX == 0);
   double rot = rightX * moduleMaxRot * 2;
 
-  // Decide drive modes
-  //if (snapRobotToGoal.update(dPad >= 0 && !driveTurning, 5.0, driveTurning)) // SNAP mode
-  //{
+  //Decide drive modes
+  // if (snapRobotToGoal.update(dPad >= 0 && !driveTurning, 5.0, driveTurning)) // SNAP mode
+  // {
   //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
   //  mHeadingController.setSetpointPOV(dPad);
-  //}
-  // else if (preScoringSpeaker && !driveTurning) // ALIGN(scoring) mode
-  // {
-  //   // if (mLimelight.isSpeakerTagDetected())
-  //   // {
-  //   //   Pose3d target = mLimelight.getTargetPoseRobotSpace();
-  //   //   double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
-  //   //   double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-  //   //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   // }
   // }
-  //else // Normal driving mode
-  //{
-  mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
-  //}
+  if (ctr.GetCircleButtonPressed()) // ALIGN(scoring) mode
+  {
+    if (limelight.isTargetDetected())
+    {
+      Pose3d target = limelight.getTargetPoseRobotSpace();
+      double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
+      double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
+      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      mHeadingController.setSetpoint(zeroSetpoint);
+    }
+  }
+  else // Normal driving mode
+  {
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
+  }
 
   // Output heading controller if used
   rot = mHeadingController.getHeadingControllerState() == SwerveHeadingController::OFF

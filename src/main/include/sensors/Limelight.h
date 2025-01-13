@@ -5,51 +5,61 @@
 #include <cmath>
 #include <iostream>
 #include "LimelightHelpers.h"
-#include <algorithm>
 #include "geometry/Pose3d.h"
 #include "Constants.h"
-#include <String.h>
 
-class Limelight
-{
-    // TODO:
-    // 1. USE PID to get in front of tag by set distance
-    // 2. make fucntion for target area
+class Limelight {
+
 private:
-    double limelightAngleDegrees = 36;
-    double limelightHeightInches = 5;
-    double tagHeightInches = 52;
-    std::string limelightName = "";
+    std::string limelightName;
+    double limelightMountAngle; // Measured in degrees
+    double limelightHeight; // Measured in inches
+    double tagHeight = 52; // Measured in inches
 
 public:
-
-    Limelight(std::string getlimelightName, double getlimelightAngleDegrees, double getlimelightHeightInches){
-        limelightName = getlimelightName;
-        limelightAngleDegrees = getlimelightAngleDegrees;
-        limelightHeightInches = getlimelightHeightInches;
-
+    Limelight(std::string name, double mountAngle, double heightOffFloor){
+        limelightName = name;
+        limelightMountAngle = mountAngle; // degrees
+        limelightHeight = heightOffFloor; // inches
     }
 
-    bool targetDetected()
-    {
+    bool isTargetDetected() {
         if ((nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->GetNumber("tv", 0)) == 0)
         {
             return false;
         }
-        else
+        return true;
+    }
+
+    int getTagID() { // returns the ID of the AprilTag
+        return (int)LimelightHelpers::getFiducialID();
+    }
+
+    double getTX() { // TX
+        if (isTargetDetected() == true)
         {
-            return true;
+            double tx = LimelightHelpers::getTX("");
+            frc::SmartDashboard::PutNumber("Tx", tx);
+            return tx;
         }
     }
 
-    double getDistanceToWall()
-    {
-        if (targetDetected() == true)
+    double getTY() { // TY
+        if (isTargetDetected() == true)
         {
             double ty = LimelightHelpers::getTY("");
-            double angleToTagDegrees = limelightAngleDegrees + ty;
+            frc::SmartDashboard::PutNumber("Ty", ty);
+            return ty;
+        }
+    }
+
+    double getDistanceToWall() { // perpendicular distance to wall
+        if (isTargetDetected() == true)
+        {
+            double ty = LimelightHelpers::getTY("");
+            double angleToTagDegrees = limelightMountAngle + ty;
             double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
-            double distanceToWall = (tagHeightInches - limelightHeightInches) / tan(angleToTagRadians);
+            double distanceToWall = (tagHeight - limelightHeight) / tan(angleToTagRadians);
             distanceToWall = distanceToWall + 0.4191; //added the distance between limelight and shooter
             frc::SmartDashboard::PutNumber("distanceToWall", distanceToWall);
             return distanceToWall;
@@ -59,12 +69,11 @@ public:
         }
     }
 
-    double getAngleLimelightToTag()
-    { // TY + limelight mount angle
-        if (targetDetected() == true)
+    double getAngleLimelightToTag() { // TY + limelight mount angle
+        if (isTargetDetected() == true)
         {
-            double ty = LimelightHelpers::getTY("");
-            double angleToTagDegrees = limelightAngleDegrees + ty;
+            double ty = getTY();
+            double angleToTagDegrees = limelightMountAngle + ty;
             frc::SmartDashboard::PutNumber("vertical angle", angleToTagDegrees);
             return angleToTagDegrees;
         }
@@ -74,33 +83,20 @@ public:
         }
     }
 
-    double getAngleLimelightToWall()
-    { // TX
-        if (targetDetected() == true)
-        {
-            double tx = LimelightHelpers::getTX("");
-            frc::SmartDashboard::PutNumber("Tx", tx);
-            return tx;
-        }
-    }
-
-    std::vector<double> getPolarCoords()
-    {
-        std::vector<double> polarCoords = {getAngleLimelightToWall(), getDistanceToWall()};
+    std::vector<double> getPolarCoords() {
+        std::vector<double> polarCoords = {getTX(), getDistanceToWall()};
         return polarCoords;
     }
 
-    std::vector<double> getXYCoords()
-    {
-        double angle = getAngleLimelightToWall() * (PI / 180);
+    std::vector<double> getXYCoords() {
+        double angle = getTX() * (PI / 180);
         double x = (getDistanceToWall()) * sin(angle);
         double y = (getDistanceToWall()) * cos(angle);
         std::vector<double> xyCoords = {x, y};
         return xyCoords;
     }
 
-    bool isIn(int object, std::vector<int> inp)
-    {
+    bool isIn(int object, std::vector<int> inp) { // use to check if current ID is part of target ID list
         for (unsigned int i = 0; i < inp.size(); i++)
         {
             if (inp[i] == object)
@@ -111,8 +107,11 @@ public:
         return false;
     }
 
-    Pose3d getTargetPoseRobotSpace()
-    {
+    void setLEDMode(int mode) { // 0 for off / 1 for blink / 2 for on
+        nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->PutNumber("ledMode", mode);
+    }
+
+    Pose3d getTargetPoseRobotSpace() {
         std::vector<double> x = LimelightHelpers::getTargetPose_RobotSpace();
         Pose3d output = Pose3d(x);
         double tempY = output.y;

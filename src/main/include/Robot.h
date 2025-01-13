@@ -52,10 +52,9 @@ public:
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
   
-  //Limelight aLimelight, bLImelight;             aLimelight -->  Limelight Agent 1/A,    bLimelight --> Limelight Agent 2/B
-  Limelight aLimelight = Limelight("FrontLimelight", 30, 5);  //Constructor Attribute Initialisation
-  Limelight bLimelight = Limelight("BackLimelight", 30, 5);   //Constructor Attribute Initialisation
-  
+  //Limelight
+  Limelight limelight = Limelight("", 30, 5);
+
   // Teleop Controls
   float ctrPercent = 1.0;
   float boostPercent = 0.9;
