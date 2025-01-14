@@ -28,7 +28,7 @@ void Robot::AutonomousInit()
   // if (frc::DriverStation::IsDSAttached()) {
   //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
   // }
-  // if (mLimelight.targetDetected()) {
+  // if (limelight.targetDetected()) {
   //   mTraj.startPose = mLimelight.getRobotPoseFieldSpace();
   //   mTraj.receivedPose = true;
   // } else {
@@ -80,7 +80,7 @@ void Robot::TeleopPeriodic()
   //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
   //  mHeadingController.setSetpointPOV(dPad);
   // }
-  if (ctr.GetCircleButtonPressed()) // ALIGN(scoring) mode
+  if (ctr.GetTriangleButtonPressed()) // ALIGN(scoring) mode
   {
     if (limelight.isTargetDetected())
     {
