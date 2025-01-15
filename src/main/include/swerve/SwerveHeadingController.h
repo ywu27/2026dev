@@ -72,7 +72,16 @@ public:
         mHeadingControllerState = state;
     }
 
+    double normalizeAngle(double angle) {
+        while (angle < 0) angle += 360;
+        while (angle >= 360) angle -= 360;
+        return angle;
+    }
+
     double calculate(double current_angle) {
+        current_angle = normalizeAngle(current_angle);
+        mSetpoint = normalizeAngle(mSetpoint);
+        
         switch (mHeadingControllerState) {
             case OFF:
                 return 0.0;
@@ -80,7 +89,7 @@ public:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
                 break;
             case ALIGN:
-                mPIDCtr.SetPID(1.5, 0.0, 0.0);
+                mPIDCtr.SetPID(0.05, 0.0, 0.005);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
@@ -88,6 +97,4 @@ public:
         }
         return std::clamp(mPIDCtr.Calculate(current_angle, mSetpoint), outputMin, outputMax);
     }
-
-
 };

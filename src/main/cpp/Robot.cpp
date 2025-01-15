@@ -90,7 +90,7 @@ void Robot::TeleopPeriodic()
   //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
   //  mHeadingController.setSetpointPOV(dPad);
   // }
-  if (ctr.GetTriangleButtonPressed()) // ALIGN(scoring) mode
+  if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
   {
     //if (limelight.isTargetDetected())
     //{
@@ -109,9 +109,9 @@ void Robot::TeleopPeriodic()
   }
 
   // Output heading controller if used
-  rot = mHeadingController.getHeadingControllerState() == SwerveHeadingController::OFF
-            ? rot
-            : mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  if (mHeadingController.getHeadingControllerState() != SwerveHeadingController::OFF) {
+      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
 
   // Gyro Resets
   if (ctr.GetCrossButtonReleased())
