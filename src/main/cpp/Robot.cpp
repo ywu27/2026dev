@@ -62,6 +62,8 @@ void Robot::TeleopPeriodic()
 {
   limelight.getTX();
   limelight.getTY();
+  limelight.getDistanceToWall();
+
   auto startTime = frc::Timer::GetFPGATimestamp();
   // Controller inputs
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);
@@ -90,14 +92,16 @@ void Robot::TeleopPeriodic()
   // }
   if (ctr.GetTriangleButtonPressed()) // ALIGN(scoring) mode
   {
-    if (limelight.isTargetDetected())
-    {
+    //if (limelight.isTargetDetected())
+    //{
       Pose3d target = limelight.getTargetPoseRobotSpace();
+      frc::SmartDashboard::PutNumber("target y", target.y);
+      frc::SmartDashboard::PutNumber("target x", target.x);
       double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
       double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       mHeadingController.setSetpoint(zeroSetpoint);
-    }
+    //}
   }
   else // Normal driving mode
   {

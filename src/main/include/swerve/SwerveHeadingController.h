@@ -80,7 +80,7 @@ public:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
                 break;
             case ALIGN:
-                mPIDCtr.SetPID(0.02, 0.0, 0.0);
+                mPIDCtr.SetPID(1.5, 0.0, 0.0);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);

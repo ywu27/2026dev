@@ -24,7 +24,7 @@ public:
     }
 
     bool isTargetDetected() {
-        if ((nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->GetNumber("tv", 0)) == 0)
+        if ((nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)) == 0.0)
         {
             frc::SmartDashboard::PutBoolean("target detected?", false);
             return false;
