@@ -12,11 +12,15 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
+  limelight.setPipelineIndex1();
+  limelight.setLEDMode(0);
   frc::CameraServer::StartAutomaticCapture();
 
 }
 void Robot::RobotPeriodic()
 {
+  
+  limelight.isTargetDetected();
 }
 
 void Robot::AutonomousInit()
@@ -40,8 +44,11 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit()
 {
-
   mDrive.state = DriveState::Teleop;
+  
+  limelight.setPipelineIndex1();
+  limelight.isTargetDetected();
+  limelight.setLEDMode(0);
 
   mDrive.enableModules();
   mGyro.init();
@@ -53,7 +60,8 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic()
 {
-
+  limelight.getTX();
+  limelight.getTY();
   auto startTime = frc::Timer::GetFPGATimestamp();
   // Controller inputs
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);

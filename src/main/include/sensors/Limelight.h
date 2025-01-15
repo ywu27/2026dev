@@ -14,7 +14,7 @@ private:
     std::string limelightName;
     double limelightMountAngle; // Measured in degrees
     double limelightHeight; // Measured in inches
-    double tagHeight = 52; // Measured in inches
+    double tagHeight = 53; // Measured in inches
 
 public:
     Limelight(std::string name, double mountAngle, double heightOffFloor){
@@ -26,9 +26,16 @@ public:
     bool isTargetDetected() {
         if ((nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->GetNumber("tv", 0)) == 0)
         {
+            frc::SmartDashboard::PutBoolean("target detected?", false);
             return false;
         }
+        frc::SmartDashboard::PutBoolean("target detected?", true);
         return true;
+    }
+
+    void setPipelineIndex1()
+    {
+        LimelightHelpers::setPipelineIndex("", 0);
     }
 
     int getTagID() { // returns the ID of the AprilTag
