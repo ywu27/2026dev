@@ -3,6 +3,7 @@
 #include "geometry/Pose2d.h"
 #include <cmath>
 #include <stdexcept>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/controller/PIDController.h>
 
 
@@ -20,6 +21,8 @@ public:
     enum HeadingControllerState {
         OFF, SNAP, ALIGN, MAINTAIN
     };
+    
+    double kd = 0.03;
     HeadingControllerState mHeadingControllerState = OFF;
 
 
@@ -89,7 +92,8 @@ public:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
                 break;
             case ALIGN:
-                mPIDCtr.SetPID(0.05, 0.0, 0.005);
+                mPIDCtr.SetPID(0.02, 0.0, 0.0);
+                frc::SmartDashboard::PutNumber("kd", kd);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
