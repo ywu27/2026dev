@@ -90,7 +90,7 @@ void Robot::TeleopPeriodic()
   //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
   //  mHeadingController.setSetpointPOV(dPad);
   // }
-  if (ctr.GetTriangleButton() && limelight.isTargetDetected()) // ALIGN(scoring) mode
+  if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
   {
       Pose3d target = limelight.getTargetPoseRobotSpace();
       frc::SmartDashboard::PutNumber("target y", target.y);
@@ -129,6 +129,7 @@ void Robot::TeleopPeriodic()
   mDrive.updateOdometry();
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
+  frc::SmartDashboard::PutBoolean("testtarget", limelight.isTargetDetected());
 }
 
 void Robot::DisabledInit()

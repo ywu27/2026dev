@@ -93,7 +93,6 @@ public:
                 break;
             case ALIGN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
-                frc::SmartDashboard::PutNumber("kd", kd);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);

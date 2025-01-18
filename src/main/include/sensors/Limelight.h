@@ -24,13 +24,13 @@ public:
     }
 
     bool isTargetDetected() {
-        if ((nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)) == 0.0)
+        if ((nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)) == 1)
         {
-            frc::SmartDashboard::PutBoolean("target detected?", false);
-            return false;
+            frc::SmartDashboard::PutNumber("insidetest", (nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)));
+            return true;
         }
-        frc::SmartDashboard::PutBoolean("target detected?", true);
-        return true;
+        frc::SmartDashboard::PutNumber("insidetest", (nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)));
+        return false;
     }
 
     void setPipelineIndex1()
@@ -58,6 +58,10 @@ public:
             frc::SmartDashboard::PutNumber("Ty", ty);
             return ty;
         }
+    }
+
+    double isTargetDetected2() {
+        return !(getTX()==0);
     }
 
     double getDistanceToWall() { // perpendicular distance to wall
