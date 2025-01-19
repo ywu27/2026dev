@@ -8,8 +8,8 @@
 
 
 class SwerveHeadingController {
-private:
-    frc::PIDController mPIDCtr {0.2, 0.0, 0.0};
+public:
+    frc::PIDController mPIDCtr {0.1, 0.0, 0.01}; //-0.01 -0.02
     double mSetpoint = 0.0;
     double outputMax;
     double outputMin;
@@ -17,7 +17,6 @@ private:
     
     Rotation2d desiredHeading;
 
-public:
     enum HeadingControllerState {
         OFF, SNAP, ALIGN, MAINTAIN
     };
@@ -92,7 +91,7 @@ public:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
                 break;
             case ALIGN:
-                mPIDCtr.SetPID(0.02, 0.0, 0.0);
+                mPIDCtr.SetPID(0.1, 0.0, 0.01);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
