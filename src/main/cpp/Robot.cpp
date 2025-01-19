@@ -96,7 +96,36 @@ void Robot::TeleopPeriodic()
       frc::SmartDashboard::PutNumber("target y", target.y);
       frc::SmartDashboard::PutNumber("target x", target.x);
       double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
-      double zeroSetpoint = 0; //mGyro.getBoundedAngleCW().getDegrees() - angleOffset;
+      double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
+      // double kP = 0.02;
+      // double kI = 0.0;
+      // double kD = 0.0;
+      // frc::SmartDashboard::PutNumber("kP", kP);
+      // kP = frc::SmartDashboard::GetNumber("kP", kP);
+      // frc::SmartDashboard::PutNumber("kI", kI);
+      // kI = frc::SmartDashboard::GetNumber("kI", kI);
+      // frc::SmartDashboard::PutNumber("kD", kD);
+      // kD = frc::SmartDashboard::GetNumber("kD", kD);
+      // mHeadingController.mPIDCtr.SetPID(kP, kI, kD);
+      frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
+      frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      mHeadingController.setSetpoint(zeroSetpoint);
+      /*
+      if (ctr.GetCircleButton()) {
+        
+        mDrive.orientModules(0, 0, 0, 0);
+        //mDrive.autoMove(0, 0.25);
+      }
+      */
+  }
+  else if (ctr.GetCircleButton()) // ALIGN(scoring) mode
+  {
+      Pose3d target = limelight.getTargetPoseRobotSpace();
+      frc::SmartDashboard::PutNumber("target y", target.y);
+      frc::SmartDashboard::PutNumber("target x", target.x);
+      double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
+      double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
       // double kP = 0.02;
       // double kI = 0.0;
       // double kD = 0.0;
