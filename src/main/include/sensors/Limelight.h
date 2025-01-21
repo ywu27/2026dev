@@ -33,9 +33,8 @@ public:
         return false;
     }
 
-    void setPipelineIndex1()
-    {
-        LimelightHelpers::setPipelineIndex("", 0);
+    void setPipelineIndex(int index) {
+        LimelightHelpers::setPipelineIndex("", index);
     }
 
     int getTagID() { // returns the ID of the AprilTag

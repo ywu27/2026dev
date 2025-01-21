@@ -12,11 +12,10 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
-  limelight.setPipelineIndex1();
-  limelight.setLEDMode(0);
+  limelight.setPipelineIndex(0);
   frc::CameraServer::StartAutomaticCapture();
-
 }
+
 void Robot::RobotPeriodic()
 {
   
@@ -30,7 +29,7 @@ void Robot::AutonomousInit()
   mDrive.enableModules();
  
   // if (frc::DriverStation::IsDSAttached()) {
-  //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
+  //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed; // checks for alliance color
   // }
   // if (limelight.targetDetected()) {
   //   mTraj.startPose = mLimelight.getRobotPoseFieldSpace();
@@ -46,7 +45,7 @@ void Robot::TeleopInit()
 {
   mDrive.state = DriveState::Teleop;
   
-  limelight.setPipelineIndex1();
+  limelight.setPipelineIndex(0);
   limelight.isTargetDetected();
   limelight.setLEDMode(0);
 
@@ -85,11 +84,6 @@ void Robot::TeleopPeriodic()
   double rot = rightX * moduleMaxRot * 2;
 
   //Decide drive modes
-  // if (snapRobotToGoal.update(dPad >= 0 && !driveTurning, 5.0, driveTurning)) // SNAP mode
-  // {
-  //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
-  //  mHeadingController.setSetpointPOV(dPad);
-  // }
   if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
   {
       Pose3d target = limelight.getTargetPoseRobotSpace();
@@ -97,45 +91,6 @@ void Robot::TeleopPeriodic()
       frc::SmartDashboard::PutNumber("target x", target.x);
       double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
       double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-      // double kP = 0.02;
-      // double kI = 0.0;
-      // double kD = 0.0;
-      // frc::SmartDashboard::PutNumber("kP", kP);
-      // kP = frc::SmartDashboard::GetNumber("kP", kP);
-      // frc::SmartDashboard::PutNumber("kI", kI);
-      // kI = frc::SmartDashboard::GetNumber("kI", kI);
-      // frc::SmartDashboard::PutNumber("kD", kD);
-      // kD = frc::SmartDashboard::GetNumber("kD", kD);
-      // mHeadingController.mPIDCtr.SetPID(kP, kI, kD);
-      frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
-      frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      mHeadingController.setSetpoint(zeroSetpoint);
-      /*
-      if (ctr.GetCircleButton()) {
-        
-        mDrive.orientModules(0, 0, 0, 0);
-        //mDrive.autoMove(0, 0.25);
-      }
-      */
-  }
-  else if (ctr.GetCircleButton()) // ALIGN(scoring) mode
-  {
-      Pose3d target = limelight.getTargetPoseRobotSpace();
-      frc::SmartDashboard::PutNumber("target y", target.y);
-      frc::SmartDashboard::PutNumber("target x", target.x);
-      double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
-      double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-      // double kP = 0.02;
-      // double kI = 0.0;
-      // double kD = 0.0;
-      // frc::SmartDashboard::PutNumber("kP", kP);
-      // kP = frc::SmartDashboard::GetNumber("kP", kP);
-      // frc::SmartDashboard::PutNumber("kI", kI);
-      // kI = frc::SmartDashboard::GetNumber("kI", kI);
-      // frc::SmartDashboard::PutNumber("kD", kD);
-      // kD = frc::SmartDashboard::GetNumber("kD", kD);
-      // mHeadingController.mPIDCtr.SetPID(kP, kI, kD);
       frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
       frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
@@ -155,7 +110,7 @@ void Robot::TeleopPeriodic()
 
   // Output heading controller if used
   if (mHeadingController.getHeadingControllerState() != SwerveHeadingController::OFF) {
-      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
   }
 
   // Gyro Resets

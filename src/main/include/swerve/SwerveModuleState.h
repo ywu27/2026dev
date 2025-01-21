@@ -32,9 +32,4 @@ class SwerveModuleState {
         void setRot2d(const Rotation2d angle) {
             angleRadians_ = angle.getRadians();
         }
-
-
-
-
-
 };

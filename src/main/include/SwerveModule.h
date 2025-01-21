@@ -82,7 +82,6 @@ public:
     void setDrivePositionSetpoint(float setpt);
     void setDriveVelocitySetpoint(float setpt);
 
-    // TODO: Test this
     void setModuleState(SwerveModuleState setpt, bool takeShortestPath = true);
     SwerveModuleState moduleSetpointGenerator(SwerveModuleState prevSetpoint, SwerveModuleState desiredSetpoint);
     frc::SwerveModulePosition getModulePosition();
@@ -93,7 +92,6 @@ public:
     double getDriveEncoderVel();
     double getDriveEncoderPos();
 
-    // TODO: implement & overload
     bool isFinished(float percentageBound);
     SwerveModuleState getModuleState();
 

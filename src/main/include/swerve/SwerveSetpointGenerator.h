@@ -19,13 +19,5 @@ public:
     {
         std::vector<SwerveModuleState> states = mKinematics->toSwerveStates(currSetpt);
         states = SwerveDriveKinematics::desaturateWheelSpeeds(states, moduleMaxFPS);
-        
-
     }
-
-
-
-
-
-
 };
