@@ -12,11 +12,14 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
+  limelight.setPipelineIndex(0);
   frc::CameraServer::StartAutomaticCapture();
-
 }
+
 void Robot::RobotPeriodic()
 {
+  
+  limelight.isTargetDetected();
 }
 
 void Robot::AutonomousInit()
@@ -26,9 +29,9 @@ void Robot::AutonomousInit()
   mDrive.enableModules();
  
   // if (frc::DriverStation::IsDSAttached()) {
-  //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
+  //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed; // checks for alliance color
   // }
-  // if (mLimelight.targetDetected()) {
+  // if (limelight.targetDetected()) {
   //   mTraj.startPose = mLimelight.getRobotPoseFieldSpace();
   //   mTraj.receivedPose = true;
   // } else {
@@ -40,8 +43,11 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit()
 {
-
   mDrive.state = DriveState::Teleop;
+  
+  limelight.setPipelineIndex(0);
+  limelight.isTargetDetected();
+  limelight.setLEDMode(0);
 
   mDrive.enableModules();
   mGyro.init();
@@ -53,13 +59,9 @@ void Robot::TeleopInit()
 }
 void Robot::TeleopPeriodic()
 {
-  /*if (ctr.GetCircleButtonPressed()) {
-    mDrive.autoMove(PI/2, 100);
-  }
-  */
-  if (ctr.GetCircleButtonPressed()) {
-    mDrive.mFrontLeft.steerMotor.Set(0.5);
-  }
+  limelight.getTX();
+  limelight.getTY();
+  limelight.getDistanceToWall();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   // Controller inputs
@@ -81,32 +83,34 @@ void Robot::TeleopPeriodic()
   bool driveTurning = !(rightX == 0);
   double rot = rightX * moduleMaxRot * 2;
 
-  // Decide drive modes
-  //if (snapRobotToGoal.update(dPad >= 0 && !driveTurning, 5.0, driveTurning)) // SNAP mode
-  //{
-  //  mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
-  //  mHeadingController.setSetpointPOV(dPad);
-  //}
-  // else if (preScoringSpeaker && !driveTurning) // ALIGN(scoring) mode
-  // {
-  //   // if (mLimelight.isSpeakerTagDetected())
-  //   // {
-  //   //   Pose3d target = mLimelight.getTargetPoseRobotSpace();
-  //   //   double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
-  //   //   double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-  //   //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   // }
-  // }
-  //else // Normal driving mode
-  //{
-  mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
-  //}
+  //Decide drive modes
+  if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
+  {
+      Pose3d target = limelight.getTargetPoseRobotSpace();
+      frc::SmartDashboard::PutNumber("target y", target.y);
+      frc::SmartDashboard::PutNumber("target x", target.x);
+      double angleOffset = limelight.getTX();
+      double zeroSetpoint = 0;
+      if (angleOffset>0) {
+        zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
+      }
+      else {
+        zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
+      }
+      frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
+      frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      mHeadingController.setSetpoint(zeroSetpoint);
+  }
+  else // Normal driving mode
+  {
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
+  }
 
   // Output heading controller if used
-  rot = mHeadingController.getHeadingControllerState() == SwerveHeadingController::OFF
-            ? rot
-            : mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  if (mHeadingController.getHeadingControllerState() != SwerveHeadingController::OFF) {
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
 
   // Gyro Resets
   if (ctr.GetCrossButtonReleased())
@@ -123,6 +127,7 @@ void Robot::TeleopPeriodic()
   mDrive.updateOdometry();
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
+  frc::SmartDashboard::PutBoolean("testtarget", limelight.isTargetDetected());
 }
 
 void Robot::DisabledInit()

@@ -4,19 +4,17 @@
 #include <chrono>
 #include <thread>
 
-void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyro, bool useFieldOriented, bool cleanAccum)
-{
+void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyro, bool useFieldOriented, bool cleanAccum) {
     double desiredVx = desiredSpeeds.vxMetersPerSecond;
     double desiredVy = desiredSpeeds.vyMetersPerSecond;
-    if (useFieldOriented)
-    {
+
+    if (useFieldOriented) {
         desiredSpeeds = ChassisSpeeds::fromFieldRelativeSpeeds(desiredVx, desiredVy, desiredSpeeds.omegaRadiansPerSecond, fieldRelativeGyro);
         frc::SmartDashboard::PutBoolean("BOTCENTRIC!", false);
-    }
-    else
-    {
+    } else {
         frc::SmartDashboard::PutBoolean("BOTCENTRIC!", true);
     }
+
     desiredVx = desiredSpeeds.vxMetersPerSecond;
     desiredVy = desiredSpeeds.vyMetersPerSecond;
 
@@ -27,8 +25,7 @@ void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyr
         frc::SmartDashboard::PutNumber("CleanedAccum", false);
     }
 
-    if (fabs(desiredVx) < kEpsilon && fabs(desiredVy) < kEpsilon && fabs(desiredSpeeds.omegaRadiansPerSecond) < kEpsilon)
-    {
+    if (fabs(desiredVx) < kEpsilon && fabs(desiredVy) < kEpsilon && fabs(desiredSpeeds.omegaRadiansPerSecond) < kEpsilon) {
         // SwerveModuleState FLBRstop = SwerveModuleState(0.0, PI / 4);
         // SwerveModuleState FRBLstop = SwerveModuleState(0.0, 7 * PI / 4);
 
@@ -59,8 +56,7 @@ void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyr
      * WPM * (6.12 motor rot / 1 wheel rot) = RPM
      */
 
-    for (int i = 0; i < 4; i++)
-    {
+    for (int i = 0; i < 4; i++) {
         double speed = moduleStates[i].getSpeedFPS();
         speed = ((speed * 60) / wheelCircumFeet) * moduleDriveRatio;
         // SwerveModuleState temp = SwerveModuleState(speed, moduleStates[i].getRot2d().getRadians());
@@ -85,24 +81,22 @@ void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyr
  * Initialize every motor(encoders, factory reset, current limits, etc)
  * Initialize each motor thread, which should start the threads
  */
-void SwerveDrive::initModules()
-{
+void SwerveDrive::initModules() {
     mFrontLeft.initMotors();
-    //mFrontLeft.driveMotor.setInvert(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
     mFrontRight.initMotors();
     mBackLeft.initMotors();
+    mBackLeft.driveMotor.setInvert(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
     mBackRight.initMotors();
-    //mBackRight.driveMotor.setInvert(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
+    mBackRight.driveMotor.setInvert(ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive);
 
     modulePIDThread = std::thread(&SwerveDrive::runModules, this);
 }
+
 /**
  * Do not call this code outside of initModules's thread
  */
-void SwerveDrive::runModules()
-{
-    while (true)
-    {
+void SwerveDrive::runModules() {
+    while (true) {
         mFrontLeft.run();
         mFrontRight.run();
         mBackLeft.run();
@@ -115,70 +109,58 @@ void SwerveDrive::runModules()
  * Set every module's threads to active mode
  * So the PIDs start running
  */
-void SwerveDrive::enableModules()
-{
+void SwerveDrive::enableModules() {
     mFrontLeft.startModule();
     mBackLeft.startModule();
     mBackRight.startModule();
     mFrontRight.startModule();
 }
+
 /**
  * Disable every module's thread
  * Threads still exist, just on standby while loop
  */
-bool SwerveDrive::stopModules()
-{
+bool SwerveDrive::stopModules() {
     mFrontLeft.stopModule();
     mBackLeft.stopModule();
     mBackRight.stopModule();
     mFrontRight.stopModule();
     return true;
 }
-/**
- * Enter radians
- * Sets steer Angle setpoint to inputs
- */
-void SwerveDrive::orientModules(double FL, double FR, double BL, double BR)
-{
+
+void SwerveDrive::orientModules(double FL, double FR, double BL, double BR) {
     mBackRight.setSteerAngleSetpoint(BR);
     mBackLeft.setSteerAngleSetpoint(BL);
     mFrontRight.setSteerAngleSetpoint(FR);
     mFrontLeft.setSteerAngleSetpoint(FL);
 }
 
-/**x
- * Incomplete function
- * Awaits movement
- */
-void SwerveDrive::autoMove(double angleRadians, double distanceFeet)
-{
+void SwerveDrive::autoMove(double angleRadians, double distanceFeet) {
+    // NEEDS TESTING
     orientModules(angleRadians, angleRadians, angleRadians, angleRadians);
-    // TODO: Wait for modules w/ while loop
+
+    mFrontLeft.setDrivePositionSetpoint(distanceFeet);
+    mFrontRight.setDrivePositionSetpoint(distanceFeet);
+    mBackLeft.setDrivePositionSetpoint(distanceFeet);
+    mBackRight.setDrivePositionSetpoint(distanceFeet);
+    
     while(true) {
-        mFrontLeft.setDrivePositionSetpoint(distanceFeet);
-        mFrontRight.setDrivePositionSetpoint(distanceFeet);
-        mBackLeft.setDrivePositionSetpoint(distanceFeet);
-        mBackRight.setDrivePositionSetpoint(distanceFeet);
+        mFrontLeft.run();
+        mFrontRight.run();
+        mBackLeft.run();
+        mBackRight.run();
+
         if (mFrontLeft.isFinished(0.05)&&mFrontRight.isFinished(0.05)&&mBackLeft.isFinished(0.05)&&mBackRight.isFinished(0.05)) {
             break;
         }
     }
 }
 
-// void SwerveDrive::setDriveCurrentLimit(int limit)
-// {
-//     mFrontRight.setDriveCurrentLimit(limit);
-//     mFrontLeft.setDriveCurrentLimit(limit);
-//     mBackLeft.setDriveCurrentLimit(limit);
-//     mBackRight.setDriveCurrentLimit(limit);
-// }
-
 /**
  * Resets odometry position
  * (used in auto config)
  */
-void SwerveDrive::resetOdometry(frc::Translation2d trans, frc::Rotation2d angle)
-{
+void SwerveDrive::resetOdometry(frc::Translation2d trans, frc::Rotation2d angle) {
     m_odometry.ResetPosition(
         mGyro.getRotation2d(),
         {mBackLeft.getModulePosition(),
@@ -188,19 +170,14 @@ void SwerveDrive::resetOdometry(frc::Translation2d trans, frc::Rotation2d angle)
         frc::Pose2d{trans, angle});
 }
 
-/**
- * Retrieves odometry pose in feet
- */
-frc::Pose2d SwerveDrive::getOdometryPose()
-{
+frc::Pose2d SwerveDrive::getOdometryPose() { // gets odometry pose in feet
     return m_odometry.GetPose();
 }
 
 /**
  * Updates odometry with current module positions
  */
-void SwerveDrive::updateOdometry()
-{
+void SwerveDrive::updateOdometry() {
     m_odometry.Update(
         -mGyro.getRotation2d(),
         {mBackLeft.getModulePosition(),
@@ -214,8 +191,7 @@ void SwerveDrive::updateOdometry()
  * Uses gyro widget
  * Flips angle gyro if module has negative velocity
  */
-void SwerveDrive::displayDriveTelemetry()
-{
+void SwerveDrive::displayDriveTelemetry() {
 }
 
 void SwerveDrive::zeroAccumulation() {

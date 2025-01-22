@@ -18,6 +18,4 @@ public:
         }
         botSpeed = speeds;
     }
-
-
 };

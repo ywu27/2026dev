@@ -19,8 +19,6 @@
 #include "frc/kinematics/SwerveDriveOdometry.h"
 #include "pathplanner/lib/path/PathPlannerPath.h"
 
-// #define maxRot
-
 // TODO: inherit thread helper
 enum DriveState{
     Teleop,
@@ -39,8 +37,6 @@ public: //CHANGE BACK TO PRIVATE
     // Threas for each Module
     std::thread modulePIDThread;
     float maxRot = moduleMaxRot;
-
-    // TODO: Rename to Point2d
     std::array<Translation2d, 4> wheelPs = {Translation2d(trackWidthNumber, wheelBase), Translation2d(trackWidthNumber, -wheelBase), Translation2d(-trackWidthNumber, wheelBase), Translation2d(-trackWidthNumber, -wheelBase)};
 
     SwerveDriveKinematics m_kinematics = SwerveDriveKinematics(wheelPs);
@@ -78,8 +74,6 @@ public:
     }
 
     DriveState state = DriveState::Teleop;
-    // TODO overload - pass Point2d + rotation, it figures it out
-    // void Drive(Translation2d translation, Rotation2d rotation);
     void Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyro, bool useFieldOriented, bool cleanAccum = false);
     void initModules();
     void enableModules();
@@ -90,7 +84,5 @@ public:
     frc::Pose2d getOdometryPose();
     void updateOdometry();
     void displayDriveTelemetry();
-    void setDriveCurrentLimit(int limit);
     void zeroAccumulation();
-
 };

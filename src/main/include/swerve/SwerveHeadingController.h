@@ -3,12 +3,13 @@
 #include "geometry/Pose2d.h"
 #include <cmath>
 #include <stdexcept>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/controller/PIDController.h>
 
 
 class SwerveHeadingController {
-private:
-    frc::PIDController mPIDCtr {0.2, 0.0, 0.0};
+public:
+    frc::PIDController mPIDCtr {0.1, 0.0, 0.01};
     double mSetpoint = 0.0;
     double outputMax;
     double outputMin;
@@ -16,10 +17,11 @@ private:
     
     Rotation2d desiredHeading;
 
-public:
     enum HeadingControllerState {
         OFF, SNAP, ALIGN, MAINTAIN
     };
+    
+    double kd = 0.03;
     HeadingControllerState mHeadingControllerState = OFF;
 
 
@@ -72,7 +74,16 @@ public:
         mHeadingControllerState = state;
     }
 
+    double normalizeAngle(double angle) {
+        while (angle < 0) angle += 360;
+        while (angle >= 360) angle -= 360;
+        return angle;
+    }
+
     double calculate(double current_angle) {
+        current_angle = normalizeAngle(current_angle);
+        mSetpoint = normalizeAngle(mSetpoint);
+        
         switch (mHeadingControllerState) {
             case OFF:
                 return 0.0;
@@ -80,7 +91,7 @@ public:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
                 break;
             case ALIGN:
-                mPIDCtr.SetPID(0.02, 0.0, 0.0);
+                mPIDCtr.SetPID(0.1, 0.0, 0.01);
                 break;
             case MAINTAIN:
                 mPIDCtr.SetPID(0.02, 0.0, 0.0);
@@ -88,6 +99,4 @@ public:
         }
         return std::clamp(mPIDCtr.Calculate(current_angle, mSetpoint), outputMin, outputMax);
     }
-
-
 };
