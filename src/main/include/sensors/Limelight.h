@@ -63,7 +63,7 @@ public:
         return !(getTX()==0);
     }
 
-    double getDistanceToWall() { // perpendicular distance to wall
+    double getDistanceToWall() { // perpendicular distance to wall in inches
         if (isTargetDetected() == true)
         {
             double ty = LimelightHelpers::getTY("");
@@ -137,5 +137,9 @@ public:
         output.y = output.z;
         output.z = -tempY;
         return output;
+    }
+
+    double moveAmt() { // inches
+        return tan(getTX() * (PI / 180.0)) * getDistanceToWall();
     }
 };

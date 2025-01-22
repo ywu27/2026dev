@@ -95,6 +95,7 @@ void Robot::TeleopPeriodic()
       frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       mHeadingController.setSetpoint(zeroSetpoint);
+      mDrive.autoMove(zeroSetpoint + PI_2, limelight.moveAmt());
       /*
       if (ctr.GetCircleButton()) {
         
