@@ -64,10 +64,8 @@ public:
         configs.Slot0.kV = 0.0;   // Falcon 500 is a 500kV motor, 500rpm per V = 8.333 rps per V, 1/8.33 = 0.12 volts / Rotation per second
         configs.Slot0.kS = 0.00;
 
-        //const int peak_forward_torque_current = 10; // Gave errors after 2025 WPILib change
-        //const int peak_reverse_torque_current = -10; // Gave errors after 2025 WPILib change
-        configs.TorqueCurrent.PeakForwardTorqueCurrent = units::ampere_t(15);
-        configs.TorqueCurrent.PeakReverseTorqueCurrent = units::ampere_t(-15);
+        configs.TorqueCurrent.PeakForwardTorqueCurrent = units::ampere_t(10);
+        configs.TorqueCurrent.PeakReverseTorqueCurrent = units::ampere_t(-10);
 
         /* Percent supply gains when we get a Slot 2 */
         configs.Slot1.kP = 3.5;    // An error of 100 rotations per second results in 100% output
