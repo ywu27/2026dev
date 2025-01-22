@@ -89,7 +89,7 @@ void Robot::TeleopPeriodic()
       Pose3d target = limelight.getTargetPoseRobotSpace();
       frc::SmartDashboard::PutNumber("target y", target.y);
       frc::SmartDashboard::PutNumber("target x", target.x);
-      double angleOffset = Rotation2d::polarToCompass(atan2(target.y, target.x)) * 180 / PI;
+      double angleOffset = limelight.getTX();
       double zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
       frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
       frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
