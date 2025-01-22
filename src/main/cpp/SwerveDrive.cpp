@@ -137,12 +137,20 @@ void SwerveDrive::orientModules(double FL, double FR, double BL, double BR) {
 }
 
 void SwerveDrive::autoMove(double angleRadians, double distanceFeet) {
+    // NEEDS TESTING
     orientModules(angleRadians, angleRadians, angleRadians, angleRadians);
+
+    mFrontLeft.setDrivePositionSetpoint(distanceFeet);
+    mFrontRight.setDrivePositionSetpoint(distanceFeet);
+    mBackLeft.setDrivePositionSetpoint(distanceFeet);
+    mBackRight.setDrivePositionSetpoint(distanceFeet);
+    
     while(true) {
-        mFrontLeft.setDrivePositionSetpoint(distanceFeet);
-        mFrontRight.setDrivePositionSetpoint(distanceFeet);
-        mBackLeft.setDrivePositionSetpoint(distanceFeet);
-        mBackRight.setDrivePositionSetpoint(distanceFeet);
+        mFrontLeft.run();
+        mFrontRight.run();
+        mBackLeft.run();
+        mBackRight.run();
+
         if (mFrontLeft.isFinished(0.05)&&mFrontRight.isFinished(0.05)&&mBackLeft.isFinished(0.05)&&mBackRight.isFinished(0.05)) {
             break;
         }
