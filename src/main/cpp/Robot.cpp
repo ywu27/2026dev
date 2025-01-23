@@ -84,8 +84,9 @@ void Robot::TeleopPeriodic()
   double rot = rightX * moduleMaxRot * 2;
 
   //Decide drive modes
-  if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
+  if (ctr.GetTriangleButtonPressed()) // ALIGN(scoring) mode
   {
+      /*
       Pose3d target = limelight.getTargetPoseRobotSpace();
       frc::SmartDashboard::PutNumber("target y", target.y);
       frc::SmartDashboard::PutNumber("target x", target.x);
@@ -101,6 +102,8 @@ void Robot::TeleopPeriodic()
       frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       mHeadingController.setSetpoint(zeroSetpoint);
+      */
+    mDrive.autoMove(0, 3);
   }
   else // Normal driving mode
   {

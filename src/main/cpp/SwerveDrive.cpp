@@ -129,31 +129,38 @@ bool SwerveDrive::stopModules() {
 }
 
 void SwerveDrive::orientModules(double FL, double FR, double BL, double BR) {
-    mBackRight.setSteerAngleSetpoint(BR);
-    mBackLeft.setSteerAngleSetpoint(BL);
-    mFrontRight.setSteerAngleSetpoint(FR);
-    mFrontLeft.setSteerAngleSetpoint(FL);
+    // mBackRight.setSteerAngleSetpoint(BR);
+    // mBackLeft.setSteerAngleSetpoint(BL);
+    // mFrontRight.setSteerAngleSetpoint(FR);
+    // mFrontLeft.setSteerAngleSetpoint(FL);
+    mBackRight.steerMotor.Set(mBackRight.steerCTR.Calculate(mBackRight.steerEnc.getAbsolutePosition().getRadians(), BR));
+    mBackLeft.steerMotor.Set(mBackLeft.steerCTR.Calculate(mBackLeft.steerEnc.getAbsolutePosition().getRadians(), BL));
+    mFrontRight.steerMotor.Set(mFrontRight.steerCTR.Calculate(mFrontRight.steerEnc.getAbsolutePosition().getRadians(), FR));
+    mFrontLeft.steerMotor.Set(mFrontLeft.steerCTR.Calculate(mFrontLeft.steerEnc.getAbsolutePosition().getRadians(), FL));
 }
 
 void SwerveDrive::autoMove(double angleRadians, double distanceFeet) {
     // NEEDS TESTING
     orientModules(angleRadians, angleRadians, angleRadians, angleRadians);
 
-    mFrontLeft.setDrivePositionSetpoint(distanceFeet);
-    mFrontRight.setDrivePositionSetpoint(distanceFeet);
-    mBackLeft.setDrivePositionSetpoint(distanceFeet);
-    mBackRight.setDrivePositionSetpoint(distanceFeet);
+    // mFrontLeft.setDrivePositionSetpoint(distanceFeet);
+    // mFrontRight.setDrivePositionSetpoint(distanceFeet);
+    // mBackLeft.setDrivePositionSetpoint(distanceFeet);
+    // mBackRight.setDrivePositionSetpoint(distanceFeet);
     
-    while(true) {
-        mFrontLeft.run();
-        mFrontRight.run();
-        mBackLeft.run();
-        mBackRight.run();
+    double encoderTicks = mBackLeft.driveMotor.getPosition();
+    double moveWheelCircumAmt = distanceFeet / wheelCircumFeet;
 
-        if (mFrontLeft.isFinished(0.05)&&mFrontRight.isFinished(0.05)&&mBackLeft.isFinished(0.05)&&mBackRight.isFinished(0.05)) {
-            break;
-        }
+    while (encoderTicks + moveWheelCircumAmt != encoderTicks) {
+        mFrontLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
+        mFrontRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
+        mBackLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
+        mBackRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
     }
+    mFrontLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
+    mFrontRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
+    mBackLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
+    mBackRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
 }
 
 /**
