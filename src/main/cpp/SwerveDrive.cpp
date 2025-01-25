@@ -140,16 +140,12 @@ void SwerveDrive::autoMove(double angleRadians, double distanceFeet) {
     orientModules(angleRadians, angleRadians, angleRadians, angleRadians);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    // while(true) {
-    //     mFrontLeft.setDriveVelocitySetpoint(0.1);
-    //     mFrontRight.setDriveVelocitySetpoint(0.1);
-    //     mBackLeft.setDriveVelocitySetpoint(0.1);
-    //     mBackRight.setDriveVelocitySetpoint(0.1);
-    // }
-    // mFrontLeft.run();
-    // mFrontRight.run();
-    // mBackLeft.run();
-    // mBackRight.run();
+    while(true) {
+        mFrontLeft.setDriveVelocitySetpoint(0.1);
+        mFrontRight.setDriveVelocitySetpoint(0.1);
+        mBackLeft.setDriveVelocitySetpoint(0.1);
+        mBackRight.setDriveVelocitySetpoint(0.1);
+    }
     // double encoderTicks = mBackLeft.driveMotor.getPosition();
     // double moveWheelCircumAmt = distanceFeet / wheelCircumFeet;
 
