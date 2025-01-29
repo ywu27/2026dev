@@ -28,7 +28,8 @@ enum DriveState{
 };
 class SwerveDrive
 {
-public: //CHANGE BACK TO PRIVATE
+private:
+
     SwerveModule mFrontLeft = SwerveModule(FLsteerID, FLdriveID, FL_CAN_ID);
     SwerveModule mFrontRight = SwerveModule(FRsteerID, FRdriveID, FR_CAN_ID);
     SwerveModule mBackLeft = SwerveModule(BLsteerID, BLdriveID, BL_CAN_ID);
@@ -63,9 +64,6 @@ public: //CHANGE BACK TO PRIVATE
         frc::Pose2d{0_m, 0_m, 0_deg}
     };
 
-    
-    
-    // Module Level functions
     void runModules(); // Private - do not call outside of init
 
 public:
@@ -78,8 +76,6 @@ public:
     void initModules();
     void enableModules();
     bool stopModules();
-    void orientModules(double FL, double FR, double BL, double BR);
-    void autoMove(double angleRadians, double distanceFeet);
     void resetOdometry(frc::Translation2d trans, frc::Rotation2d angle);
     frc::Pose2d getOdometryPose();
     void updateOdometry();

@@ -161,13 +161,6 @@ void SwerveModule::run() {
         steerMotor.StopMotor();
         driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
     } else {
-        if (steerID == 5) {
-            double vel = driveMotor.getVelocity();
-            if (vel > maxVelocityAttained) {
-                maxVelocityAttained = vel;
-            }
-            frc::SmartDashboard::PutNumber("MaxVAttained", maxVelocityAttained);
-        }
 
         double newSteerOutput = steerCTR.Calculate(steerEnc.getAbsolutePosition().getRadians(), steerAngleSetpoint);
         if (!ControlUtil::epsilonEquals(newSteerOutput, currentSteerOutput)) { // Save some CAN buffer

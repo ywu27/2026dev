@@ -22,6 +22,7 @@
 #include <frc/GenericHID.h>
 #include "control/PowerModule.h"
 #include "SwerveDrive.h"
+#include "swerve/SwerveAlign.h"
 #include "util/TimeDelayButton.h"
 #include "sensors/Limelight.h"
 

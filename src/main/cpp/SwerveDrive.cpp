@@ -128,40 +128,6 @@ bool SwerveDrive::stopModules() {
     return true;
 }
 
-void SwerveDrive::orientModules(double FL, double FR, double BL, double BR) {
-    mBackRight.setSteerAngleSetpoint(BR);
-    mBackLeft.setSteerAngleSetpoint(BL);
-    mFrontRight.setSteerAngleSetpoint(FR);
-    mFrontLeft.setSteerAngleSetpoint(FL);
-}
-
-void SwerveDrive::autoMove(double angleRadians, double distanceFeet) {
-    // NEEDS TESTING
-    orientModules(angleRadians, angleRadians, angleRadians, angleRadians);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    while(true) {
-        mFrontLeft.setDriveVelocitySetpoint(0.1);
-        mFrontRight.setDriveVelocitySetpoint(0.1);
-        mBackLeft.setDriveVelocitySetpoint(0.1);
-        mBackRight.setDriveVelocitySetpoint(0.1);
-    }
-    // double encoderTicks = mBackLeft.driveMotor.getPosition();
-    // double moveWheelCircumAmt = distanceFeet / wheelCircumFeet;
-
-    // while (encoderTicks + moveWheelCircumAmt > encoderTicks) {
-    //     mFrontLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
-    //     mFrontRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
-    //     mBackLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
-    //     mBackRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.2);
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(12));
-    // }
-    // mFrontLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
-    // mFrontRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
-    // mBackLeft.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
-    // mBackRight.driveMotor.set(TalonFXMotor::controlMode::OPENLOOP, 0.0);
-}
-
 /**
  * Resets odometry position
  * (used in auto config)
