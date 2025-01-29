@@ -56,6 +56,8 @@ public:
   //Limelight
   Limelight limelight = Limelight("", 30, 5);
 
+  SwerveAlign align;
+
   // Teleop Controls
   float ctrPercent = 1.0;
   float boostPercent = 0.9;

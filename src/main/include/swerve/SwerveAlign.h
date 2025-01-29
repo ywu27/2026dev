@@ -9,15 +9,12 @@
 
 class SwerveAlign {
 private:
-    static frc::PIDController forwardPID;
-    static frc::PIDController strafePID;
-
     frc::PIDController forwardPID{0.1, 0, 0};
     frc::PIDController strafePID{0.01, 0, 0};
 
 public:
 
-    static ChassisSpeeds SwerveAlign::autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance, bool enableStrafing) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance, bool enableStrafing) { // distance in meters
         ChassisSpeeds speeds;
         if (limelight.isTargetDetected()) {
             double tx = limelight.getTX();

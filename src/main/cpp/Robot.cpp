@@ -87,7 +87,7 @@ void Robot::TeleopPeriodic()
   double rot = rightX * moduleMaxRot * 2;
 
   //Decide drive modes
-  if (ctr.GetTriangleButtonPressed()) // ALIGN(scoring) mode
+  if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
   {
     Pose3d target = limelight.getTargetPoseRobotSpace();
     frc::SmartDashboard::PutNumber("target y", target.y);
@@ -106,9 +106,14 @@ void Robot::TeleopPeriodic()
     //mDrive.autoMove(0, 3);
   }
   else if (ctr.GetCircleButton()) {
-    ChassisSpeeds speeds = SwerveAlign::autoAlign(limelight, mHeadingController, 2, true);
+    ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
     vx = speeds.vxMetersPerSecond;
     vy = speeds.vyMetersPerSecond;
+    mDrive.Drive(
+      speeds,
+      mGyro.getBoundedAngleCCW(),
+      mGyro.gyro.IsConnected(),
+      cleanDriveAccum);
   }
   else // Normal driving mode
   {
