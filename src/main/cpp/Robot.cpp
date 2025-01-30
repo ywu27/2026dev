@@ -61,7 +61,8 @@ void Robot::TeleopPeriodic()
 {
   limelight.getTX();
   limelight.getTY();
-  limelight.getDistanceToWall();
+  frc::SmartDashboard::PutNumber("dstance", limelight.getDistanceToWall());
+  std::cout<< limelight.getDistanceToWall();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   double vx = 0;
@@ -103,17 +104,24 @@ void Robot::TeleopPeriodic()
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
-    //mDrive.autoMove(0, 3);
   }
   else if (ctr.GetCircleButton()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    mDrive.Drive(
-      speeds,
-      mGyro.getBoundedAngleCCW(),
-      mGyro.gyro.IsConnected(),
-      cleanDriveAccum);
+    vy = speeds.vxMetersPerSecond;
+    vx = speeds.vyMetersPerSecond;
+    frc::SmartDashboard::PutNumber("vx", vx);
+    frc::SmartDashboard::PutNumber("vy", vy);
+    double angleOffset = limelight.getTX();
+    double zeroSetpoint = 0;
+    if (angleOffset>0) {
+      zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
+    }
+    else {
+      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
+    }
+    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
   }
   else // Normal driving mode
   {

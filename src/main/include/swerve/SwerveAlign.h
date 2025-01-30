@@ -4,19 +4,16 @@
 #include "ChassisSpeeds.h"
 #include "SwerveHeadingController.h"
 
-#define forwardFactor 10
-#define strafeFactor 10
-
 class SwerveAlign {
 private:
-    frc::PIDController forwardPID{0.1, 0, 0};
-    frc::PIDController strafePID{0.01, 0, 0};
+    frc::PIDController forwardPID{7, 0.5, 0};
+    frc::PIDController strafePID{1, 0, 0};
 
 public:
 
     ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance, bool enableStrafing) { // distance in meters
         ChassisSpeeds speeds;
-        if (limelight.isTargetDetected()) {
+        //if (limelight.isTargetDetected()) {
             double tx = limelight.getTX();
             double ty = limelight.getTY();
             double distanceToTag = limelight.getDistanceToWall();
@@ -30,11 +27,11 @@ public:
               strafeSpeed = strafePID.Calculate(tx, 0);
             }
             double rotationSpeed = 0;
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(forwardSpeed * forwardFactor, strafeSpeed * strafeFactor, rotationSpeed);
-        }
-        else {
-            speeds = ChassisSpeeds(0, 0, 0);
-        }
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, -strafeSpeed, rotationSpeed);
+        //}
+        //else {
+        //    speeds = ChassisSpeeds(0, 0, 0);
+        //}
 
         return speeds;
     }
