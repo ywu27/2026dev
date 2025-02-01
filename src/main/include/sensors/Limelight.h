@@ -11,10 +11,14 @@
 class Limelight {
 
 private:
-    std::string limelightName;
+    std::string limelightName;s
     double limelightMountAngle; // Measured in degrees
     double limelightHeight; // Measured in inches
     double tagHeight = 53; // Measured in inches
+    std::vector<int> redtargetIDs = {10, 9, 8, 7, 6, 11};
+    std::vector<int> bluetargetIDs = {21, 22, 17, 18, 19, 20};
+    std::vector<double> targetAngles = {0, 60, 120, 180, 240, 300};
+
 
 public:
     Limelight(std::string name, double mountAngle, double heightOffFloor){
