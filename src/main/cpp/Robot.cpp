@@ -87,26 +87,6 @@ void Robot::TeleopPeriodic()
   bool driveTurning = !(rightX == 0);
   double rot = rightX * moduleMaxRot * 2;
 
-  if (ctr.GetSquareButton()) // ALIGN(scoring) mode
-  {
-    Pose3d target = limelight.getTargetPoseRobotSpace();
-    frc::SmartDashboard::PutNumber("target y", target.y);
-    frc::SmartDashboard::PutNumber("target x", target.x);
-    double angleOffset = limelight.getTX();
-    double zeroSetpoint = 90;
-    // if (angleOffset>0) {
-    //   zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-    // }
-    // else {
-    //   zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
-    // }
-    // if (limelight.getTX()<0.5) {
-    //   mDrive.stopModules();
-    // }
-    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-  }
   //Decide drive modes
   if (ctr.GetCircleButton()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
@@ -119,32 +99,13 @@ void Robot::TeleopPeriodic()
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
   }
-  else if (ctr.GetCircleButton()) // ALIGN(scoring) mode
-  {
-      Pose3d target = limelight.getTargetPoseRobotSpace();
-      frc::SmartDashboard::PutNumber("target y", target.y);
-      frc::SmartDashboard::PutNumber("target x", target.x);
-      double angleOffset = limelight.getTX();
-      double zeroSetpoint = 0;
-      if (angleOffset>0) {
-        zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-      }
-      else {
-        zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
-      }
-      frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
-      frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      mHeadingController.setSetpoint(90);
-  }
   else // Normal driving mode
   {
     mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
     vx = leftX * moduleMaxFPS;
     vy = leftY * moduleMaxFPS;
   }
-
-  // Output heading controller if used
+    // Output heading controller if used
   if (mHeadingController.getHeadingControllerState() != SwerveHeadingController::OFF) {
     rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
   }

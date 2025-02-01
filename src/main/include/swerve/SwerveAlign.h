@@ -18,9 +18,6 @@ public:
             double ty = limelight.getTY();
             double distanceToTag = limelight.getDistanceToWall();
             double desiredAngle = 0.0;
-            //headingController.setSetpoint(desiredAngle);
-            //double rotationOutput = headingController.calculate(tx);
-
             double forwardSpeed = forwardPID.Calculate(distanceToTag, distance);
             double strafeSpeed = 0;
             if (enableStrafing) {
