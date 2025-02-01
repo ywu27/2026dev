@@ -87,6 +87,26 @@ void Robot::TeleopPeriodic()
   bool driveTurning = !(rightX == 0);
   double rot = rightX * moduleMaxRot * 2;
 
+  if (ctr.GetSquareButton()) // ALIGN(scoring) mode
+  {
+    Pose3d target = limelight.getTargetPoseRobotSpace();
+    frc::SmartDashboard::PutNumber("target y", target.y);
+    frc::SmartDashboard::PutNumber("target x", target.x);
+    double angleOffset = limelight.getTX();
+    double zeroSetpoint = 90;
+    // if (angleOffset>0) {
+    //   zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
+    // }
+    // else {
+    //   zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
+    // }
+    // if (limelight.getTX()<0.5) {
+    //   mDrive.stopModules();
+    // }
+    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
+  }
   //Decide drive modes
   if (ctr.GetTriangleButton()) // ALIGN(scoring) mode
   {
@@ -99,8 +119,11 @@ void Robot::TeleopPeriodic()
       zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
     }
     else {
-      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
+      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
     }
+    // if (limelight.getTX()<0.5) {
+    //   mDrive.stopModules();
+    // }
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
@@ -117,8 +140,11 @@ void Robot::TeleopPeriodic()
       zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
     }
     else {
-      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
+      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
     }
+    // if (limelight.getTX()<0.5) {
+    //   mDrive.stopModules();
+    // }
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
