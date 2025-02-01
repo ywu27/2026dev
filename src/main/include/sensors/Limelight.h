@@ -63,20 +63,20 @@ public:
         return !(getTX()==0);
     }
 
-    double getDistanceToWall() { // perpendicular distance to wall in inches
-        if (isTargetDetected() == true)
-        {
+    double getDistanceToWall() { // perpendicular distance to wall in meters
+        //if (isTargetDetected() == true)
+        //{
             double ty = LimelightHelpers::getTY("");
             double angleToTagDegrees = limelightMountAngle + ty;
             double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
             double distanceToWall = (tagHeight - limelightHeight) / tan(angleToTagRadians);
-            distanceToWall = distanceToWall + 0.4191; //added the distance between limelight and shooter
+            distanceToWall *= 0.0254; //converted to meters
             frc::SmartDashboard::PutNumber("distanceToWall", distanceToWall);
             return distanceToWall;
-        }
-        else {
-            return 0;
-        }
+        //}
+        //else {
+        //    return 0;
+        //}
     }
 
     double getAngleLimelightToTag() { // TY + limelight mount angle
