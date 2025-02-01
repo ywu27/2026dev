@@ -113,38 +113,18 @@ void Robot::TeleopPeriodic()
     Pose3d target = limelight.getTargetPoseRobotSpace();
     frc::SmartDashboard::PutNumber("target y", target.y);
     frc::SmartDashboard::PutNumber("target x", target.x);
-    double angleOffset = limelight.getTX();
-    double zeroSetpoint = 0;
-    if (angleOffset>0) {
-      zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-    }
-    else {
-      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
-    }
-    // if (limelight.getTX()<0.5) {
-    //   mDrive.stopModules();
-    // }
+    double zeroSetpoint = 90;
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
   }
   else if (ctr.GetCircleButton()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
-    vy = speeds.vxMetersPerSecond;
-    vx = speeds.vyMetersPerSecond;
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
-    double angleOffset = limelight.getTX();
-    double zeroSetpoint = 0;
-    if (angleOffset>0) {
-      zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-    }
-    else {
-      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + angleOffset;
-    }
-    // if (limelight.getTX()<0.5) {
-    //   mDrive.stopModules();
-    // }
+    double zeroSetpoint = 90;
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);

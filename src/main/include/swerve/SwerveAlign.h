@@ -27,7 +27,7 @@ public:
               strafeSpeed = strafePID.Calculate(tx, 0);
             }
             double rotationSpeed = 0;
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, -strafeSpeed, rotationSpeed);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, strafeSpeed, rotationSpeed);
         //}
         //else {
         //    speeds = ChassisSpeeds(0, 0, 0);
