@@ -119,24 +119,7 @@ void Robot::TeleopPeriodic()
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
   }
-  else if (ctr.GetCircleButton()) // ALIGN(scoring) mode
-  {
-      Pose3d target = limelight.getTargetPoseRobotSpace();
-      frc::SmartDashboard::PutNumber("target y", target.y);
-      frc::SmartDashboard::PutNumber("target x", target.x);
-      double angleOffset = limelight.getTX();
-      double zeroSetpoint = 0;
-      if (angleOffset>0) {
-        zeroSetpoint = mGyro.getBoundedAngleCW().getDegrees() + angleOffset;
-      }
-      else {
-        zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - angleOffset;
-      }
-      //frc::SmartDashboard::PutNumber("steer encoder position", mDrive.mFrontLeft.steerEnc.getAbsolutePosition().getDegrees());
-      frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      mHeadingController.setSetpoint(90);
-  }
+  
   else // Normal driving mode
   {
     mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
