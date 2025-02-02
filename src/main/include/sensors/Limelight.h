@@ -11,13 +11,31 @@
 class Limelight {
 
 private:
-    std::string limelightName;s
+    std::string limelightName;
     double limelightMountAngle; // Measured in degrees
     double limelightHeight; // Measured in inches
-    double tagHeight = 53; // Measured in inches
-    std::vector<int> redtargetIDs = {10, 9, 8, 7, 6, 11};
-    std::vector<int> bluetargetIDs = {21, 22, 17, 18, 19, 20};
-    std::vector<double> targetAngles = {0, 60, 120, 180, 240, 300};
+    
+    double reefTagHeight = 6.875; // Measured in inches
+    double coralStationTagHeight = 53.25; // Measured in inches
+    double processorTagHeight = 45.875; // Measured in inches
+    double bargeTagHeight = 69.0; // Measured in inches
+    
+    std::vector<int> redReefTargetIDs = {10, 9, 8, 7, 6, 11};
+    std::vector<int> blueReefTargetIDs = {21, 22, 17, 18, 19, 20};
+    std::vector<double> reefTargetAngles = {0, 60, 120, 180, 240, 300};
+
+    std::vector<int> redCoralStationTargetIDs = {1, 2};
+    std::vector<int> blueCoralStationTargetIDs = {12, 13};
+
+    int redProcessorTargetIDs = 3;
+    int blueProcessorTargetIDs = 16;
+
+    std::vector<int> redBargeTargetIDs = {4, 14};
+    std::vector<int> blueBargeTargetIDs = {5, 15};
+
+
+
+    //double coralStationtargetAngle
 
 
 public:
@@ -67,9 +85,43 @@ public:
         return !(getTX()==0);
     }
 
+    // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
+    // returns the tag height in inches
+    double setTagHeight(){
+        
+        double tagHeight; //Measured in inches
+        int fieldElement = 1;
+
+        if (std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) != redReefTargetIDs.end()
+        or std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end()) {
+                
+            tagHeight = reefTagHeight;
+        }
+            
+        else if (std::find(redCoralStationTargetIDs.begin(), redCoralStationTargetIDs.end(), fieldElement) != redCoralStationTargetIDs.end()
+        or std::find(blueCoralStationTargetIDs.begin(), blueCoralStationTargetIDs.end(), fieldElement) != blueCoralStationTargetIDs.end()) {
+                
+            tagHeight = coralStationTagHeight;
+        }
+            
+        else if (fieldElement == redProcessorTargetIDs or fieldElement == blueProcessorTargetIDs) {
+                
+            tagHeight = processorTagHeight;
+        }
+            
+        else if (std::find(redBargeTargetIDs.begin(), redBargeTargetIDs.end(), fieldElement) != redBargeTargetIDs.end()
+        or std::find(blueBargeTargetIDs.begin(), blueBargeTargetIDs.end(), fieldElement) != blueBargeTargetIDs.end()) {
+                
+            tagHeight = bargeTagHeight;
+        }
+        
+        return tagHeight;
+    }
+    
     double getDistanceToWall() { // perpendicular distance to wall in meters
         //if (isTargetDetected() == true)
         //{
+            double tagHeight = setTagHeight();
             double ty = LimelightHelpers::getTY("");
             double angleToTagDegrees = limelightMountAngle + ty;
             double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
