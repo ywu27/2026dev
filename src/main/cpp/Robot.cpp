@@ -88,16 +88,12 @@ void Robot::TeleopPeriodic()
   double rot = rightX * moduleMaxRot * 2;
 
   //Decide drive modes
-  if (ctr.GetCircleButton()) {
-    ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    frc::SmartDashboard::PutNumber("vx", vx);
-    frc::SmartDashboard::PutNumber("vy", vy);
-    double zeroSetpoint = 90;
-    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
+  
+  if (ctr.GetCircleButton()) { // Aligning to a tag
+    ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 90, 2);
+    vx = speeds.getVx();
+    vy = speeds.getVy();
+    rot = speeds.getRotation();
   }
   else // Normal driving mode
   {
@@ -105,11 +101,7 @@ void Robot::TeleopPeriodic()
     vx = leftX * moduleMaxFPS;
     vy = leftY * moduleMaxFPS;
   }
-    // Output heading controller if used
-  if (mHeadingController.getHeadingControllerState() != SwerveHeadingController::OFF) {
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-
+  
   // Gyro Resets
   if (ctr.GetCrossButtonReleased())
   {
@@ -123,6 +115,9 @@ void Robot::TeleopPeriodic()
       mGyro.gyro.IsConnected(),
       cleanDriveAccum);
   mDrive.updateOdometry();
+  frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+  frc::SmartDashboard::PutNumber("vx", vx);
+  frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
 }

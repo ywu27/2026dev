@@ -11,20 +11,20 @@ private:
 
 public:
 
-    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance, bool enableStrafing) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double rotationSetpoint, double distance) { // rotationSetpoint in degrees / distance in meters
         ChassisSpeeds speeds;
         //if (limelight.isTargetDetected()) {
             double tx = limelight.getTX();
             double ty = limelight.getTY();
             double distanceToTag = limelight.getDistanceToWall();
-            double desiredAngle = 0.0;
+
             double forwardSpeed = forwardPID.Calculate(distanceToTag, distance);
-            double strafeSpeed = 0;
-            if (enableStrafing) {
-              strafeSpeed = strafePID.Calculate(tx, 0);
-            }
-            double rotationSpeed = 0;
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, strafeSpeed, rotationSpeed);
+            double strafeSpeed = strafePID.Calculate(tx, 0);
+
+            headingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+            headingController.setSetpoint(rotationSetpoint);
+            double rotation = headingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, strafeSpeed, rotation);
         //}
         //else {
         //    speeds = ChassisSpeeds(0, 0, 0);
