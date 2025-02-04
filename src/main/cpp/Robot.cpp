@@ -115,8 +115,8 @@ void Robot::TeleopPeriodic()
     vy = speeds.vyMetersPerSecond;
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
-    double zeroSetpoint = 
-    
+    double zeroSetpoint = limelight.setAngleSetpoint();
+
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
@@ -153,7 +153,11 @@ void Robot::TeleopPeriodic()
     vy = speeds.vyMetersPerSecond;
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
-    double zeroSetpoint = 90;
+    //double zeroSetpoint = 90;
+
+    //Gets the setpoint angle and tag height from the set tag height function in limelight.h
+    double zeroSetpoint = limelight.setAngleSetpoint();
+
     frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);

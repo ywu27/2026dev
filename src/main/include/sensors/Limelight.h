@@ -87,14 +87,14 @@ public:
 
     // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
     // returns the tag height in inches
-    double setTagHeight(){
+    int setTagHeight(){
         
         double tagHeight; //Measured in inches
-        int fieldElement = 1;
+        int fieldElement = getTagID();
 
         if (std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) != redReefTargetIDs.end()
-        or std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end()) {
-                
+        or (std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end())){
+
             tagHeight = reefTagHeight;
         }
             
@@ -105,17 +105,67 @@ public:
         }
             
         else if (fieldElement == redProcessorTargetIDs or fieldElement == blueProcessorTargetIDs) {
-                
+            
             tagHeight = processorTagHeight;
         }
             
         else if (std::find(redBargeTargetIDs.begin(), redBargeTargetIDs.end(), fieldElement) != redBargeTargetIDs.end()
         or std::find(blueBargeTargetIDs.begin(), blueBargeTargetIDs.end(), fieldElement) != blueBargeTargetIDs.end()) {
-                
+            
             tagHeight = bargeTagHeight;
+
         }
         
         return tagHeight;
+
+    }
+    
+    // sets the angle setpoint based on the angle of the field element's tag ID
+    double setAngleSetpoint(){
+        
+        int fieldElement = getTagID();
+        int angleSetpoint = 0; //Measured in degrees
+
+        if (std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) != redReefTargetIDs.end()){
+            
+            //finding the index value of the taget IDs for red reef and using it to find the setpoint angle
+            int redIndexAngle = std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) - redReefTargetIDs.begin();
+            angleSetpoint = reefTargetAngles[redIndexAngle];
+        }
+       
+        else if (std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end()) {
+            
+            //finding the index value of the taget IDs for blue reef and using it to find the setpoint angle
+            int blueIndexAngle = std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) - blueReefTargetIDs.begin();
+            angleSetpoint = reefTargetAngles[blueIndexAngle];
+        }
+            
+        else if (std::find(redCoralStationTargetIDs.begin(), redCoralStationTargetIDs.end(), fieldElement) != redCoralStationTargetIDs.end()
+        or std::find(blueCoralStationTargetIDs.begin(), blueCoralStationTargetIDs.end(), fieldElement) != blueCoralStationTargetIDs.end()) {
+                
+            if (fieldElement == 13 or fieldElement == 1){
+                angleSetpoint = 45;
+            }
+
+            else if (fieldElement == 12 or fieldElement == 2){
+                angleSetpoint = -45;
+            }
+            
+        }
+            
+        else if (fieldElement == redProcessorTargetIDs or fieldElement == blueProcessorTargetIDs) {
+            
+            angleSetpoint = 90;
+        }
+            
+        else if (std::find(redBargeTargetIDs.begin(), redBargeTargetIDs.end(), fieldElement) != redBargeTargetIDs.end()
+        or std::find(blueBargeTargetIDs.begin(), blueBargeTargetIDs.end(), fieldElement) != blueBargeTargetIDs.end()) {
+            
+            angleSetpoint = 180;
+
+        }
+        
+        return angleSetpoint;
     }
     
     double getDistanceToWall() { // perpendicular distance to wall in meters
