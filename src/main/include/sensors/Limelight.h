@@ -65,6 +65,7 @@ public:
             frc::SmartDashboard::PutNumber("Tx", tx);
             return tx;
         }
+        return 0.0;
     }
 
     double getTY() { // TY
@@ -74,6 +75,7 @@ public:
             frc::SmartDashboard::PutNumber("Ty", ty);
             return ty;
         }
+        return 0.0;
     }
 
     double isTargetDetected2() {

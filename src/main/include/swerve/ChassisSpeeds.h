@@ -21,6 +21,18 @@ public:
           vyMetersPerSecond(vyMetersPerSecond),
           omegaRadiansPerSecond(omegaRadiansPerSecond) {}
 
+    double getVx() {
+        return vxMetersPerSecond;
+    }
+
+    double getVy() {
+        return vyMetersPerSecond;
+    }
+
+    double getRotation() {
+        return omegaRadiansPerSecond;
+    }
+
     static ChassisSpeeds fromFieldRelativeSpeeds(double vxMetersPerSecond, double vyMetersPerSecond,
                                                  double omegaRadiansPerSecond, const Rotation2d robotAngle) {
         return ChassisSpeeds(

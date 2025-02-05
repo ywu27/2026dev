@@ -11,23 +11,14 @@ private:
 
 public:
 
-    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance, bool enableStrafing) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double distance) { // distance in meters
         ChassisSpeeds speeds;
         //if (limelight.isTargetDetected()) {
             double tx = limelight.getTX();
-            double ty = limelight.getTY();
             double distanceToTag = limelight.getDistanceToWall();
-            double desiredAngle = 0.0;
-            //headingController.setSetpoint(desiredAngle);
-            //double rotationOutput = headingController.calculate(tx);
-
             double forwardSpeed = forwardPID.Calculate(distanceToTag, distance);
-            double strafeSpeed = 0;
-            if (enableStrafing) {
-              strafeSpeed = strafePID.Calculate(tx, 0);
-            }
-            double rotationSpeed = 0;
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, strafeSpeed, rotationSpeed);
+            double strafeSpeed = strafePID.Calculate(tx, 0);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-forwardSpeed, strafeSpeed, 0);
         //}
         //else {
         //    speeds = ChassisSpeeds(0, 0, 0);
