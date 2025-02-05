@@ -34,8 +34,10 @@ private:
     std::vector<int> blueBargeTargetIDs = {5, 15};
 
 public:
-    Limelight(std::string name){
+     Limelight(std::string name, double mountAngle, double heightOffFloor){
         limelightName = name;
+        limelightMountAngle = mountAngle; // degrees
+        limelightHeight = heightOffFloor; // inches
     }
 
     bool isTargetDetected() {
@@ -80,7 +82,7 @@ public:
 
     // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
     // returns the tag height in inches
-    double setTagHeight(){
+    double getTagHeight(){
         
         double tagHeight; //Measured in inches
         int fieldElement = getTagID();
