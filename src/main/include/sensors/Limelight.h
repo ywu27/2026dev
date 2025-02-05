@@ -14,6 +14,8 @@ private:
     std::string limelightName;
     double limelightMountAngle = 30; // Measured in degrees
     double limelightHeight = 5; // Measured in inches
+    enum TagType {REEF, CORALSTATION, PROCESSOR, BARGE};
+    enum Alliance{RED, BLUE};
     
     double reefTagHeight = 6.875; // Measured in inches
     double coralStationTagHeight = 53.25; // Measured in inches
@@ -22,7 +24,7 @@ private:
     
     std::vector<int> redReefTargetIDs = {10, 9, 8, 7, 6, 11};
     std::vector<int> blueReefTargetIDs = {21, 22, 17, 18, 19, 20};
-    std::vector<double> reefTargetAngles = {0, 60, 120, 180, 240, 300};
+    std::vector<double> redReefTargetAngles = {0, 60, 120, 180, 240, 300};
 
     std::vector<int> redCoralStationTargetIDs = {1, 2};
     std::vector<int> blueCoralStationTargetIDs = {12, 13};
@@ -32,12 +34,16 @@ private:
 
     std::vector<int> redBargeTargetIDs = {4, 14};
     std::vector<int> blueBargeTargetIDs = {5, 15};
+    Alliance alliance;
+    TagType tagType;
 
 public:
-     Limelight(std::string name, double mountAngle, double heightOffFloor){
+     Limelight(std::string name, double mountAngle, double heightOffFloor, Alliance myAlliance){
         limelightName = name;
         limelightMountAngle = mountAngle; // degrees
         limelightHeight = heightOffFloor; // inches
+        tagType = REEF;
+        alliance = myAlliance;
     }
 
     bool isTargetDetected() {
@@ -84,86 +90,74 @@ public:
 
     // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
     // returns the tag height in inches
+
+    TagType getTagType(){
+        int tagID = getTagID();
+        if(tagID<12){
+            alliance=RED;
+        }
+        else{
+            alliance=BLUE;
+        }
+        switch (alliance) {
+            case RED:
+                if(tagID<12 && tagID>5){
+                    tagType = REEF;
+                }
+                else if(tagID == 1 || tagID == 2){
+                    tagType = CORALSTATION;
+                }
+                else if(tagID == 3){
+                    tagType = PROCESSOR;
+                }
+                else if(tagID == 4 || tagID == 14){
+                    tagType = BARGE;
+                }
+                break;
+            case BLUE:
+                if(tagID<23 && tagID>16){
+                    tagType = REEF;
+                }
+                else if(tagID == 12 || tagID == 13){
+                    tagType = CORALSTATION;
+                }
+                else if(tagID == 16){
+                    tagType = PROCESSOR;
+                }
+                else if(tagID == 5 || tagID == 15){
+                    tagType = BARGE;
+                }
+                break;
+        }
+        return tagType;
+    }
+    
     double getTagHeight(){
-        
+
         double tagHeight; //Measured in inches
-        int fieldElement = getTagID();
-
-        if (std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) != redReefTargetIDs.end()
-        or (std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end())){
-
-            tagHeight = reefTagHeight;
+        tagType = getTagType();
+        switch(tagType){
+            case REEF:
+                tagHeight = reefTagHeight;
+                break;
+            case CORALSTATION:
+                tagHeight = coralStationTagHeight;
+                break;
+            case PROCESSOR:
+                tagHeight = processorTagHeight;
+                break;
+            case BARGE:
+                tagHeight = bargeTagHeight;
+                break;
         }
-            
-        else if (std::find(redCoralStationTargetIDs.begin(), redCoralStationTargetIDs.end(), fieldElement) != redCoralStationTargetIDs.end()
-        or std::find(blueCoralStationTargetIDs.begin(), blueCoralStationTargetIDs.end(), fieldElement) != blueCoralStationTargetIDs.end()) {
-                
-            tagHeight = coralStationTagHeight;
-        }
-            
-        else if (fieldElement == redProcessorTargetIDs or fieldElement == blueProcessorTargetIDs) {
-            
-            tagHeight = processorTagHeight;
-        }
-            
-        else if (std::find(redBargeTargetIDs.begin(), redBargeTargetIDs.end(), fieldElement) != redBargeTargetIDs.end()
-        or std::find(blueBargeTargetIDs.begin(), blueBargeTargetIDs.end(), fieldElement) != blueBargeTargetIDs.end()) {
-            
-            tagHeight = bargeTagHeight;
-
-        }
-        
         return tagHeight;
 
     }
+
+
     
-    // sets the angle setpoint based on the angle of the field element's tag ID
-    double setAngleSetpoint(){
-        
-        int fieldElement = getTagID();
-        int angleSetpoint = 0; //Measured in degrees
+    
 
-        if (std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) != redReefTargetIDs.end()){
-            
-            //finding the index value of the taget IDs for red reef and using it to find the setpoint angle
-            int redIndexAngle = std::find(redReefTargetIDs.begin(), redReefTargetIDs.end(), fieldElement) - redReefTargetIDs.begin();
-            angleSetpoint = reefTargetAngles[redIndexAngle];
-        }
-       
-        else if (std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) != blueReefTargetIDs.end()) {
-            
-            //finding the index value of the taget IDs for blue reef and using it to find the setpoint angle
-            int blueIndexAngle = std::find(blueReefTargetIDs.begin(), blueReefTargetIDs.end(), fieldElement) - blueReefTargetIDs.begin();
-            angleSetpoint = reefTargetAngles[blueIndexAngle];
-        }
-            
-        else if (std::find(redCoralStationTargetIDs.begin(), redCoralStationTargetIDs.end(), fieldElement) != redCoralStationTargetIDs.end()
-        or std::find(blueCoralStationTargetIDs.begin(), blueCoralStationTargetIDs.end(), fieldElement) != blueCoralStationTargetIDs.end()) {
-                
-            if (fieldElement == 13 or fieldElement == 1){
-                angleSetpoint = 45;
-            }
-
-            else if (fieldElement == 12 or fieldElement == 2){
-                angleSetpoint = -45;
-            }
-            
-        }
-            
-        else if (fieldElement == redProcessorTargetIDs or fieldElement == blueProcessorTargetIDs) {
-            
-            angleSetpoint = 90;
-        }
-            
-        else if (std::find(redBargeTargetIDs.begin(), redBargeTargetIDs.end(), fieldElement) != redBargeTargetIDs.end()
-        or std::find(blueBargeTargetIDs.begin(), blueBargeTargetIDs.end(), fieldElement) != blueBargeTargetIDs.end()) {
-            
-            angleSetpoint = 180;
-
-        }
-        
-        return angleSetpoint;
-    }
     
     double getDistanceToWall() { // perpendicular distance to wall in meters
         //if (isTargetDetected() == true)
