@@ -12,8 +12,8 @@ class Limelight {
 
 private:
     std::string limelightName;
-    double limelightMountAngle; // Measured in degrees
-    double limelightHeight; // Measured in inches
+    double limelightMountAngle = 30; // Measured in degrees
+    double limelightHeight = 5; // Measured in inches
     
     double reefTagHeight = 6.875; // Measured in inches
     double coralStationTagHeight = 53.25; // Measured in inches
@@ -33,16 +33,9 @@ private:
     std::vector<int> redBargeTargetIDs = {4, 14};
     std::vector<int> blueBargeTargetIDs = {5, 15};
 
-
-
-    //double coralStationtargetAngle
-
-
 public:
-    Limelight(std::string name, double mountAngle, double heightOffFloor){
+    Limelight(std::string name){
         limelightName = name;
-        limelightMountAngle = mountAngle; // degrees
-        limelightHeight = heightOffFloor; // inches
     }
 
     bool isTargetDetected() {
@@ -87,7 +80,7 @@ public:
 
     // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
     // returns the tag height in inches
-    int setTagHeight(){
+    double setTagHeight(){
         
         double tagHeight; //Measured in inches
         int fieldElement = getTagID();
@@ -171,7 +164,7 @@ public:
     double getDistanceToWall() { // perpendicular distance to wall in meters
         //if (isTargetDetected() == true)
         //{
-            double tagHeight = setTagHeight();
+            double tagHeight = getTagHeight();
             double ty = LimelightHelpers::getTY("");
             double angleToTagDegrees = limelightMountAngle + ty;
             double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
@@ -243,9 +236,5 @@ public:
         output.y = output.z;
         output.z = -tempY;
         return output;
-    }
-
-    double moveAmt() { // inches
-        return tan(getTX() * (PI / 180.0)) * getDistanceToWall();
     }
 };
