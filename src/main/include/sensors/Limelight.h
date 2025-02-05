@@ -25,7 +25,6 @@ private:
     std::vector<int> redReefTargetIDs = {10, 9, 8, 7, 6, 11};
     std::vector<int> blueReefTargetIDs = {21, 22, 17, 18, 19, 20};
     std::vector<double> redReefTargetAngles = {0, 60, 120, 180, 240, 300};
-    std::vector<double> redReefTargetAngles = {0, 60, 120, 180, 240, 300};
 
 
     std::vector<int> redCoralStationTargetIDs = {1, 2};
