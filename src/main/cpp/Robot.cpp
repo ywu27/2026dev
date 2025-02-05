@@ -83,8 +83,6 @@ void Robot::TeleopPeriodic()
   // Driver Information
 
   // Teleop States
-  bool driveTranslating = !(leftX == 0 && leftY == 0);
-  bool driveTurning = !(rightX == 0);
   double rot = rightX * moduleMaxRot * 2;
 
   //Decide drive modes

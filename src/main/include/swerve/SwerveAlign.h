@@ -4,6 +4,7 @@
 #include "ChassisSpeeds.h"
 #include "SwerveHeadingController.h"
 
+
 class SwerveAlign {
 private:
     frc::PIDController forwardPID{7, 0.5, 0};
@@ -15,7 +16,7 @@ public:
         ChassisSpeeds speeds;
         //if (limelight.isTargetDetected()) {
             double tx = limelight.getTX();
-            double ty = limelight.getTY();
+            //double ty = limelight.getTY();
             double distanceToTag = limelight.getDistanceToWall();
 
             double forwardSpeed = forwardPID.Calculate(distanceToTag, distance);
