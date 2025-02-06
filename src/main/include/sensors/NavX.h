@@ -16,6 +16,11 @@ public:
         angleOffset = Rotation2d(0.0);
     }
 
+    void zero() {
+        gyro.ZeroYaw();
+        angleOffset = Rotation2d(0.0);
+    }
+
     void setOffset(Rotation2d angleOffsetInput) 
     {
         angleOffset = angleOffsetInput;

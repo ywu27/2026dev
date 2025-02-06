@@ -11,7 +11,6 @@
 void Robot::RobotInit()
 {
   mDrive.initModules();
-  mGyro.init();
   limelight.setPipelineIndex(0);
   //frc::CameraServer::StartAutomaticCapture();
 }
@@ -62,7 +61,6 @@ void Robot::TeleopPeriodic()
   limelight.getTX();
   limelight.getTY();
   frc::SmartDashboard::PutNumber("dstance", limelight.getDistanceToWall());
-  std::cout<< limelight.getDistanceToWall();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   double vx = 0;
@@ -88,25 +86,6 @@ void Robot::TeleopPeriodic()
   //Decide drive modes
 
   if (ctr.GetCircleButton()) {
-    ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2, true);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    frc::SmartDashboard::PutNumber("vx", vx);
-    frc::SmartDashboard::PutNumber("vy", vy);
-    double zeroSetpoint = limelight.setAngleSetpoint();
-
-    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-  }
-  else // Normal driving mode
-  {
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
-    vx = leftX * moduleMaxFPS;
-    vy = leftY * moduleMaxFPS;
-  }
-
-  if (ctr.GetCircleButton()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2);
     vx = speeds.vyMetersPerSecond;
     vy = speeds.vxMetersPerSecond;
@@ -125,9 +104,9 @@ void Robot::TeleopPeriodic()
     vy = leftY * moduleMaxFPS;
   }
   // Gyro Resets
-  if (ctr.GetCrossButtonReleased())
+  if (ctr.GetCrossButtonReleased() || align.isAligned(limelight))
   {
-    mGyro.init();
+    mGyro.zero();
   }
 
   // Drive function
