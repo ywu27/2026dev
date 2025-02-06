@@ -64,13 +64,9 @@ public:
     }
 
     double getTX() { // TX
-        if (isTargetDetected() == true)
-        {
-            double tx = LimelightHelpers::getTX("");
-            frc::SmartDashboard::PutNumber("Tx", tx);
-            return tx;
-        }
-        return 0.0;
+        double tx = LimelightHelpers::getTX("");
+        frc::SmartDashboard::PutNumber("Tx", tx);
+        return tx;
     }
 
     double getTY() { // TY
@@ -91,6 +87,7 @@ public:
     // returns the tag height in inches
 
     TagType getTagType(){
+        //int tagID = 3;
         int tagID = getTagID();
         if(tagID<12){
             alliance=RED;
@@ -152,27 +149,16 @@ public:
         return tagHeight;
 
     }
-
-
-    
-    
-
     
     double getDistanceToWall() { // perpendicular distance to wall in meters
-        //if (isTargetDetected() == true)
-        //{
-            double tagHeight = getTagHeight();
-            double ty = LimelightHelpers::getTY("");
-            double angleToTagDegrees = limelightMountAngle + ty;
-            double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
-            double distanceToWall = (tagHeight - limelightHeight) / tan(angleToTagRadians);
-            distanceToWall *= 0.0254; //converted to meters
-            frc::SmartDashboard::PutNumber("distanceToWall", distanceToWall);
-            return distanceToWall;
-        //}
-        //else {
-        //    return 0;
-        //}
+        double tagHeight = getTagHeight();
+        double ty = LimelightHelpers::getTY("");
+        double angleToTagDegrees = limelightMountAngle + ty;
+        double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
+        double distanceToWall = (tagHeight - limelightHeight) / tan(angleToTagRadians);
+        distanceToWall *= 0.0254; //converted to meters
+        frc::SmartDashboard::PutNumber("distanceToWall", distanceToWall);
+        return distanceToWall;
     }
 
     double getAngleLimelightToTag() { // TY + limelight mount angle

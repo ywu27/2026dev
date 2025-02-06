@@ -43,7 +43,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
   mDrive.state = DriveState::Teleop;
-  
+  frc::SmartDashboard::PutNumber("tx", limelight.getTX());
   limelight.setPipelineIndex(0);
   limelight.isTargetDetected();
   limelight.setLEDMode(0);
@@ -87,6 +87,7 @@ void Robot::TeleopPeriodic()
 
   if (ctr.GetCircleButton()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 2);
+    frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vyMetersPerSecond;
     vy = speeds.vxMetersPerSecond;
     frc::SmartDashboard::PutNumber("vx", vx);
