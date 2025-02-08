@@ -13,7 +13,7 @@ private:
 public:
 
     bool isAligned(Limelight& limelight) {
-        if (abs(limelight.getTX())<1 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
+        if (abs(limelight.getTX())<2 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
             return true;
         }
         return false;
