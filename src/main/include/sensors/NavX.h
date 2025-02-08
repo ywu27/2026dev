@@ -21,6 +21,11 @@ public:
         angleOffset = Rotation2d(0.0);
     }
 
+    void setYaw(double desiredYaw) {
+        double currentYaw = gyro.GetAngle();
+        angleOffset = Rotation2d::fromDegrees(currentYaw - desiredYaw);
+    }
+
     void setOffset(Rotation2d angleOffsetInput) 
     {
         angleOffset = angleOffsetInput;
