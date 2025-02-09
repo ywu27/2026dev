@@ -45,6 +45,12 @@ public:
         alliance = myAlliance;
     }
 
+    std::vector<double> displayRobotPose() {
+        frc::SmartDashboard::PutNumberArray("Robot Pose Limelight", nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose", std::vector<double>(6)));
+        auto botpose = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose",std::vector<double>(6, 0.0));
+        return botpose;
+    }
+
     bool isTargetDetected() {
         if ((nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)) == 1)
         {

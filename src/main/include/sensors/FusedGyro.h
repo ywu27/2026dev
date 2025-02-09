@@ -3,23 +3,21 @@
 #include "geometry/Rotation2d.h"
 #include "NavX.h"
 
-class FusedGyro {
+class FusedGyro
+{
 
 private:
-    NavX &mGyro;
+    NavX mGyro = NavX();
     Rotation2d trueAngle;
 
     // drift increment when outside driftBoundDegrees
     double maxDriftDegrees = 10;
-    // Range for sensors to be in to proportion drift
-    double driftBoundDegrees = 10;
+    // Range for sensors to be in to proportion drift  
+    double driftBoundDegrees = 10;     
     // Degrees
     double previousRawGyro;
 
 public:
-
-    FusedGyro(NavX &mGyroInput) : mGyro(mGyroInput) {}
-
     void init()
     {
         mGyro.init();

@@ -17,8 +17,8 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
-  
-  limelight.isTargetDetected();
+  limelight.displayRobotPose();
+  // limelight.isTargetDetected();
 }
 
 void Robot::AutonomousInit()
