@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <string>
+#include <ctime>
 
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -69,6 +70,9 @@ public:
     // TODO: Brownout module
     double currentSteerOutput = 0.0;
 
+    std::vector<double> driveMotorRot;
+    double combinedRot = 0.0; // rad
+
     // public:
     SwerveModule(int steerMotorID, int driveMotorID, int cancoderID);
     void initMotors();
@@ -91,6 +95,7 @@ public:
     double getSteerOutput();
     double getDriveEncoderVel();
     double getDriveEncoderPos();
+    double driveMotorRotations(double timestamp);
 
     bool isFinished(float percentageBound);
     SwerveModuleState getModuleState();

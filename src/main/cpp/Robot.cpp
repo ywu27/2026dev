@@ -17,7 +17,8 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
-  limelight.displayRobotPose();
+  //limelight.displayRobotPose();
+  frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
   // limelight.isTargetDetected();
 }
 
@@ -87,6 +88,24 @@ void Robot::TeleopPeriodic()
   //Decide drive modes
   double zeroSetpoint = 0;
 
+  // TESTING
+  if (ctr.GetCircleButton()) {
+    Pose3d robotPose = limelight.getRobotPoseFieldSpace();
+    Pose3d apriltagPose = limelight.getTargetPoseRobotSpace();
+
+    double transX = apriltagPose.x; // meters
+    double transY = apriltagPose.y; // meters
+    double transZ = apriltagPose.z; // meters
+    double apriltagYaw = apriltagPose.yaw; // radians
+    double robotYaw = robotPose.yaw; // radians
+    double rotateYaw = apriltagYaw - robotYaw; // radians
+    
+    zeroSetpoint = rotateYaw * (180 / PI); // degrees
+    frc::SmartDashboard::PutNumber("April Tag Yaw", apriltagYaw);
+    frc::SmartDashboard::PutNumber("Robot Yaw", robotYaw);
+    frc::SmartDashboard::PutNumber("Target Yaw", zeroSetpoint);
+  }
+
   if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 0.75);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
@@ -95,8 +114,8 @@ void Robot::TeleopPeriodic()
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
     fieldOriented = false;
-    zeroSetpoint = 0;
-    frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+    // zeroSetpoint = 0;
+    //frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
     rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
