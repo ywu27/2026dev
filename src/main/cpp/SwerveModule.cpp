@@ -212,8 +212,7 @@ double SwerveModule::driveMotorRotations(units::second_t timestamp) {
         }
     }
     driveMotorRot.push_back(getDriveEncoderPos());
-
-    frc::SmartDashboard::PutNumber("Drive Motor Rotations", combinedRot);
+    
     return combinedRot;
 }
 

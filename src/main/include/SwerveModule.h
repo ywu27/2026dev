@@ -71,7 +71,7 @@ public:
     double currentSteerOutput = 0.0;
 
     std::vector<double> driveMotorRot;
-    double combinedRot = 0.0; // rad
+    double combinedRot = 0.0; // rotations
 
     // public:
     SwerveModule(int steerMotorID, int driveMotorID, int cancoderID);

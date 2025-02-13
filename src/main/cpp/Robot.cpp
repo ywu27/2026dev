@@ -89,7 +89,7 @@ void Robot::TeleopPeriodic()
   //Decide drive modes
   double zeroSetpoint = 0;
   frc::SmartDashboard::PutNumber("wheel rot", mDrive.mBackLeft.driveMotorRotations(timestamp));
-  mDrive.mBackLeft.driveMotorRotations(timestamp);
+  // mDrive.mBackLeft.driveMotorRotations(timestamp);
 
   if (ctr.GetR1Button()) {
     timestamp = frc::Timer::GetFPGATimestamp();
