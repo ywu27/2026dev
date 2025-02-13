@@ -43,6 +43,7 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit()
 {
+  timestamp = frc::Timer::GetFPGATimestamp();
   mDrive.state = DriveState::Teleop;
   frc::SmartDashboard::PutNumber("tx", limelight.getTX());
   limelight.setPipelineIndex(0);
@@ -87,6 +88,8 @@ void Robot::TeleopPeriodic()
 
   //Decide drive modes
   double zeroSetpoint = 0;
+  frc::SmartDashboard::PutNumber("wheel rot", mDrive.mBackLeft.driveMotorRotations(timestamp));
+  mDrive.mBackLeft.driveMotorRotations(timestamp);
 
   // TESTING
   if (ctr.GetCircleButton()) {

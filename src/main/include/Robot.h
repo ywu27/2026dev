@@ -57,6 +57,8 @@ public:
   Limelight limelight = Limelight("", Limelight::RED);
 
   SwerveAlign align;
+  units::second_t timestamp = frc::Timer::GetFPGATimestamp();
+
 
   // Teleop Controls
   float ctrPercent = 1.0;

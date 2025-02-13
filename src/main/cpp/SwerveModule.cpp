@@ -194,21 +194,26 @@ double SwerveModule::getDriveEncoderPos() { // in rotations
 }
 
 // TESTING
-double SwerveModule::driveMotorRotations(double timestamp) {
-    if (frc::Timer::GetFPGATimestamp() == units::second_t(timestamp)) {
+double SwerveModule::driveMotorRotations(units::second_t timestamp) {
+    if (frc::Timer::GetFPGATimestamp() == timestamp) {
         combinedRot = 0.0;
         driveMotorRot.clear();
         driveMotorRot.push_back(getDriveEncoderPos());
     }
-    if (!(driveMotorRot[0] > driveMotorRot[1])) {
-        combinedRot += (driveMotorRot[1] - driveMotorRot[0]);
-        driveMotorRot.erase(driveMotorRot.begin());
+    if (driveMotorRot.size() < 1) {
         driveMotorRot.push_back(getDriveEncoderPos());
     }
-    else if (driveMotorRot[0] > driveMotorRot[1]) {
-        driveMotorRot.erase(driveMotorRot.begin());
-        driveMotorRot.push_back(getDriveEncoderPos());
+    if (driveMotorRot.size() >= 2) {
+        if (!(driveMotorRot[0] > driveMotorRot[1])) {
+            combinedRot += (driveMotorRot[1] - driveMotorRot[0]);
+            driveMotorRot.erase(driveMotorRot.begin());
+        } else {
+            driveMotorRot.erase(driveMotorRot.begin());
+        }
     }
+    driveMotorRot.push_back(getDriveEncoderPos());
+
+    frc::SmartDashboard::PutNumber("Drive Motor Rotations", combinedRot);
     return combinedRot;
 }
 

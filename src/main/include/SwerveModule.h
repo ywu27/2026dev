@@ -95,7 +95,7 @@ public:
     double getSteerOutput();
     double getDriveEncoderVel();
     double getDriveEncoderPos();
-    double driveMotorRotations(double timestamp);
+    double driveMotorRotations(units::second_t timestamp);
 
     bool isFinished(float percentageBound);
     SwerveModuleState getModuleState();
