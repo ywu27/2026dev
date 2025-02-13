@@ -204,7 +204,7 @@ double SwerveModule::driveMotorRotations(units::second_t timestamp) {
         driveMotorRot.push_back(getDriveEncoderPos());
     }
     if (driveMotorRot.size() >= 2) {
-        if (!(driveMotorRot[0] > driveMotorRot[1])) {
+        if (!(abs(driveMotorRot[0]) > abs(driveMotorRot[1]))) {
             combinedRot += (driveMotorRot[1] - driveMotorRot[0]);
             driveMotorRot.erase(driveMotorRot.begin());
         } else {
