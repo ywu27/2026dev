@@ -88,11 +88,14 @@ void Robot::TeleopPeriodic()
 
   //Decide drive modes
   double zeroSetpoint = 0;
-  frc::SmartDashboard::PutNumber("wheel rot", mDrive.mBackLeft.driveMotorRotations(timestamp));
   // mDrive.mBackLeft.driveMotorRotations(timestamp);
 
-  if (ctr.GetR1Button()) {
+  if (ctr.GetR1ButtonPressed()) {
     timestamp = frc::Timer::GetFPGATimestamp();
+  }
+  if (ctr.GetR1Button()) {
+    frc::SmartDashboard::PutNumber("wheel distance feet", mDrive.mBackLeft.driveMotorDistance(timestamp));
+    frc::SmartDashboard::PutNumber("Encoder Pos Drive", mDrive.mBackLeft.getDriveEncoderPos());
   }
 
   // TESTING

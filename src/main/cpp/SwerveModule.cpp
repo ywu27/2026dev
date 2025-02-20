@@ -194,7 +194,7 @@ double SwerveModule::getDriveEncoderPos() { // in rotations
 }
 
 // TESTING
-double SwerveModule::driveMotorRotations(units::second_t timestamp) {
+double SwerveModule::driveMotorDistance(units::second_t timestamp) { // in feet
     if (frc::Timer::GetFPGATimestamp() == timestamp) {
         combinedRot = 0.0;
         driveMotorRot.clear();
@@ -205,7 +205,7 @@ double SwerveModule::driveMotorRotations(units::second_t timestamp) {
     }
     if (driveMotorRot.size() >= 2) {
         if (!(abs(driveMotorRot[0]) > abs(driveMotorRot[1]))) {
-            combinedRot += (driveMotorRot[1] - driveMotorRot[0]);
+            combinedRot += abs(driveMotorRot[1]) - abs(driveMotorRot[0]);
             driveMotorRot.erase(driveMotorRot.begin());
         } else {
             driveMotorRot.erase(driveMotorRot.begin());
@@ -213,7 +213,7 @@ double SwerveModule::driveMotorRotations(units::second_t timestamp) {
     }
     driveMotorRot.push_back(getDriveEncoderPos());
     
-    return combinedRot;
+    return (combinedRot*wheelCircumFeet)/4.89;
 }
 
 /**
