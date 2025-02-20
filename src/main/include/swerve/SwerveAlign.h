@@ -41,16 +41,19 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveDrive& drive, units::second_t timestamp) {
+    ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveDrive& drive, units::second_t timestamp) { // setpoint in feet
         ChassisSpeeds speeds;
-        currentX = drive.mFrontLeft.driveMotorDistance(timestamp);
-        currentY = drive.mFrontLeft.driveMotorDistance(timestamp);
-        if (abs(setpointX-currentX)>0.2 && abs(setpointY-currentY)>0.2) {
-
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0);
+        currentX = drive.m_odometry.GetPose().X().value(); // .mFrontLeft.driveMotorDistance(timestamp);
+        currentY = drive.m_odometry.GetPose().Y().value(); // .driveMotorDistance(timestamp);
+        if (drive.mFrontLeft.driveMotorDistance(timestamp) < ((abs(setpointX - currentX) <= 0.2) && (abs(setpointY - currentY) <= 0.2)))
+        { //abs(setpointX-currentX)>0.2 && abs(setpointY-currentY)>0.2) {
+            double strafeSpeed = strafePID.Calculate(currentX, setpointX);
+            double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-1*forwardSpeed, -1*strafeSpeed, 0);
         }
         else {
             speeds = ChassisSpeeds(0, 0, 0);
         }
+        return speeds;
     }
 };
