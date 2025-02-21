@@ -88,15 +88,6 @@ void Robot::TeleopPeriodic()
 
   //Decide drive modes
   double zeroSetpoint = 0;
-  // mDrive.mBackLeft.driveMotorRotations(timestamp);
-
-  if (ctr.GetR1ButtonPressed()) {
-    timestamp = frc::Timer::GetFPGATimestamp();
-  }
-  if (ctr.GetR1Button()) {
-    frc::SmartDashboard::PutNumber("wheel distance feet", mDrive.mBackLeft.driveMotorDistance(timestamp));
-    frc::SmartDashboard::PutNumber("Encoder Pos Drive", mDrive.mBackLeft.getDriveEncoderPos());
-  }
 
   // TESTING
   if (ctr.GetCircleButton()) {
@@ -118,16 +109,15 @@ void Robot::TeleopPeriodic()
 
   
   if (ctr.GetR1Button()) {
-    ChassisSpeeds speeds = align.driveToSetpoint(1, 1, mDrive, timestamp);
+    ChassisSpeeds speeds = align.driveToSetpoint(1, 1, mDrive);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
-    vx = speeds.vyMetersPerSecond;
-    vy = speeds.vxMetersPerSecond;
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
     fieldOriented = false;
     rot = 0;
   }
-
   else if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 0.75);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
