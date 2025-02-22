@@ -94,22 +94,22 @@ void Robot::TeleopPeriodic()
     Pose3d robotPose = limelight.getRobotPoseFieldSpace();
     Pose3d apriltagPose = limelight.getTargetPoseRobotSpace();
 
-    double transX = apriltagPose.x; // meters
-    double transY = apriltagPose.y; // meters
-    double transZ = apriltagPose.z; // meters
+    double transX = apriltagPose.x - robotPose.x; // meters
+    double transY = apriltagPose.y - robotPose.y; // meters
+    double transZ = apriltagPose.z - robotPose.z; // meters
     double apriltagYaw = apriltagPose.yaw; // radians
     double robotYaw = robotPose.yaw; // radians
     double rotateYaw = apriltagYaw - robotYaw; // radians
     
-    zeroSetpoint = rotateYaw * (180 / PI); // degrees
+    zeroSetpoint = rotateYaw; // degrees
     frc::SmartDashboard::PutNumber("April Tag Yaw", apriltagYaw);
     frc::SmartDashboard::PutNumber("Robot Yaw", robotYaw);
     frc::SmartDashboard::PutNumber("Target Yaw", zeroSetpoint);
   }
 
-  
+  /*
   if (ctr.GetR1Button()) {
-    ChassisSpeeds speeds = align.driveToSetpoint(1, 1, mDrive);
+    ChassisSpeeds speeds = align.driveToSetpoint(0, 3, mDrive);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vxMetersPerSecond;
     vy = speeds.vyMetersPerSecond;
@@ -118,7 +118,8 @@ void Robot::TeleopPeriodic()
     fieldOriented = false;
     rot = 0;
   }
-  else if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
+  */
+  if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 0.75);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vyMetersPerSecond;
@@ -126,8 +127,13 @@ void Robot::TeleopPeriodic()
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
     fieldOriented = false;
-    zeroSetpoint = 0;
-    //frc::SmartDashboard::PutNumber("Gyro position", mGyro.getBoundedAngleCCW().getDegrees());
+    double zeroSetpoint;
+    if (limelight.getTX()>0) {
+      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() + limelight.getTX();
+    } 
+    else {
+      zeroSetpoint = mGyro.getBoundedAngleCCW().getDegrees() - limelight.getTX();
+    }
     mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     mHeadingController.setSetpoint(zeroSetpoint);
     rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());

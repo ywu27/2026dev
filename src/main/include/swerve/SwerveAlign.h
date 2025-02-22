@@ -43,13 +43,13 @@ public:
 
     ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveDrive& drive) { 
         ChassisSpeeds speeds;
-        double currentX = drive.m_odometry.GetPose().X().value();
-        double currentY = drive.m_odometry.GetPose().Y().value();
+        double currentX = drive.getOdometryPose().X().value();
+        double currentY = drive.getOdometryPose().Y().value();
         
         if (fabs(setpointX - currentX) > 0.2 && fabs(setpointY - currentY) > 0.2) {
             double strafeSpeed = strafePID.Calculate(currentX, setpointX);
             double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-1 * forwardSpeed, -1 * strafeSpeed, 0);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-1 * strafeSpeed, -1 * forwardSpeed, 0);
         } else {
             speeds = ChassisSpeeds(0, 0, 0);
         }
