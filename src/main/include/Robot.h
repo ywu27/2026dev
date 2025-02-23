@@ -25,6 +25,7 @@
 #include "swerve/SwerveAlign.h"
 #include "util/TimeDelayButton.h"
 #include "sensors/Limelight.h"
+#include <ctre/phoenix6/CANBus.hpp>
 
 class Robot : public frc::TimedRobot
 {
@@ -59,6 +60,10 @@ public:
   SwerveAlign align;
   units::second_t timestamp = frc::Timer::GetFPGATimestamp();
 
+  //CANivore
+  ctre::phoenix6::CANBus canbus{"Drivetrain"};
+  ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
+  float busUtil = canInfo.BusUtilization;
 
   // Teleop Controls
   float ctrPercent = 1.0;
