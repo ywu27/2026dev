@@ -83,8 +83,8 @@ void Robot::TeleopPeriodic()
   int dPad = ctr.GetPOV();
   bool rumbleController = false;
 
-  bool intakeClear = ctr.GetR2ButtonPressed();
-  bool intakeIn = ctr.GetL2ButtonPressed();
+  bool intakeClear = ctr.GetR2Button();
+  bool intakeIn = ctr.GetL2Button();
   bool climb = ctr.GetL1Button();
 
   // Teleop States
