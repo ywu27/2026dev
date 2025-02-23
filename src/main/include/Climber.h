@@ -17,11 +17,17 @@ class Climber{
 
         //Set velocity setpoint for climber
         double velocity;
+        double climbSetpoint;
     
     public:
+        enum climberState {
+            STOW,
+            CLIMB
+        };
+
         void init();
         void disable();
         void setVelocity(double speed);
-        void velocitySetpoint();
-
+        void climb();
+        void position(climberState climbState);
 };

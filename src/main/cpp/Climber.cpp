@@ -18,6 +18,15 @@ void Climber::setVelocity(double speed){
     velocity = speed;
 }
 
-void Climber::velocitySetpoint() {
+void Climber::climb() {
     climberCTR.SetReference(velocity, rev::spark::SparkBase::ControlType::kVelocity);
+}
+
+void Climber::position(climberState climbState) {
+    switch (climbState) {
+        case (STOW):
+            climberCTR.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition);
+        case (CLIMB):
+            climberCTR.SetReference(climbSetpoint, rev::spark::SparkLowLevel::ControlType::kPosition);
+    }
 }

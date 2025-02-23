@@ -22,6 +22,7 @@
 #include <frc/GenericHID.h>
 #include "control/PowerModule.h"
 #include "SwerveDrive.h"
+#include "Superstructure.h"
 #include "swerve/SwerveAlign.h"
 #include "util/TimeDelayButton.h"
 #include "sensors/Limelight.h"
@@ -53,12 +54,14 @@ public:
   //frc::PS5Controller ctrOperator = frc::PS5Controller(1);
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
+  Superstructure mSuperstructure;
   
   //Limelight
   Limelight limelight = Limelight("", Limelight::RED);
 
+  // For Auto Align
   SwerveAlign align;
-  units::second_t timestamp = frc::Timer::GetFPGATimestamp();
+  // units::second_t timestamp = frc::Timer::GetFPGATimestamp();
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

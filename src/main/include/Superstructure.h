@@ -22,7 +22,6 @@ public:
     void disable();
 
     void controlIntake(bool intakeIn, bool intakeClear);
-    void controlElevator();
-    void controlClimber(bool climberDown);
-    void defaultConfig();
+    void controlElevator(std::string dPadState);
+    void climb();
 };

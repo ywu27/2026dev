@@ -4,6 +4,9 @@ void Superstructure::init() {
     mIntake.init();
     mElevator.init();
     mClimber.init();
+    mElevator.setState(0);
+    mClimber.position(mClimber.STOW);
+
     enableModules = false;
     moduleThread = std::thread(&Superstructure::periodic, this);
 }
@@ -44,20 +47,35 @@ void Superstructure::controlIntake(bool intakeIn, bool intakeClear) {
     frc::SmartDashboard::PutBoolean("Intake?", intakeIn);
 }
 
-void Superstructure::controlElevator() {
-    // add dPad stuff that will be done later
+void Superstructure::controlElevator(std::string dPadState) {
+    if (dPadState == "Coral") {
+        mElevator.setState(5);
+    }
+    else if (dPadState == "Start") {
+        mElevator.setState(0);
+    }
+    else if (dPadState == "Up") {
+        if (mElevator.currentState < 5) {
+            mElevator.setState(mElevator.currentState + 1);
+        }
+    }
+    else if (dPadState == "Down") {
+        if (mElevator.currentState > 0) {
+            mElevator.setState(mElevator.currentState - 1);
+        }
+    }
 }
 
-void Superstructure::controlClimber(bool climberDown) {
+void Superstructure::climb() {
     mClimber.setVelocity(3000.0); // Change accordingly
-    if (climberDown) {
-        mClimber.velocitySetpoint();
+    if (mClimber.STOW) {
+        mClimber.position(mClimber.STOW);
+    }
+    else if (mClimber.CLIMB) {
+        mClimber.position(mClimber.CLIMB);
+        mClimber.climb();
     }
     else {
         mClimber.disable();
     }
-}
-
-void Superstructure::defaultConfig() {
-    // Will need to add some things
 }

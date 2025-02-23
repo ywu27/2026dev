@@ -12,6 +12,7 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   limelight.setPipelineIndex(0);
+  mSuperstructure.init();
   //frc::CameraServer::StartAutomaticCapture();
 }
 
@@ -27,6 +28,7 @@ void Robot::AutonomousInit()
   mDrive.state = DriveState::Auto;
   mGyro.init();
   mDrive.enableModules();
+  mSuperstructure.enable();
  
   // if (frc::DriverStation::IsDSAttached()) {
   //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed; // checks for alliance color
@@ -43,7 +45,6 @@ void Robot::AutonomousPeriodic()
 }
 void Robot::TeleopInit()
 {
-  timestamp = frc::Timer::GetFPGATimestamp();
   mDrive.state = DriveState::Teleop;
   frc::SmartDashboard::PutNumber("tx", limelight.getTX());
   limelight.setPipelineIndex(0);
@@ -53,6 +54,7 @@ void Robot::TeleopInit()
   mDrive.enableModules();
   mGyro.init();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
+  mSuperstructure.enable();
 
   mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
   xStickLimiter.reset(0.0);
@@ -78,10 +80,12 @@ void Robot::TeleopPeriodic()
 
   double rightX = ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
 
-  //int dPad = ctrOperator.GetPOV();
+  int dPad = ctr.GetPOV();
   bool rumbleController = false;
 
-  // Driver Information
+  bool intakeClear = ctr.GetR2ButtonPressed();
+  bool intakeIn = ctr.GetL2ButtonPressed();
+  bool climb = ctr.GetL1Button();
 
   // Teleop States
   double rot = rightX * moduleMaxRot * 2;
@@ -89,25 +93,25 @@ void Robot::TeleopPeriodic()
   //Decide drive modes
   double zeroSetpoint = 0;
 
-  // TESTING
-  if (ctr.GetCircleButton()) {
-    Pose3d robotPose = limelight.getRobotPoseFieldSpace();
-    Pose3d apriltagPose = limelight.getTargetPoseRobotSpace();
+  // // TESTING
+  // if (ctr.GetCircleButton()) {
+  //   Pose3d robotPose = limelight.getRobotPoseFieldSpace();
+  //   Pose3d apriltagPose = limelight.getTargetPoseRobotSpace();
 
-    double transX = apriltagPose.x - robotPose.x; // meters
-    double transY = apriltagPose.y - robotPose.y; // meters
-    double transZ = apriltagPose.z - robotPose.z; // meters
-    double apriltagYaw = apriltagPose.yaw; // radians
-    double robotYaw = robotPose.yaw; // radians
-    double rotateYaw = apriltagYaw - robotYaw; // radians
+  //   double transX = apriltagPose.x - robotPose.x; // meters
+  //   double transY = apriltagPose.y - robotPose.y; // meters
+  //   double transZ = apriltagPose.z - robotPose.z; // meters
+  //   double apriltagYaw = apriltagPose.yaw; // radians
+  //   double robotYaw = robotPose.yaw; // radians
+  //   double rotateYaw = apriltagYaw - robotYaw; // radians
     
-    zeroSetpoint = rotateYaw; // degrees
-    frc::SmartDashboard::PutNumber("April Tag Yaw", apriltagYaw);
-    frc::SmartDashboard::PutNumber("Robot Yaw", robotYaw);
-    frc::SmartDashboard::PutNumber("Target Yaw", zeroSetpoint);
-  }
+  //   zeroSetpoint = rotateYaw; // degrees
+  //   frc::SmartDashboard::PutNumber("April Tag Yaw", apriltagYaw);
+  //   frc::SmartDashboard::PutNumber("Robot Yaw", robotYaw);
+  //   frc::SmartDashboard::PutNumber("Target Yaw", zeroSetpoint);
+  // }
 
-  if (ctr.GetR1Button()) {
+  if (ctr.GetSquareButton()) {
     ChassisSpeeds speeds = align.driveToSetpoint(0, 3, mHeadingController, mDrive, mGyro);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vxMetersPerSecond;
@@ -118,7 +122,7 @@ void Robot::TeleopPeriodic()
     frc::SmartDashboard::PutNumber("rot", rot);
     fieldOriented = false;
   }
-  else if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
+  else if (ctr.GetCircleButton()&&limelight.isTargetDetected2()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 0.75);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vyMetersPerSecond;
@@ -165,6 +169,28 @@ void Robot::TeleopPeriodic()
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
+
+  if (intakeClear) {
+    mSuperstructure.controlIntake(intakeIn, intakeClear);
+  }
+  else if (intakeIn) {
+    mSuperstructure.controlIntake(intakeIn, intakeClear);
+  }
+  else if (climb) {
+    mSuperstructure.climb();
+  }
+  else if (ctr.GetPOV() == 0) {
+    mSuperstructure.controlElevator("Up");
+  }
+  else if (ctr.GetPOV() == 90) {
+    mSuperstructure.controlElevator("Start");
+  }
+  else if (ctr.GetPOV() == 180) {
+    mSuperstructure.controlElevator("Down");
+  }
+  else if (ctr.GetPOV() == 270) {
+    mSuperstructure.controlElevator("Coral");
+  }
 }
 
 void Robot::DisabledInit()
