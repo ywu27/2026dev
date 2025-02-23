@@ -107,19 +107,18 @@ void Robot::TeleopPeriodic()
     frc::SmartDashboard::PutNumber("Target Yaw", zeroSetpoint);
   }
 
-  /*
   if (ctr.GetR1Button()) {
-    ChassisSpeeds speeds = align.driveToSetpoint(0, 3, mDrive);
+    ChassisSpeeds speeds = align.driveToSetpoint(0, 3, mHeadingController, mDrive, mGyro);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vxMetersPerSecond;
     vy = speeds.vyMetersPerSecond;
+    rot = speeds.getRotation();
     frc::SmartDashboard::PutNumber("vx", vx);
     frc::SmartDashboard::PutNumber("vy", vy);
+    frc::SmartDashboard::PutNumber("rot", rot);
     fieldOriented = false;
-    rot = 0;
   }
-  */
-  if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
+  else if (ctr.GetR2Button()&&limelight.isTargetDetected2()) {
     ChassisSpeeds speeds = align.autoAlign(limelight, mHeadingController, 0.75);
     frc::SmartDashboard::PutNumber("strafe", speeds.vyMetersPerSecond);
     vx = speeds.vyMetersPerSecond;

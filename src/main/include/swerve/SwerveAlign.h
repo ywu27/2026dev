@@ -41,15 +41,37 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveDrive& drive) { 
+    double calculateTurnAngle(double sideX, double sideY) {
+        double pythag = sqrt(pow(sideX, 2) + pow(sideY, 2)); // third side of the triangle
+        double angleY = std::asin(sideY / pythag) * (180 / PI); // angle looking at side Y
+
+        if (sideX > 0 && sideY > 0) {
+            return 90.0 - angleY;
+        }
+        else if (sideX < 0 && sideY > 0) {
+            return -1*(90.0 - angleY);
+        } 
+        else if (sideX < 0 && sideY < 0) {
+            return -1*(90.0 + angleY);
+        }
+        else if (sideX > 0 && sideY < 0) {
+            return 90.0 + angleY;
+        }
+    }
+
+    ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveHeadingController &headingController, SwerveDrive& drive, NavX &mGyro) { 
+        // Variables
         ChassisSpeeds speeds;
-        double currentX = drive.getOdometryPose().X().value();
         double currentY = drive.getOdometryPose().Y().value();
+
+        //Tolerance
+        forwardPID.SetTolerance(0.2, 0.01); // Change accordingly
         
-        if (fabs(setpointX - currentX) > 0.2 && fabs(setpointY - currentY) > 0.2) {
-            double strafeSpeed = strafePID.Calculate(currentX, setpointX);
+        if (!forwardPID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-1 * strafeSpeed, -1 * forwardSpeed, 0);
+            headingController.setSetpoint(calculateTurnAngle(setpointX, setpointY));
+            double rot = headingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, -forwardSpeed, rot);
         } else {
             speeds = ChassisSpeeds(0, 0, 0);
         }
