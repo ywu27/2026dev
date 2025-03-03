@@ -20,12 +20,10 @@
 #include "util/ControlUtil.h"
 #include "frc/kinematics/SwerveModulePosition.h"
 #include "frc/geometry/Rotation2d.h"
-#include "control/PowerModule.h"
 #include <swerve/TalonFXMotor.h>
 
 class SwerveModule
 {
-    // private: <- removed for testing
 public:
     int steerID;
     int driveID;
@@ -63,8 +61,8 @@ public:
     const float maxDriveAccelerationRPM = 2665.993 * (25.8 / 7.6);
     const float maxSteerVelocity = 189.2; // Radians per sec
 
-    const int maxSteerCurrent = 10;                      // Maximum current to steer motor
-    const int maxDriveCurrent = swerveDriveStartCurrent; // Maximum current to steer motor
+    const int maxSteerCurrent = 10; // Maximum current to steer motor
+    const int maxDriveCurrent = 20; // Maximum current to drive motor
     // Must match with power module.h start value
 
     // TODO: Brownout module

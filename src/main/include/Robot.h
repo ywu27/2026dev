@@ -20,13 +20,13 @@
 #include "sensors/Limelight.h"
 #include "util/SlewRateLimiter.h"
 #include <frc/GenericHID.h>
-#include "control/PowerModule.h"
 #include "SwerveDrive.h"
 #include "Superstructure.h"
 #include "swerve/SwerveAlign.h"
 #include "util/TimeDelayButton.h"
 #include "sensors/Limelight.h"
 #include <ctre/phoenix6/CANBus.hpp>
+#include <frc/GenericHID.h>
 
 class Robot : public frc::TimedRobot
 {
@@ -49,15 +49,16 @@ public:
   void SimulationInit() override;
   void SimulationPeriodic() override;
 
-  // Modules/Devices
   frc::PS5Controller ctr = frc::PS5Controller(0);
-  //frc::PS5Controller ctrOperator = frc::PS5Controller(1);
+  frc::PS5Controller ctrOperator = frc::PS5Controller(1);
+
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Superstructure mSuperstructure;
   
-  //Limelight
-  Limelight limelight = Limelight("", Limelight::RED);
+  int alliance;
+  Limelight limelight1 = Limelight("one", alliance);
+  Limelight limelight2 = Limelight("two", alliance);
 
   // For Auto Align
   SwerveAlign align;

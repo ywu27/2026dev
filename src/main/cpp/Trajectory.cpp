@@ -12,13 +12,13 @@
 
 // controller used to track trajectories + correct minor disturbances
 static frc::HolonomicDriveController controller{
-    frc::PIDController{0.1, 0, 0},
-    frc::PIDController{0.1, 0, 0},
-    frc::ProfiledPIDController<units::radian>{
+    frc::PIDController{0.1, 0, 0}, // vy
+    frc::PIDController{0.1, 0, 0}, // vx
+    frc::ProfiledPIDController<units::radian>{ // rotation PID
         steerP, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{
-            units::radians_per_second_t(189.2), // prev: 5.0
-            units::radians_per_second_squared_t(2665.993 * (25.8 / 7.6))}}}; // prev: 100
+            units::radians_per_second_t(5), // prev: 189.2
+            units::radians_per_second_squared_t(100)}}}; // prev: 2665.993 * (25.8 / 7.6)
 
 /**
  * Drives robot to the next state on trajectory

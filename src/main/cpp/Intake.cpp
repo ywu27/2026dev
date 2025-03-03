@@ -1,10 +1,18 @@
 #include "Intake.h"
 
 void Intake::init() {
-    config.SmartCurrentLimit(intakeCurrentLimit);
-    config.SmartCurrentLimit(clearingCurrentLimit);
-    config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
-    intakeMotor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
+    intakeConfig.Inverted(false);
+    intakeConfig.SmartCurrentLimit(10);
+    intakeConfig.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake); // TRY WITH COAST / don't know design
+    intakeConfig.closedLoop.Pid(0.6, 0, 0.0);
+
+    angleConfig.Inverted(false);
+    angleConfig.SmartCurrentLimit(10);
+    angleConfig.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
+    angleConfig.closedLoop.Pid(0.6, 0, 0.0);
+
+    angleMotor.Configure(angleConfig, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
+    intakeMotor.Configure(intakeConfig, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
 void Intake::disable() {
@@ -18,7 +26,7 @@ void Intake::setIntakeSpeed(double speed) {
 void Intake::setIntakeState(intakeState state) {
     switch (state) {
     case IN:
-        intakeController.SetReference(intakeSpeed, rev::spark::SparkBase::ControlType::kVelocity);
+        intakeCtr.SetReference(intakeSpeed, rev::spark::SparkBase::ControlType::kVelocity);
         break;
     case CLEAR:
         clear();
@@ -29,8 +37,7 @@ void Intake::setIntakeState(intakeState state) {
 }
 
 void Intake::clear() {
-    double motorVelocity = intakeEncoder.GetVelocity();
+    double motorVelocity = intakeEnc.GetVelocity();
     double motorCurrentDraw = intakeMotor.GetOutputCurrent();
-    frc::SmartDashboard::PutBoolean("IntakeClearFlag", false);
-    intakeController.SetReference(-intakeSpeed, rev::spark::SparkBase::ControlType::kVelocity);
+    intakeCtr.SetReference(-intakeSpeed, rev::spark::SparkBase::ControlType::kVelocity);
 }

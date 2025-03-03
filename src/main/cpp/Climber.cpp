@@ -7,11 +7,11 @@ void Climber::init(){
     
     //This value will be changed based on testing
     config.SmartCurrentLimit(20);
-    climberMotor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
+    motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
 void Climber::disable() {
-    climberMotor.StopMotor();
+    motor.StopMotor();
 }
 
 void Climber::setVelocity(double speed){
@@ -20,6 +20,7 @@ void Climber::setVelocity(double speed){
 
 void Climber::climb() {
     climberCTR.SetReference(velocity, rev::spark::SparkBase::ControlType::kVelocity);
+    //motor.Set(1); // TRY THIS AS WELL
 }
 
 void Climber::position(climberState climbState) {

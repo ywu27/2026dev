@@ -33,46 +33,47 @@ void Superstructure::disable() {
     enableModules = false;
 }
 
-void Superstructure::controlIntake(bool intakeIn, bool intakeClear) {
-    mIntake.setIntakeSpeed(2000.0);
-    if (intakeIn) {
-        mIntake.setIntakeState(Intake::intakeState::IN);
-    }
-    else if (intakeClear) {
-        mIntake.setIntakeState(Intake::intakeState::CLEAR);
-    }
-    else {
+void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for clear
+    mIntake.setIntakeSpeed(2000.0); // CHANGE IF NECESSARY
+    if (mode==0) {
         mIntake.setIntakeState(Intake::intakeState::STOP);
     }
-    frc::SmartDashboard::PutBoolean("Intake?", intakeIn);
-}
-
-void Superstructure::controlElevator(std::string dPadState) {
-    if (dPadState == "Coral") {
-        mElevator.setState(5);
+    else if (mode==1) {
+        mIntake.setIntakeState(Intake::intakeState::IN);
     }
-    else if (dPadState == "Start") {
-        mElevator.setState(0);
-    }
-    else if (dPadState == "Up") {
-        if (mElevator.currentState < 5) {
-            mElevator.setState(mElevator.currentState + 1);
-        }
-    }
-    else if (dPadState == "Down") {
-        if (mElevator.currentState > 0) {
-            mElevator.setState(mElevator.currentState - 1);
-        }
+    else if (mode==2) {
+        mIntake.setIntakeState(Intake::intakeState::CLEAR);
     }
 }
 
-void Superstructure::climb() {
-    mClimber.setVelocity(3000.0); // Change accordingly
-    if (mClimber.STOW) {
+void Superstructure::elevatorUp() {
+    if (mElevator.getCurrentState()<4) {
+        mElevator.setState(mElevator.getCurrentState() + 1);
+    }
+    //ENDEFFECTOR
+}
+
+void Superstructure::elevatorDown() {
+    if (mElevator.getCurrentState()>1) { // TRY ZERO AS WELL
+        mElevator.setState(mElevator.getCurrentState() - 1);
+    }
+    //ENDEFFECTOR
+}
+
+void Superstructure::intakeCoral() {
+    mElevator.setState(5);
+    //ENDEFFECTOR
+}
+
+void Superstructure::controlClimber(int position) { // 0 for stow / 1 for setpoint / 2 for climbing
+    mClimber.setVelocity(3000.0); // CHANGE IF NECESSARY
+    if (position==0) {
         mClimber.position(mClimber.STOW);
     }
-    else if (mClimber.CLIMB) {
+    else if (position==1) {
         mClimber.position(mClimber.CLIMB);
+    }
+    else if (position==2) {
         mClimber.climb();
     }
     else {

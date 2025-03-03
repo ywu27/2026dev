@@ -8,23 +8,26 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/config/SparkMaxConfig.h>
 
-int intakeMotorID= 1;
-int clearingCurrentLimit=40;
-int intakeCurrentLimit=40;
+#define intakeID 11
+#define angleID 12
 
 class Intake
 {
 private:
     int intakeSpeed = 5700;
 
-    const int clearCurrentThreshold = 40;
-    const int clearVelocityThreshold = 100;
+    const int clearCurrentThreshold = 20;
+    const int clearVelocityThreshold = 1000;
 
-    rev::spark::SparkMax intakeMotor = rev::spark::SparkMax(intakeMotorID, rev::spark::SparkMax::MotorType::kBrushless);
-    rev::spark::SparkClosedLoopController intakeController = intakeMotor.GetClosedLoopController();
-    rev::spark::SparkRelativeEncoder intakeEncoder = intakeMotor.GetEncoder();
-    rev::spark::SparkMaxConfig config{};
-    void clear();
+    rev::spark::SparkMax intakeMotor = rev::spark::SparkMax(intakeID, rev::spark::SparkMax::MotorType::kBrushless);
+    rev::spark::SparkClosedLoopController intakeCtr = intakeMotor.GetClosedLoopController();
+    rev::spark::SparkRelativeEncoder intakeEnc = intakeMotor.GetEncoder();
+    rev::spark::SparkMaxConfig intakeConfig{};
+
+    rev::spark::SparkMax angleMotor = rev::spark::SparkMax(angleID, rev::spark::SparkMax::MotorType::kBrushless);
+    rev::spark::SparkClosedLoopController angleCtr = angleMotor.GetClosedLoopController();
+    rev::spark::SparkRelativeEncoder angleEnc = angleMotor.GetEncoder();
+    rev::spark::SparkMaxConfig angleConfig{};
 
 public:
     enum intakeState
@@ -38,4 +41,5 @@ public:
     void disable();
     void setIntakeState(intakeState state);
     void setIntakeSpeed(double speed);
+    void clear();
 };

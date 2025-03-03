@@ -87,7 +87,7 @@ public:
             case OFF:
                 return 0.0;
             case SNAP:
-                mPIDCtr.SetPID(0.1, 0.0, 0.0);
+                mPIDCtr.SetPID(0.12, 0.0, 0.01);
                 break;
             case ALIGN:
                 mPIDCtr.SetPID(0.04, 0.0, 0.01);

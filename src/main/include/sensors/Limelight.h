@@ -12,195 +12,126 @@ class Limelight {
 
 private:
     std::string limelightName;
-    double limelightMountAngle = 30; // Measured in degrees
-    double limelightHeight = 5; // Measured in inches
+    double limelightMountAngle = 20;
+    double limelightHeight = 12;
     
-    double reefTagHeight = 6.875; // Measured in inches
-    double coralStationTagHeight = 53.25; // Measured in inches
-    double processorTagHeight = 45.875; // Measured in inches
-    double bargeTagHeight = 69.0; // Measured in inches
+    struct TagInfo {
+        double height;
+        int angleSetpoint;
+    };
     
-    std::vector<int> redReefTargetIDs = {10, 9, 8, 7, 6, 11};
-    std::vector<int> blueReefTargetIDs = {21, 22, 17, 18, 19, 20};
-    std::vector<double> redReefTargetAngles = {0, 60, 120, 180, 240, 300};
-
-    std::vector<int> redCoralStationTargetIDs = {1, 2};
-    std::vector<int> blueCoralStationTargetIDs = {12, 13};
-
-    int redProcessorTargetIDs = 3;
-    int blueProcessorTargetIDs = 16;
-
-    std::vector<int> redBargeTargetIDs = {4, 14};
-    std::vector<int> blueBargeTargetIDs = {5, 15};
+    std::map<int, TagInfo> tagData = {
+        {1, {53.25, 126}}, {2, {53.25, 234}}, {3, {45.875, 270}}, {4, {69.0, 0}}, {5, {69.0, 0}},
+        {10, {6.875, 180}}, {11, {6.875, 240}}, {6, {6.875, 300}}, {7, {6.875, 0}}, {8, {6.875, 60}}, {9, {6.875, 120}},
+        {12, {53.25, 234}}, {13, {53.25, 126}}, {14, {69.0, 0}}, {15, {69.0, 0}}, {16, {45.875, 270}},
+        {17, {6.875, 120}}, {18, {6.875, 60}}, {19, {6.875, 0}}, {20, {6.875, 300}}, {21, {6.875, 240}}, {22, {6.875, 180}}
+    };
 
 public:
     enum Alliance{RED, BLUE};
     enum TagType {REEF, CORALSTATION, PROCESSOR, BARGE};
+    
     Alliance alliance;
     TagType tagType;
 
-    Limelight(std::string name, Alliance myAlliance){
+    Limelight(std::string name, int allianceOption){ // 0 is red alliance
         limelightName = name;
-        tagType = REEF;
-        alliance = myAlliance;
+        
+        if (allianceOption == 0){
+            alliance = RED;
+        }
+        else{
+            alliance = BLUE;
+        }
     }
 
     bool isTargetDetected() {
-        if ((nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)) == 1)
-        {
-            frc::SmartDashboard::PutNumber("insidetest", (nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)));
+        double tv = nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->GetNumber("tv", 0.0);
+        if (tv == 1) {
             return true;
+        } else {
+            return false;
         }
-        frc::SmartDashboard::PutNumber("insidetest", (nt::NetworkTableInstance::GetDefault().GetTable("")->GetNumber("tv", 0.0)));
-        return false;
+    }
+
+    bool isTargetDetected2() {
+        if (getTX()==0 && getTY()==0) {
+            return false;
+        }
+        return true;
     }
 
     void setPipelineIndex(int index) {
-        LimelightHelpers::setPipelineIndex("", index);
+        LimelightHelpers::setPipelineIndex(limelightName, index);
     }
 
-    int getTagID() { // returns the ID of the AprilTag
+    int getTagID() {
         return (int)LimelightHelpers::getFiducialID();
     }
 
-    double getTX() { // TX
-        double tx = LimelightHelpers::getTX("");
-        frc::SmartDashboard::PutNumber("Tx", tx);
-        return tx;
+    double getTX() {
+        return LimelightHelpers::getTX(limelightName);
     }
 
-    double getTY() { // TY
-        if (isTargetDetected() == true)
-        {
-            double ty = LimelightHelpers::getTY("");
-            frc::SmartDashboard::PutNumber("Ty", ty);
-            return ty;
-        }
-        return 0.0;
+    double getTY() {
+        return LimelightHelpers::getTY(limelightName);
     }
 
-    double isTargetDetected2() {
-        return !(getTX()==0);
-    }
-
-    // sets the tag height based on the target ID by comparing it to the vectors of target IDs in different positions of the field
-    // returns the tag height in inches
-
-    TagType getTagType(){
-        //int tagID = 3;
+    TagType getTagType() {
         int tagID = getTagID();
-        if(tagID<12){
-            alliance=RED;
+        if (tagID >= 10 && tagID <= 22) {
+            return REEF;
+        } else if (tagID == 1 || tagID == 2 || tagID == 12 || tagID == 13) {
+            return CORALSTATION;
+        } else if (tagID == 3 || tagID == 16) {
+            return PROCESSOR;
+        } else if (tagID == 4 || tagID == 5 || tagID == 14 || tagID == 15) {
+            return BARGE;
+        } else {
+            return REEF;
         }
-        else{
-            alliance=BLUE;
-        }
-        switch (alliance) {
-            case RED:
-                if(tagID<12 && tagID>5){
-                    tagType = REEF;
-                }
-                else if(tagID == 1 || tagID == 2){
-                    tagType = CORALSTATION;
-                }
-                else if(tagID == 3){
-                    tagType = PROCESSOR;
-                }
-                else if(tagID == 4 || tagID == 14){
-                    tagType = BARGE;
-                }
-                break;
-            case BLUE:
-                if(tagID<23 && tagID>16){
-                    tagType = REEF;
-                }
-                else if(tagID == 12 || tagID == 13){
-                    tagType = CORALSTATION;
-                }
-                else if(tagID == 16){
-                    tagType = PROCESSOR;
-                }
-                else if(tagID == 5 || tagID == 15){
-                    tagType = BARGE;
-                }
-                break;
-        }
-        return tagType;
-    }
-    
-    double getTagHeight(){
-
-        double tagHeight; //Measured in inches
-        tagType = getTagType();
-        switch(tagType){
-            case REEF:
-                tagHeight = reefTagHeight;
-                break;
-            case CORALSTATION:
-                tagHeight = coralStationTagHeight;
-                break;
-            case PROCESSOR:
-                tagHeight = processorTagHeight;
-                break;
-            case BARGE:
-                tagHeight = bargeTagHeight;
-                break;
-        }
-        return tagHeight;
-
-    }
-    
-    double getDistanceToWall() { // perpendicular distance to wall in meters
-        double tagHeight = getTagHeight();
-        double ty = LimelightHelpers::getTY("");
-        double angleToTagDegrees = limelightMountAngle + ty;
-        double angleToTagRadians = angleToTagDegrees * (PI / 180.0);
-        double distanceToWall = (tagHeight - limelightHeight) / tan(angleToTagRadians);
-        distanceToWall *= 0.0254; //converted to meters
-        frc::SmartDashboard::PutNumber("distanceToWall", distanceToWall);
-        return distanceToWall;
     }
 
-    double getAngleLimelightToTag() { // TY + limelight mount angle
-        if (isTargetDetected() == true)
-        {
-            double ty = getTY();
-            double angleToTagDegrees = limelightMountAngle + ty;
-            frc::SmartDashboard::PutNumber("vertical angle", angleToTagDegrees);
-            return angleToTagDegrees;
+    double getTagHeight() {
+        int tagID = getTagID();
+        if (tagData.count(tagID)) {
+            return tagData[tagID].height;
+        } else {
+            return 0;
         }
-        else
-        {
+    }
+
+    double getAngleSetpoint() {
+        int tagID = getTagID();
+        if (tagData.count(tagID)) {
+            return tagData[tagID].angleSetpoint;
+        } else {
+            return 0;
+        }
+    }
+
+    double getDistanceToWall() {
+        return getTargetPoseRobotSpace().y;
+    }
+
+    double getAngleLimelightToTag() {
+        if (isTargetDetected()) {
+            return limelightMountAngle + getTY();
+        } else {
             return 0;
         }
     }
 
     std::vector<double> getPolarCoords() {
-        std::vector<double> polarCoords = {getTX(), getDistanceToWall()};
-        return polarCoords;
+        return {getTX(), getDistanceToWall()};
     }
 
     std::vector<double> getXYCoords() {
-        double angle = getTX() * (PI / 180);
-        double x = (getDistanceToWall()) * sin(angle);
-        double y = (getDistanceToWall()) * cos(angle);
-        std::vector<double> xyCoords = {x, y};
-        return xyCoords;
-    }
-
-    bool isIn(int object, std::vector<int> inp) { // use to check if current ID is part of target ID list
-        for (unsigned int i = 0; i < inp.size(); i++)
-        {
-            if (inp[i] == object)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void setLEDMode(int mode) { // 0 for off / 1 for blink / 2 for on
-        nt::NetworkTableInstance::GetDefault().GetTable(limelightName)->PutNumber("ledMode", mode);
+        double angle = getTX() * (M_PI / 180);
+        double dist = getDistanceToWall();
+        double x = dist * sin(angle);
+        double y = dist * cos(angle);
+        return {x, y};
     }
 
     Pose3d getTargetPoseRobotSpace() {

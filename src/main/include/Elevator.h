@@ -5,8 +5,8 @@
 #include <rev/SparkClosedLoopController.h>
 #include <rev/config/SparkMaxConfig.h>
 
-constexpr int ElevatorID = 7; //Update after it is finished
-
+#define elevatorID1 11
+#define elevatorID2 12
 
 class Elevator {
     public:
@@ -19,18 +19,25 @@ class Elevator {
         void setState(int state); // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
         void runMotor(double speed);
         void disable();
+        int getCurrentState();
 
     private:
         //These setpoints need to be changed when the elevator is assembled...
         //The set points are relative. we subtracted 10 from each
-        double starting_SP = 0.0;//lowest SP where the elevator starts
+        double starting_SP = 0.0;
         double level1 = 8.0;
         double level2 = 22.0; // rotations
         double cstation = 27.5;
         double level3 = 38.0;
-        double level4 = 52.0;//highest SP for the L4 on reef
-        rev::spark::SparkMax motor = rev::spark::SparkMax(ElevatorID, rev::spark::SparkLowLevel::MotorType::kBrushless);
+        double level4 = 52.0;
+
+        rev::spark::SparkMax motor = rev::spark::SparkMax(elevatorID1, rev::spark::SparkLowLevel::MotorType::kBrushless);
         rev::spark::SparkRelativeEncoder enc = motor.GetEncoder();
         rev::spark::SparkMaxConfig config{};
         rev::spark::SparkClosedLoopController elevatorCTR = motor.GetClosedLoopController();
+
+        rev::spark::SparkMax motor2 = rev::spark::SparkMax(elevatorID2, rev::spark::SparkLowLevel::MotorType::kBrushless);
+        rev::spark::SparkRelativeEncoder enc2 = motor2.GetEncoder();
+        rev::spark::SparkMaxConfig config2{};
+        rev::spark::SparkClosedLoopController elevatorCTR2 = motor2.GetClosedLoopController();
 };

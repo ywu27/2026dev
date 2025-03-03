@@ -20,8 +20,9 @@ public:
     void periodic();
     void enable();
     void disable();
-
-    void controlIntake(bool intakeIn, bool intakeClear);
-    void controlElevator(std::string dPadState);
-    void climb();
+    void intakeCoral();
+    void controlIntake(int mode);
+    void elevatorUp();
+    void elevatorDown();
+    void controlClimber(int position);
 };
