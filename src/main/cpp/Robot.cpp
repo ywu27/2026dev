@@ -139,8 +139,9 @@ void Robot::TeleopPeriodic()
   if (ctrOperator.GetCrossButtonReleased()) {
     mGyro.init();
   }
-  if (align.isAligned(limelight1)) {
+  if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
     mGyro.setYaw(zeroSetpoint);
+    // scoreCoral = true; // TEST THIS
   }
 
   // Drive function
@@ -159,9 +160,11 @@ void Robot::TeleopPeriodic()
   }
   else if (elevatorUp) {
     mSuperstructure.elevatorUp();
+    //ENDEFFECTOR
   }
   else if (elevatorDown) {
     mSuperstructure.elevatorDown();
+    //ENDEFFECTOR
   }
   else if (scoreCoral) {
     //ENDEFFECTOR
