@@ -35,12 +35,11 @@ public:
         if (!isAligned(limelight)) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0); //CHECK THIS
         }
         else {
             speeds = ChassisSpeeds(0, 0, 0);
         }
-        
         return speeds;
     }
 

@@ -126,37 +126,3 @@ void EndEffector::score() {
 //     // Default Auto goes here
 //   }
 // }
-
-// void Robot::TeleopInit() {
-// }
-
-// void Robot::TeleopPeriodic() {
-//   frc::SmartDashboard::PutNumber("Motor Position", mendeffector.angleMotor1.GetEncoder().GetPosition());
-//   if (ctr.GetCircleButton()){
-//     mendeffector.intake();
-//   }
-//   else if (ctr.GetCircleButtonReleased()){
-//     mendeffector.score();
-//   }
-//   else if (ctr.GetTriangleButton()) {
-//     mendeffector.disable();
-//   }
-// }
-
-// void Robot::DisabledInit() {}
-
-// void Robot::DisabledPeriodic() {}
-
-// void Robot::TestInit() {}
-
-// void Robot::TestPeriodic() {}
-
-// void Robot::SimulationInit() {}
-
-// void Robot::SimulationPeriodic() {}
-
-// #ifndef RUNNING_FRC_TESTS
-// int main() {
-//   return frc::StartRobot<Robot>();
-// }
-// #endif
