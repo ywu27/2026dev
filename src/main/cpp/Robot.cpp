@@ -97,7 +97,7 @@ void Robot::TeleopPeriodic()
     }
     targetDistance = 1;
     zeroSetpoint = limelight1.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight1, mHeadingController, targetDistance, offSet);
+    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
     vx = speeds.vxMetersPerSecond;
     vy = speeds.vyMetersPerSecond;
     fieldOriented = false;
@@ -111,7 +111,7 @@ void Robot::TeleopPeriodic()
     }
     targetDistance = 1;
     zeroSetpoint = limelight2.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight2, mHeadingController, targetDistance, offSet);
+    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
     vx = speeds.vxMetersPerSecond;
     vy = speeds.vyMetersPerSecond;
     fieldOriented = false;

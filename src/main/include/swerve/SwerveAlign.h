@@ -26,7 +26,7 @@ public:
         return false;
     }
 
-    ChassisSpeeds autoAlign(Limelight& limelight, SwerveHeadingController& headingController, double setpointDistance, double offsetSetpoint) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, double setpointDistance, double offsetSetpoint) { // distance in meters
         ChassisSpeeds speeds;
         double offset = limelight.getTargetPoseRobotSpace().x;
         double distanceToTag = limelight.getDistanceToWall();
@@ -40,7 +40,7 @@ public:
         else {
             speeds = ChassisSpeeds(0, 0, 0);
         }
-
+        
         return speeds;
     }
 

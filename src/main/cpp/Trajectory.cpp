@@ -220,7 +220,7 @@ void Trajectory::waitToScore(int delaySeconds) {
     mSuperstructure.mElevator.setState(4);
     mSuperstructure.mEndEffector.setState(EndEffector::AIM);
 
-    // while (!mAlign.isAligned()) { // TEST THIS
+    // while (!mAlign.isAligned(mLimelight)) { // TEST THIS
     //     ChassisSpeeds speeds = mAlign.align();
     //     mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false, false);
     // }

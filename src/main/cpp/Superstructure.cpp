@@ -71,15 +71,15 @@ void Superstructure::scoreCoral() {
     mEndEffector.setState(EndEffector::SCORE);
 }
 
-void Superstructure::controlClimber(int position) { // 0 for stow / 1 for setpoint / 2 for climbing
+void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint / 2 for climbing
     mClimber.setVelocity(3000.0); // CHANGE IF NECESSARY
-    if (position==0) {
-        mClimber.position(mClimber.STOW);
+    if (mode==0) {
+        mClimber.position(Climber::STOW);
     }
-    else if (position==1) {
-        mClimber.position(mClimber.CLIMB);
+    else if (mode==1) {
+        mClimber.position(Climber::CLIMB);
     }
-    else if (position==2) {
+    else if (mode==2) {
         mClimber.climb();
     }
     else {

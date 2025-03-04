@@ -19,8 +19,8 @@ void Climber::setVelocity(double speed){
 }
 
 void Climber::climb() {
-    climberCTR.SetReference(velocity, rev::spark::SparkBase::ControlType::kVelocity);
-    //motor.Set(1); // TRY THIS AS WELL
+    //climberCTR.SetReference(velocity, rev::spark::SparkBase::ControlType::kVelocity);
+    motor.Set(1); // TRY THIS AS WELL
 }
 
 void Climber::position(climberState climbState) {
