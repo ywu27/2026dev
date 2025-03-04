@@ -6,7 +6,7 @@ void Superstructure::init() {
     mClimber.init();
     mEndEffector.init();
     mElevator.setState(0);
-    mClimber.position(mClimber.STOW);
+    mClimber.position(Climber::STOW);
 
     enableModules = false;
     moduleThread = std::thread(&Superstructure::periodic, this);

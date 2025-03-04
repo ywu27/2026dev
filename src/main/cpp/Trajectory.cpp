@@ -1,37 +1,30 @@
 #include "Trajectory.h"
-#include "SwerveDrive.h"
-#include "SwerveModule.h"
-#include "Robot.h"
-
-#include <pathplanner/lib/trajectory/PathPlannerTrajectory.h>
-#include <pathplanner/lib/path/PathPlannerPath.h>
-#include <pathplanner/lib/path/GoalEndState.h>
 
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 
 // controller used to track trajectories + correct minor disturbances
 static frc::HolonomicDriveController controller{
-    frc::PIDController{0.1, 0, 0}, // vy
-    frc::PIDController{0.1, 0, 0}, // vx
-    frc::ProfiledPIDController<units::radian>{ // rotation PID
-        steerP, 0, 0,
+    frc::PIDController{0.06, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{0.06, 0, 0}, // Change PIDs to be more accurate
+    frc::ProfiledPIDController<units::radian>{
+        0.4, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{
-            units::radians_per_second_t(5), // prev: 189.2
-            units::radians_per_second_squared_t(100)}}}; // prev: 2665.993 * (25.8 / 7.6)
+            units::radians_per_second_t(5.0), // prev: 5.0
+            units::radians_per_second_squared_t(100)}}}; // prev: 100
 
 /**
  * Drives robot to the next state on trajectory
  * Odometry must be in meters
  */
 void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
-{   
+{
     // Calculate new chassis speeds given robot position and next desired state in trajectory
-    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.getOdometryPose(), state.pose, state.linearVelocity, state.deltaRot);
+    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.getOdometryPose(), frc::Pose2d{state.pose.Translation(), state.heading}, state.linearVelocity, state.deltaRot);
 
     // Calculate x, y speeds from MPS
-    double vx_feet = correction.vx.value() * 3.281;
-    double vy_feet = correction.vy.value() * 3.281;
+    double vy_feet = correction.vx.value() * 3.281;
+    double vx_feet = correction.vy.value() * 3.281;
 
     // Clamp rot speed to 2.0 since that is the max rot we allow
     double rot = std::clamp(correction.omega.value(), -moduleMaxRot, moduleMaxRot);
@@ -40,13 +33,13 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
     frc::SmartDashboard::PutNumber("autoVX", vx_feet);
     frc::SmartDashboard::PutNumber("autoRot", rot);
 
-    mDrive.Drive(ChassisSpeeds{-vy_feet, vx_feet, rot}, mGyro.getBoundedAngleCCW(), true, true);
+    mDrive.Drive(ChassisSpeeds{-vx_feet, vy_feet, rot}, mGyro.getBoundedAngleCCW(), true, true);
 }
 
 /**
  * Follows pathplanner trajectory
  */
-void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance, bool intake, bool first, float startAngle = 0.0)
+void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance, bool intake, bool first, float startAngle)
 {
     mDrive.enableModules();
     auto path = PathPlannerPath::fromPathFile(traj_dir_file_path);
@@ -62,10 +55,10 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     if (first)
     {
         auto const initialState = traj.getInitialState();
-        auto const initialPose = initialState.pose;
+        auto const initialPose = initialState.pose.Translation();
 
         // set second param to initial holonomic rotation
-        mDrive.resetOdometry(initialPose.Translation(), units::angle::degree_t(startAngle));
+        mDrive.resetOdometry(initialPose, units::angle::degree_t(startAngle));
     }
 
     frc::Timer trajTimer;
@@ -75,7 +68,7 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     {
         if (intake)
         {
-            mSuperstructure.controlIntake(1);
+            std::this_thread::sleep_for(std::chrono::seconds(2));
         }
 
         auto currentTime = trajTimer.Get();
@@ -97,6 +90,10 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     mDrive.stopModules();
 }
 
+// EDIT LATER 
+/**
+ * Calls sequences of follow functions for set paths
+ */
 void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 {
     switch (autoTrajectory)
@@ -104,31 +101,42 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
         case DO_NOTHING:
             break;
         case auto_1A:
-            follow("1 to A", false, false, true);
-            waitToScore(1);
+            //follow("Test Movement", flipAlliance, false, true, 0.0);
+            follow("1 to A", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to A", flipAlliance, false, false);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
             break;
-        //     follow("A to Top Coral Station");
-        //     follow("Top Coral Station to A");
-        //     follow("A to Top Coral Station");
-        //     break;
-        // case auto_1B:
-        //     follow("1 to B");
-        //     follow("B to Top Coral Station");
-        //     follow("Top Coral Station to B");
-        //     follow("B to Top Coral Station");
-        //     break;
-        // case auto_1C:
-        //     follow("1 to C");
-        //     follow("C to Bottom Coral Station");
-        //     follow("Bottom Coral Station to C");
-        //     follow("C to Bottom Coral Station");
-        //     break;
-        // case auto_1D:
-        //     follow("1 to D");
-        //     follow("D to Bottom Coral Station");
-        //     follow("Bottom Coral Station to D");
-        //     follow("D to Bottom Coral Station");
-        //     break;
+        case auto_1B:
+            follow("1 to B", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to B", flipAlliance, false, false);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            break;
+        case auto_1C:
+            follow("1 to C", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to C", flipAlliance, false, false);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_1D:
+            follow("1 to D", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("D to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to D", flipAlliance, false, false);
+            waitToScore(2);
+            follow("D to Bottom Coral Station", flipAlliance, false, false);
+            break;
         // case auto_1E:
         //     follow("1 to E");
         //     follow("E to Bottom Coral Station");
@@ -213,6 +221,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
         //     follow("Bottom Coral Station to F");
         //     follow("F to Bottom Coral Station");
         //     break;
+
     }
 }
 
