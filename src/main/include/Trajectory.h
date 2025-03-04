@@ -74,7 +74,7 @@ public:
 
     void followPath(Trajectory::autos autoTrajectory, bool flipAlliance);
 
-    void waitToShoot(int delaySeconds);
+    void waitToScore(int delaySeconds);
 
     void driveError(); 
 

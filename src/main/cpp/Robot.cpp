@@ -13,12 +13,6 @@ void Robot::RobotInit()
   mDrive.initModules();
   mSuperstructure.init();
   mGyro.init();
-  if (frc::DriverStation::GetAlliance()==frc::DriverStation::Alliance::kRed) {
-    alliance = 0;
-  }
-  else {
-    alliance = 1;
-  }
   //frc::CameraServer::StartAutomaticCapture(); UNCOMMENT LATER
 }
 
@@ -98,7 +92,9 @@ void Robot::TeleopPeriodic()
   double zeroSetpoint = 0;
 
   if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode
-    offSet = 0.381; // meters
+    if (limelight1.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
     targetDistance = 1;
     zeroSetpoint = limelight1.getAngleSetpoint();
     ChassisSpeeds speeds = align.autoAlign(limelight1, mHeadingController, targetDistance, offSet);
@@ -110,7 +106,9 @@ void Robot::TeleopPeriodic()
     rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
   }
   else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode
-    offSet = 0.381; // meters
+    if (limelight2.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
     targetDistance = 1;
     zeroSetpoint = limelight2.getAngleSetpoint();
     ChassisSpeeds speeds = align.autoAlign(limelight2, mHeadingController, targetDistance, offSet);
@@ -160,14 +158,12 @@ void Robot::TeleopPeriodic()
   }
   else if (elevatorUp) {
     mSuperstructure.elevatorUp();
-    //ENDEFFECTOR
   }
   else if (elevatorDown) {
     mSuperstructure.elevatorDown();
-    //ENDEFFECTOR
   }
   else if (scoreCoral) {
-    //ENDEFFECTOR
+    mSuperstructure.scoreCoral();
   }
   else if (scoreAlgae) {
     mSuperstructure.controlIntake(2);

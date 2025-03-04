@@ -4,6 +4,7 @@
 #include "Climber.h"
 #include "Intake.h"
 #include "Elevator.h"
+#include "EndEffector.h"
 
 class Superstructure 
 {
@@ -15,6 +16,7 @@ public:
     Intake mIntake;
     Elevator mElevator;
     Climber mClimber;
+    EndEffector mEndEffector;
 
     void init();
     void periodic();
@@ -24,5 +26,6 @@ public:
     void controlIntake(int mode);
     void elevatorUp();
     void elevatorDown();
+    void scoreCoral();
     void controlClimber(int position);
 };

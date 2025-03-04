@@ -56,13 +56,11 @@ public:
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Superstructure mSuperstructure;
   
-  int alliance;
-  Limelight limelight1 = Limelight("one", alliance);
-  Limelight limelight2 = Limelight("two", alliance);
+  Limelight limelight1 = Limelight("one", frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kRed)); // FIX THIS
+  Limelight limelight2 = Limelight("two", frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kRed));
 
   // For Auto Align
   SwerveAlign align;
-  // units::second_t timestamp = frc::Timer::GetFPGATimestamp();
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

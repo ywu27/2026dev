@@ -75,7 +75,7 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     {
         if (intake)
         {
-            mSuperstructure.controlIntake(true, false);
+            mSuperstructure.controlIntake(1);
         }
 
         auto currentTime = trajTimer.Get();
@@ -97,129 +97,144 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     mDrive.stopModules();
 }
 
-// EDIT LATER 
-/**
- * Calls sequences of follow functions for set paths
- */
-// void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
-// {
-//     switch (autoTrajectory)
-//     {
-//         case DO_NOTHING:
-//             break;
-//         case auto_1A:
-//             follow("1 to A");
-//             follow("A to Top Coral Station");
-//             follow("Top Coral Station to A");
-//             follow("A to Top Coral Station");
-//             break;
-//         case auto_1B:
-//             follow("1 to B");
-//             follow("B to Top Coral Station");
-//             follow("Top Coral Station to B");
-//             follow("B to Top Coral Station");
-//             break;
-//         case auto_1C:
-//             follow("1 to C");
-//             follow("C to Bottom Coral Station");
-//             follow("Bottom Coral Station to C");
-//             follow("C to Bottom Coral Station");
-//             break;
-//         case auto_1D:
-//             follow("1 to D");
-//             follow("D to Bottom Coral Station");
-//             follow("Bottom Coral Station to D");
-//             follow("D to Bottom Coral Station");
-//             break;
-//         case auto_1E:
-//             follow("1 to E");
-//             follow("E to Bottom Coral Station");
-//             follow("Bottom Coral Station to E");
-//             follow("E to Bottom Coral Station");
-//             break;
-//         case auto_1F:
-//             follow("1 to F");
-//             follow("F to Bottom Coral Station");
-//             follow("Bottom Coral Station to F");
-//             follow("F to Bottom Coral Station");
-//             break;
-//         case auto_2A:
-//             follow("2 to A");
-//             follow("A to Top Coral Station");
-//             follow("Top Coral Station to A");
-//             follow("A to Top Coral Station");
-//             break;
-//         case auto_2B:
-//             follow("2 to B");
-//             follow("B to Top Coral Station");
-//             follow("Top Coral Station to B");
-//             follow("B to Top Coral Station");
-//             break;
-//         case auto_2C:
-//             follow("2 to C");
-//             follow("C to Bottom Coral Station");
-//             follow("Bottom Coral Station to C");
-//             follow("C to Bottom Coral Station");
-//             break;
-//         case auto_2D:
-//             follow("2 to D");
-//             follow("D to Bottom Coral Station");
-//             follow("Bottom Coral Station to D");
-//             follow("D to Bottom Coral Stationn");
-//             break;
-//         case auto_2E:
-//             follow("2 to E");
-//             follow("E to Bottom Coral Station");
-//             follow("Bottom Coral Station to E");
-//             follow("E to Bottom Coral Station");
-//             break;
-//         case auto_2F:    
-//             follow("2 to F");
-//             follow("F to Bottom Coral Station");
-//             follow("Bottom Coral Station to F");
-//             follow("F to Bottom Coral Station");
-//             break;
-//         case auto_3A:
-//             follow("3 to A");
-//             follow("A to Top Coral Station");
-//             follow("Top Coral Station to A");
-//             follow("A to Top Coral Station");
-//             break;
-//         case auto_3B:
-//             follow("3 to B");
-//             follow("B to Top Coral Station");
-//             follow("Top Coral Station to B");
-//             follow("B to Top Coral Station");
-//             break;
-//         case auto_3C:
-//             follow("3 to C");
-//             follow("C to Bottom Coral Station");
-//             follow("Bottom Coral Station to C");
-//             follow("C to Bottom Coral Station");
-//             break;
-//         case auto_3D:
-//             follow("3 to D");
-//             follow("D to Bottom Coral Station");
-//             follow("Bottom Coral Station to D");
-//             follow("D to Bottom Coral Station");
-//             break;
-//         case auto_3E:
-//             follow("3 to E");
-//             follow("E to Bottom Coral Station");
-//             follow("Bottom Coral Station to E");
-//             follow("E to Bottom Coral Station");
-//             break;
-//         case auto_3F:
-//             follow("3 to F");
-//             follow("F to Bottom Coral Station");
-//             follow("Bottom Coral Station to F");
-//             follow("F to Bottom Coral Station");
-//             break;
-
-//     }
-// }
-
-void Trajectory::waitToShoot(int delaySeconds)
+void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 {
-    //will finish when elevator is assembled and ready...closer to comp
+    switch (autoTrajectory)
+    {
+        case DO_NOTHING:
+            break;
+        case auto_1A:
+            follow("1 to A", false, false, true);
+            waitToScore(1);
+            break;
+        //     follow("A to Top Coral Station");
+        //     follow("Top Coral Station to A");
+        //     follow("A to Top Coral Station");
+        //     break;
+        // case auto_1B:
+        //     follow("1 to B");
+        //     follow("B to Top Coral Station");
+        //     follow("Top Coral Station to B");
+        //     follow("B to Top Coral Station");
+        //     break;
+        // case auto_1C:
+        //     follow("1 to C");
+        //     follow("C to Bottom Coral Station");
+        //     follow("Bottom Coral Station to C");
+        //     follow("C to Bottom Coral Station");
+        //     break;
+        // case auto_1D:
+        //     follow("1 to D");
+        //     follow("D to Bottom Coral Station");
+        //     follow("Bottom Coral Station to D");
+        //     follow("D to Bottom Coral Station");
+        //     break;
+        // case auto_1E:
+        //     follow("1 to E");
+        //     follow("E to Bottom Coral Station");
+        //     follow("Bottom Coral Station to E");
+        //     follow("E to Bottom Coral Station");
+        //     break;
+        // case auto_1F:
+        //     follow("1 to F");
+        //     follow("F to Bottom Coral Station");
+        //     follow("Bottom Coral Station to F");
+        //     follow("F to Bottom Coral Station");
+        //     break;
+        // case auto_2A:
+        //     follow("2 to A");
+        //     follow("A to Top Coral Station");
+        //     follow("Top Coral Station to A");
+        //     follow("A to Top Coral Station");
+        //     break;
+        // case auto_2B:
+        //     follow("2 to B");
+        //     follow("B to Top Coral Station");
+        //     follow("Top Coral Station to B");
+        //     follow("B to Top Coral Station");
+        //     break;
+        // case auto_2C:
+        //     follow("2 to C");
+        //     follow("C to Bottom Coral Station");
+        //     follow("Bottom Coral Station to C");
+        //     follow("C to Bottom Coral Station");
+        //     break;
+        // case auto_2D:
+        //     follow("2 to D");
+        //     follow("D to Bottom Coral Station");
+        //     follow("Bottom Coral Station to D");
+        //     follow("D to Bottom Coral Stationn");
+        //     break;
+        // case auto_2E:
+        //     follow("2 to E");
+        //     follow("E to Bottom Coral Station");
+        //     follow("Bottom Coral Station to E");
+        //     follow("E to Bottom Coral Station");
+        //     break;
+        // case auto_2F:    
+        //     follow("2 to F");
+        //     follow("F to Bottom Coral Station");
+        //     follow("Bottom Coral Station to F");
+        //     follow("F to Bottom Coral Station");
+        //     break;
+        // case auto_3A:
+        //     follow("3 to A");
+        //     follow("A to Top Coral Station");
+        //     follow("Top Coral Station to A");
+        //     follow("A to Top Coral Station");
+        //     break;
+        // case auto_3B:
+        //     follow("3 to B");
+        //     follow("B to Top Coral Station");
+        //     follow("Top Coral Station to B");
+        //     follow("B to Top Coral Station");
+        //     break;
+        // case auto_3C:
+        //     follow("3 to C");
+        //     follow("C to Bottom Coral Station");
+        //     follow("Bottom Coral Station to C");
+        //     follow("C to Bottom Coral Station");
+        //     break;
+        // case auto_3D:
+        //     follow("3 to D");
+        //     follow("D to Bottom Coral Station");
+        //     follow("Bottom Coral Station to D");
+        //     follow("D to Bottom Coral Station");
+        //     break;
+        // case auto_3E:
+        //     follow("3 to E");
+        //     follow("E to Bottom Coral Station");
+        //     follow("Bottom Coral Station to E");
+        //     follow("E to Bottom Coral Station");
+        //     break;
+        // case auto_3F:
+        //     follow("3 to F");
+        //     follow("F to Bottom Coral Station");
+        //     follow("Bottom Coral Station to F");
+        //     follow("F to Bottom Coral Station");
+        //     break;
+    }
+}
+
+void Trajectory::waitToScore(int delaySeconds) {
+    mSuperstructure.mElevator.setState(4);
+    mSuperstructure.mEndEffector.setState(EndEffector::AIM);
+
+    // while (!mAlign.isAligned()) { // TEST THIS
+    //     ChassisSpeeds speeds = mAlign.align();
+    //     mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false, false);
+    // }
+    // mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
+
+    double startTime = frc::Timer::GetFPGATimestamp().value();
+    while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - startTime < 2.0 + delaySeconds) {
+        // DELAY
+    };
+    mSuperstructure.scoreCoral();
+
+    startTime = frc::Timer::GetFPGATimestamp().value();
+    while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - startTime < 1.0 + delaySeconds) {
+        // DELAY
+    };
+    mSuperstructure.intakeCoral();
 }

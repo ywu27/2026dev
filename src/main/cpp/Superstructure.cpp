@@ -4,6 +4,7 @@ void Superstructure::init() {
     mIntake.init();
     mElevator.init();
     mClimber.init();
+    mEndEffector.init();
     mElevator.setState(0);
     mClimber.position(mClimber.STOW);
 
@@ -20,6 +21,7 @@ void Superstructure::periodic() {
             mIntake.disable();
             mElevator.disable();
             mClimber.disable();
+            mEndEffector.disable();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
@@ -50,19 +52,23 @@ void Superstructure::elevatorUp() {
     if (mElevator.getCurrentState()<4) {
         mElevator.setState(mElevator.getCurrentState() + 1);
     }
-    //ENDEFFECTOR
+    mEndEffector.setState(EndEffector::AIM);
 }
 
 void Superstructure::elevatorDown() {
     if (mElevator.getCurrentState()>1) { // TRY ZERO AS WELL
         mElevator.setState(mElevator.getCurrentState() - 1);
     }
-    //ENDEFFECTOR
+    mEndEffector.setState(EndEffector::AIM);
 }
 
 void Superstructure::intakeCoral() {
     mElevator.setState(5);
-    //ENDEFFECTOR
+    mEndEffector.setState(EndEffector::INTAKE);
+}
+
+void Superstructure::scoreCoral() {
+    mEndEffector.setState(EndEffector::SCORE);
 }
 
 void Superstructure::controlClimber(int position) { // 0 for stow / 1 for setpoint / 2 for climbing
