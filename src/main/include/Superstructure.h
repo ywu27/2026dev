@@ -28,4 +28,5 @@ public:
     void elevatorDown();
     void scoreCoral();
     void controlClimber(int position);
+    double speedLimiter();
 };

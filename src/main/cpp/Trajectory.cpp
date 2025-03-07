@@ -5,13 +5,13 @@
 
 // controller used to track trajectories + correct minor disturbances
 static frc::HolonomicDriveController controller{
-    frc::PIDController{0.06, 0, 0}, // Change PIDs to be more accurate
-    frc::PIDController{0.06, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
     frc::ProfiledPIDController<units::radian>{
-        0.4, 0, 0,
+        0.55, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{
-            units::radians_per_second_t(5.0), // prev: 5.0
-            units::radians_per_second_squared_t(100)}}}; // prev: 100
+            units::radians_per_second_t(6.0), // prev: 5.0
+            units::radians_per_second_squared_t(120)}}}; // prev: 100
 
 /**
  * Drives robot to the next state on trajectory
@@ -20,7 +20,7 @@ static frc::HolonomicDriveController controller{
 void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
 {
     // Calculate new chassis speeds given robot position and next desired state in trajectory
-    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.getOdometryPose(), frc::Pose2d{state.pose.Translation(), state.heading}, state.linearVelocity, state.deltaRot);
+    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.getOdometryPose(), frc::Pose2d{state.pose.Translation(), state.heading}, state.linearVelocity, state.heading);
 
     // Calculate x, y speeds from MPS
     double vy_feet = correction.vx.value() * 3.281;

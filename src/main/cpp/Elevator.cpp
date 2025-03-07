@@ -14,7 +14,7 @@ void Elevator::init(){
     motor2.Configure(config2, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
-void Elevator::setState(int state) {
+void Elevator::setState(int state) { // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
     if (state == 0) {
         elevatorCTR.SetReference(starting_SP, rev::spark::SparkLowLevel::ControlType::kPosition);
         elevatorCTR2.SetReference(starting_SP, rev::spark::SparkLowLevel::ControlType::kPosition);

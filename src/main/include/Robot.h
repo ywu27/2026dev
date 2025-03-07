@@ -75,6 +75,7 @@ public:
   bool scoreAmp = false;
   bool liftElev = false;
   bool cleanDriveAccum = true;
+  double speedLimiter = 1.0;
 
   // Controllers
   SwerveHeadingController mHeadingController = SwerveHeadingController(-4.0, 4.0);

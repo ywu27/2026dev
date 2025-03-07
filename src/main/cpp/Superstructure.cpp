@@ -86,3 +86,18 @@ void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint /
         mClimber.disable();
     }
 }
+
+double Superstructure::speedLimiter() {
+    if (mElevator.currentState == 0 || mElevator.currentState == 1) {
+        return 1.0;
+    }
+    else if (mElevator.currentState == 2 || mElevator.currentState == 3) {
+        return 0.75;
+    }
+    else if (mElevator.currentState == 4 || mElevator.currentState == 5) {
+        return 0.5;
+    }
+    else {
+        return 1.0;
+    }
+}

@@ -53,6 +53,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+  double speedLimiter = mSuperstructure.speedLimiter();
   bool fieldOriented = mGyro.gyro.IsConnected();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
@@ -62,8 +63,8 @@ void Robot::TeleopPeriodic()
   // Controller inputs
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);
   double leftY = ControlUtil::deadZonePower(-ctr.GetLeftY(), ctrDeadzone, 1);
-  leftX = xStickLimiter.calculate(leftX); 
-  leftY = yStickLimiter.calculate(leftY);
+  leftX = xStickLimiter.calculate(leftX) * speedLimiter; 
+  leftY = yStickLimiter.calculate(leftY) * speedLimiter;
   double rightX = ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
   double rot = 0;
 
