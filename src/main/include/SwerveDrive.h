@@ -79,6 +79,6 @@ public:
     void resetOdometry(frc::Translation2d trans, frc::Rotation2d angle);
     frc::Pose2d getOdometryPose();
     void updateOdometry();
-    void displayDriveTelemetry();
-    void zeroAccumulation();
+    // void displayDriveTelemetry();
+    // void zeroAccumulation();
 };

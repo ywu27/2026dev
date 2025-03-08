@@ -128,7 +128,7 @@ public:
     }
 
     std::vector<double> getXYCoords() {
-        double angle = getTX() * (M_PI / 180);
+        double angle = getTX() * (3.14153 / 180);
         double dist = getDistanceToWall();
         double x = dist * sin(angle);
         double y = dist * cos(angle);

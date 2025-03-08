@@ -19,7 +19,7 @@ void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyr
     desiredVy = desiredSpeeds.vyMetersPerSecond;
 
     if (cleanAccum && fabs(desiredVx) < (moduleMaxFPS * 0.1) && fabs(desiredVy) < (moduleMaxFPS * 0.1)) {
-        zeroAccumulation();
+        // zeroAccumulation();
         frc::SmartDashboard::PutNumber("CleanedAccum", true);
     } else {
         frc::SmartDashboard::PutNumber("CleanedAccum", false);
@@ -162,12 +162,12 @@ void SwerveDrive::updateOdometry() {
  * Uses gyro widget
  * Flips angle gyro if module has negative velocity
  */
-void SwerveDrive::displayDriveTelemetry() {
-}
+// void SwerveDrive::displayDriveTelemetry() {
+// }
 
-void SwerveDrive::zeroAccumulation() {
-    // mFrontLeft.m_pidController.SetIAccum(0.0);
-    // mFrontRight.m_pidController.SetIAccum(0.0);
-    // mBackRight.m_pidController.SetIAccum(0.0);
-    // mBackLeft.m_pidController.SetIAccum(0.0);
-}
+// void SwerveDrive::zeroAccumulation() {
+//     mFrontLeft.m_pidController.SetIAccum(0.0);
+//     mFrontRight.m_pidController.SetIAccum(0.0);
+//     mBackRight.m_pidController.SetIAccum(0.0);
+//     mBackLeft.m_pidController.SetIAccum(0.0);
+// }
