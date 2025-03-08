@@ -226,7 +226,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
-    mSuperstructure.mElevator.setState(4);
+    mSuperstructure.mElevator.setState(4, false);
     mSuperstructure.mEndEffector.setState(EndEffector::AIM);
 
     // while (!mAlign.isAligned(mLimelight)) { // TEST THIS

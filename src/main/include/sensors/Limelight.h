@@ -7,6 +7,7 @@
 #include "LimelightHelpers.h"
 #include "geometry/Pose3d.h"
 #include "Constants.h"
+#include <frc/DriverStation.h>
 
 class Limelight {
 
@@ -34,10 +35,10 @@ public:
     Alliance alliance;
     TagType tagType;
 
-    Limelight(std::string name) { // TEST THIS
+    Limelight(std::string name, frc::DriverStation::Alliance a) { // TEST THIS
         limelightName = name;
         
-        if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
+        if (a == frc::DriverStation::Alliance::kRed) {
             alliance = RED;
         }
         else {
