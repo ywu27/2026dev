@@ -77,6 +77,9 @@ public:
   bool cleanDriveAccum = true;
   double speedLimiter = 1.0;
 
+  // Hold Timer for dPad hold
+  frc::Timer holdTimer;
+
   // Controllers
   SwerveHeadingController mHeadingController = SwerveHeadingController(-4.0, 4.0);
   SlewRateLimiter xStickLimiter = SlewRateLimiter(ctrSlewRate);

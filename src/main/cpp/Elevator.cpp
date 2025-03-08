@@ -14,42 +14,17 @@ void Elevator::init(){
     motor2.Configure(config2, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 }
 
-void Elevator::setState(int state) { // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
-    if (state == 0) {
-        elevatorCTR.SetReference(starting_SP, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(starting_SP, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
+void Elevator::setState(int state, bool algae) { // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
+    if (algae && ((state + 5) <= 7)) {
+        setpointState = levelHeight[state + 5];
+        state = state + 5;
     }
-
-    else if (state == 1){
-        elevatorCTR.SetReference(level1, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(level1, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
+    else {
+        setpointState = levelHeight[state];
     }
-
-    else if (state == 2){
-        elevatorCTR.SetReference(level2, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(level2, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
-    }
-
-    else if (state == 3){
-        elevatorCTR.SetReference(level3, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(level3, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
-    }
-
-    else if (state == 4){
-        elevatorCTR.SetReference(level4, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(level4, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
-    }
-
-    else if (state == 5){
-        elevatorCTR.SetReference(cstation, rev::spark::SparkLowLevel::ControlType::kPosition);
-        elevatorCTR2.SetReference(cstation, rev::spark::SparkLowLevel::ControlType::kPosition);
-        currentState = state;
-    }
+    elevatorCTR.SetReference(setpointState, rev::spark::SparkLowLevel::ControlType::kPosition);
+    elevatorCTR2.SetReference(setpointState, rev::spark::SparkLowLevel::ControlType::kPosition);
+    currentState = state;
 }
 
 int Elevator::getCurrentState() {

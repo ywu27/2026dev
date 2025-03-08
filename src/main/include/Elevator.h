@@ -4,33 +4,35 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/SparkClosedLoopController.h>
 #include <rev/config/SparkMaxConfig.h>
+#include <array>
 
 #define elevatorID1 11
 #define elevatorID2 12
 
 class Elevator {
     public:
-        // enum elevatorState{
-        //     START, LEVEL1, LEVEL2, LEVEL3, LEVEL4, CSTATION 
-        // };
-        int currentState = 0;
+        // Need to be changed, setpoints in rotations
+        double startPoint = 0.0;
+        double CoralLevel1 = 8.0;
+        double CoralLevel2 = 22.0; 
+        double CoralLevel3 = 38.0;
+        double CoralLevel4 = 52.0;
+        double CoralStation = 27.5;
+        double AlgaeLevel1 = 8.0; 
+        double AlgaeLevel2 = 15.0; 
+
+        std::array<double, 8> levelHeight{startPoint, CoralLevel1, CoralLevel2, CoralLevel3, CoralLevel4, CoralStation, AlgaeLevel1, AlgaeLevel2};
+
+        int currentState = 0.0;
+        double setpointState;
 
         void init();
-        void setState(int state); // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
+        void setState(int setpointState, bool algae); // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
         void runMotor(double speed);
         void disable();
         int getCurrentState();
 
     private:
-        //These setpoints need to be changed when the elevator is assembled...
-        //The set points are relative. we subtracted 10 from each
-        double starting_SP = 0.0;
-        double level1 = 8.0;
-        double level2 = 22.0; // rotations
-        double cstation = 27.5;
-        double level3 = 38.0;
-        double level4 = 52.0;
-
         rev::spark::SparkMax motor = rev::spark::SparkMax(elevatorID1, rev::spark::SparkLowLevel::MotorType::kBrushless);
         rev::spark::SparkRelativeEncoder enc = motor.GetEncoder();
         rev::spark::SparkMaxConfig config{};

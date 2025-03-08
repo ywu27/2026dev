@@ -5,7 +5,7 @@ void Superstructure::init() {
     mElevator.init();
     mClimber.init();
     mEndEffector.init();
-    mElevator.setState(0);
+    mElevator.setState(0, false);
     mClimber.position(Climber::STOW);
 
     enableModules = false;
@@ -48,22 +48,27 @@ void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 
     }
 }
 
-void Superstructure::elevatorUp() {
-    if (mElevator.getCurrentState()<4) {
-        mElevator.setState(mElevator.getCurrentState() + 1);
+void Superstructure::elevatorUp(bool algae) {
+    if (algae && mElevator.currentState == 6) {
+        mElevator.setState(mElevator.getCurrentState() + 1, true);
     }
-    mEndEffector.setState(EndEffector::AIM);
+    else if (mElevator.currentState < 4) {
+        mElevator.setState(mElevator.getCurrentState() + 1, false);
+        mEndEffector.setState(EndEffector::AIM);
+    }
 }
-
-void Superstructure::elevatorDown() {
-    if (mElevator.getCurrentState()>1) { // TRY ZERO AS WELL
-        mElevator.setState(mElevator.getCurrentState() - 1);
+void Superstructure::elevatorDown(bool algae) {
+    if (algae && mElevator.currentState == 7) { // TRY ZERO AS WELL
+        mElevator.setState(mElevator.getCurrentState() - 1, true);
     }
-    mEndEffector.setState(EndEffector::AIM);
+    else if (mElevator.currentState > 1) {
+        mElevator.setState(mElevator.getCurrentState() - 1, false);
+        mEndEffector.setState(EndEffector::AIM);
+    }
 }
 
 void Superstructure::intakeCoral() {
-    mElevator.setState(5);
+    mElevator.setState(5, false);
     mEndEffector.setState(EndEffector::INTAKE);
 }
 

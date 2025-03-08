@@ -34,10 +34,10 @@ public:
     Alliance alliance;
     TagType tagType;
 
-    Limelight(std::string name, frc::DriverStation::Alliance allianceOption){ // FIX THIS
+    Limelight(std::string name) { // TEST THIS
         limelightName = name;
         
-        if (allianceOption == frc::DriverStation::Alliance::kRed) {
+        if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed) {
             alliance = RED;
         }
         else {

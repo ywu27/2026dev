@@ -24,8 +24,8 @@ public:
     void disable();
     void intakeCoral();
     void controlIntake(int mode);
-    void elevatorUp();
-    void elevatorDown();
+    void elevatorUp(bool algae);
+    void elevatorDown(bool algae);
     void scoreCoral();
     void controlClimber(int position);
     double speedLimiter();
