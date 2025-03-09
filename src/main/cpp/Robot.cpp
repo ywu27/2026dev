@@ -54,6 +54,8 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
+  frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
+  
   double speedLimiter = mSuperstructure.speedLimiter();
   bool fieldOriented = mGyro.gyro.IsConnected();
 
@@ -74,10 +76,10 @@ void Robot::TeleopPeriodic()
   bool rumbleController = false; //ADD THIS
   bool alignLimelight = ctr.GetR2Button();
 
-  bool intakeAlgae = ctr.GetCircleButtonPressed();
-  bool intakeCoral = ctr.GetSquareButtonPressed();
-  bool scoreCoral = ctr.GetCrossButtonPressed(); // TEST THIS
-  bool scoreAlgae = ctr.GetCrossButtonPressed();
+  bool intakeAlgae = ctr.GetCircleButton();
+  bool scoreAlgae = ctr.GetSquareButton();
+  bool scoreCoral = ctr.GetCrossButton(); // TEST THIS
+  bool intakeCoral = ctr.GetTriangleButton();
 
   bool elevatorUp = (dPad == 0);
   bool elevatorDown = (dPad == 180);
@@ -86,6 +88,7 @@ void Robot::TeleopPeriodic()
   bool stowClimber = ctrOperator.GetCircleButtonPressed();
   bool setClimberSetpoint = ctrOperator.GetTriangleButtonPressed();
   bool climb = ctrOperator.GetSquareButton();
+  bool reverseClimb = ctrOperator.GetCrossButton();
   int dPadOperator = ctrOperator.GetPOV();
 
   // Driving Modes
@@ -218,10 +221,12 @@ void Robot::TeleopPeriodic()
     mSuperstructure.controlClimber(1);
   }
   else if (climb) {
-    mSuperstructure.controlClimber(2); 
+    mSuperstructure.controlClimber(2); // climb
+  }
+  else if (reverseClimb) {
+    mSuperstructure.controlClimber(3); // reverse
   }
   else {
-
   }
 
   // Smart Dashboard Info

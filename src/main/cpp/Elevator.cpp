@@ -12,6 +12,9 @@ void Elevator::init(){
 
     motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
     motor2.Configure(config2, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
+
+    enc.SetPosition(0);
+    enc2.SetPosition(0);
 }
 
 void Elevator::setState(int state, bool algae) { // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station

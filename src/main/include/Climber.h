@@ -29,5 +29,6 @@ class Climber{
         void disable();
         void setVelocity(double speed);
         void climb();
+        void reverse();
         void position(climberState climbState);
 };

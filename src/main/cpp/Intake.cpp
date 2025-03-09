@@ -13,6 +13,9 @@ void Intake::init() {
 
     angleMotor.Configure(angleConfig, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
     intakeMotor.Configure(intakeConfig, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
+
+    angleEnc.SetPosition(0);
+    intakeEnc.SetPosition(0);
 }
 
 void Intake::disable() {

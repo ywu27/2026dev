@@ -35,15 +35,21 @@ void Superstructure::disable() {
     enableModules = false;
 }
 
-void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for clear
+void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
     mIntake.setIntakeSpeed(2000.0); // CHANGE IF NECESSARY
     if (mode==0) {
         mIntake.setIntakeState(Intake::intakeState::STOP);
     }
     else if (mode==1) {
-        mIntake.setIntakeState(Intake::intakeState::IN);
+        mIntake.setIntakeSpeed(2.5);
+        mIntake.setIntakeState(Intake::IN);
     }
     else if (mode==2) {
+        mIntake.setIntakeSpeed(0.05);
+        mIntake.setIntakeState(Intake::IN);
+    }
+    else if (mode==3) {
+        mIntake.setIntakeSpeed(2.5);
         mIntake.setIntakeState(Intake::intakeState::CLEAR);
     }
 }
@@ -76,7 +82,7 @@ void Superstructure::scoreCoral() {
     mEndEffector.setState(EndEffector::SCORE);
 }
 
-void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint / 2 for climbing
+void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint / 2 for climbing / 3 for reverse
     mClimber.setVelocity(3000.0); // CHANGE IF NECESSARY
     if (mode==0) {
         mClimber.position(Climber::STOW);
@@ -86,6 +92,9 @@ void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint /
     }
     else if (mode==2) {
         mClimber.climb();
+    }
+    else if (mode==3) {
+        mClimber.reverse();
     }
     else {
         mClimber.disable();

@@ -7,6 +7,7 @@
 #include <util/ShuffleUI.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/config/SparkMaxConfig.h>
+#include "sensors/ColorSensor.h"
 
 #define intakeID 11
 #define angleID 12
@@ -28,6 +29,8 @@ private:
     rev::spark::SparkClosedLoopController angleCtr = angleMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder angleEnc = angleMotor.GetEncoder();
     rev::spark::SparkMaxConfig angleConfig{};
+
+    ColorSensor cSensor{frc::I2C::Port::kOnboard};
 
 public:
     enum intakeState

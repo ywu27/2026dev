@@ -32,7 +32,6 @@ class Elevator {
         void disable();
         int getCurrentState();
 
-    private:
         rev::spark::SparkMax motor = rev::spark::SparkMax(elevatorID1, rev::spark::SparkLowLevel::MotorType::kBrushless);
         rev::spark::SparkRelativeEncoder enc = motor.GetEncoder();
         rev::spark::SparkMaxConfig config{};
