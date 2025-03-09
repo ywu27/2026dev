@@ -20,6 +20,8 @@ private:
     const int clearCurrentThreshold = 20;
     const int clearVelocityThreshold = 1000;
 
+public:
+
     rev::spark::SparkMax intakeMotor = rev::spark::SparkMax(intakeID, rev::spark::SparkMax::MotorType::kBrushless);
     rev::spark::SparkClosedLoopController intakeCtr = intakeMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder intakeEnc = intakeMotor.GetEncoder();
@@ -29,10 +31,8 @@ private:
     rev::spark::SparkClosedLoopController angleCtr = angleMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder angleEnc = angleMotor.GetEncoder();
     rev::spark::SparkMaxConfig angleConfig{};
-
+    
     ColorSensor cSensor{frc::I2C::Port::kOnboard};
-
-public:
     enum intakeState
     {
         IN,

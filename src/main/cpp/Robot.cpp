@@ -55,7 +55,7 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
   frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
-  
+
   double speedLimiter = mSuperstructure.speedLimiter();
   bool fieldOriented = mGyro.gyro.IsConnected();
 
@@ -86,9 +86,9 @@ void Robot::TeleopPeriodic()
   
   // Co-driver
   bool stowClimber = ctrOperator.GetCircleButtonPressed();
-  bool setClimberSetpoint = ctrOperator.GetTriangleButtonPressed();
+  // bool setClimberSetpoint = ctrOperator.GetTriangleButtonPressed();
   bool climb = ctrOperator.GetSquareButton();
-  bool reverseClimb = ctrOperator.GetCrossButton();
+  bool reverseClimb = ctrOperator.GetTriangleButton();
   int dPadOperator = ctrOperator.GetPOV();
 
   // Driving Modes
@@ -158,9 +158,6 @@ void Robot::TeleopPeriodic()
   if (intakeCoral) {
     mSuperstructure.intakeCoral();
   }
-  else if (intakeAlgae) {
-    mSuperstructure.controlIntake(1);
-  }
   else if (elevatorUp) {
     if (elevatorUp && !ctr.GetL2Button()) {
       holdTimer.Start();
@@ -214,21 +211,33 @@ void Robot::TeleopPeriodic()
   else if (scoreCoral) {
     mSuperstructure.scoreCoral();
   }
-  else if (scoreAlgae) {
-    mSuperstructure.controlIntake(2);
-  }
-  else if (setClimberSetpoint) {
-    mSuperstructure.controlClimber(1);
-  }
+  // else if (setClimberSetpoint) {
+  //   mSuperstructure.controlClimber(1);
+  // }
   else if (climb) {
     mSuperstructure.controlClimber(2); // climb
   }
   else if (reverseClimb) {
     mSuperstructure.controlClimber(3); // reverse
   }
-  else {
+  else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
+    mSuperstructure.mIntake.setIntakeSpeed(2.3);
+    mSuperstructure.mIntake.setIntakeState(Intake::IN);
   }
-
+  else if (scoreAlgae) {
+    mSuperstructure.mIntake.setIntakeSpeed(1);
+    mSuperstructure.mIntake.setIntakeState(Intake::CLEAR);
+    mSuperstructure.mIntake.angleCtr.SetReference(-0.15, rev::spark::SparkLowLevel::ControlType::kPosition);
+  }
+  else if (mSuperstructure.mIntake.cSensor.isTarget()){
+    mSuperstructure.mIntake.setIntakeSpeed(0.3);
+    mSuperstructure.mIntake.setIntakeState(Intake::IN);
+  }
+  else {
+    mSuperstructure.mIntake.intakeMotor.Set(0);
+    mSuperstructure.mIntake.angleMotor.Set(0);
+  }
+  
   // Smart Dashboard Info
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
   frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
