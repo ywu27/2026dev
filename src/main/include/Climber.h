@@ -6,7 +6,7 @@
 #include <rev/SparkRelativeEncoder.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-#define climberID 5
+#define climberID 13
 
 class Climber{
     private:
