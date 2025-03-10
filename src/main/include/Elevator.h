@@ -6,6 +6,7 @@
 #include <rev/config/SparkMaxConfig.h>
 #include <array>
 
+//UPDATE HERE, conflicting CAN IDs
 #define elevatorID1 11
 #define elevatorID2 12
 
