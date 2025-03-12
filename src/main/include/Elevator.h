@@ -5,13 +5,13 @@
 #include <rev/SparkClosedLoopController.h>
 #include <rev/config/SparkMaxConfig.h>
 #include <array>
+#include <frc/DigitalInput.h>
 
 #define elevatorID1 9
 #define elevatorID2 11
 
 class Elevator {
     public:
-        // Need to be changed, setpoints in rotations
         double startPoint = 0.0;
         double CoralLevel1 = 8.0;
         double CoralLevel2 = 22.0; 
@@ -41,4 +41,6 @@ class Elevator {
         rev::spark::SparkRelativeEncoder enc2 = motor2.GetEncoder();
         rev::spark::SparkMaxConfig config2{};
         rev::spark::SparkClosedLoopController elevatorCTR2 = motor2.GetClosedLoopController();
+
+        frc::DigitalInput limitSwitch {0};
 };

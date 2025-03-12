@@ -23,7 +23,7 @@ public:
     void enable();
     void disable();
     void intakeCoral();
-    void controlIntake(int mode);
+    // void controlIntake(int mode);
     void elevatorUp(bool algae);
     void elevatorDown(bool algae);
     void scoreCoral();

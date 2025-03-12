@@ -67,10 +67,11 @@ void EndEffector::intake() {
 
 void EndEffector::aim() {
     angleCTR2.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition);
+    // angleCTR2.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, 0.2); //TEST THIS
     scoringMotor.Set(-1);
 }
 
 void EndEffector::score() {
     scoringMotor.Set(1);
-    //scoringCTR.SetReference(5, rev::spark::SparkLowLevel::ControlType::kPosition);
+    //scoringCTR.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition); //TEST THIS
 }

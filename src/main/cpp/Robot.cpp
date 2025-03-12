@@ -48,11 +48,16 @@ void Robot::TeleopPeriodic()
 
   double speedLimiter = mSuperstructure.speedLimiter();
   double climberLimiter = 1;
-  if (ctr.GetL1Button()) {
+
+  if (ctr.GetL2Button()) {
     climberLimiter = 0.2;
   }
   else {
     climberLimiter = 1;
+  }
+
+  if (mSuperstructure.mElevator.limitSwitch.Get()) {
+    mSuperstructure.mElevator.disable();
   }
 
   bool fieldOriented = mGyro.gyro.IsConnected();
@@ -81,8 +86,8 @@ void Robot::TeleopPeriodic()
   bool scoreCoral = ctr.GetCrossButton(); // TEST THIS
   bool intakeCoral = ctr.GetTriangleButton();
 
-  bool elevatorUp = (dPad == 0);
-  bool elevatorDown = (dPad == 180);
+  bool elevatorUp = ctr.GetR1ButtonPressed();
+  bool elevatorDown = ctr.GetL1ButtonPressed();
   
   // Co-driver
   bool stowClimber = ctrOperator.GetCircleButtonPressed();
@@ -156,61 +161,63 @@ void Robot::TeleopPeriodic()
   mDrive.updateOdometry();
 
   if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
-    // mSuperstructure.mIntake ;
+    mSuperstructure.mIntake.setState(Intake::STOP);
   }
 
   if (intakeCoral) {
     mSuperstructure.intakeCoral();
   }
   else if (elevatorUp) {
-    if (elevatorUp && !ctr.GetL2Button()) {
-      holdTimer.Start();
-      // While dPad is elevatorUp
-      while (elevatorUp) {
-        elevatorUp = (ctr.GetPOV() == 0);
-        // If the timer has been doing for more than second, go to level 4
-        if (holdTimer.Get().value() > 1.0) {
-          mSuperstructure.mElevator.setState(4, false);
-          break;
-        }
-        frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
-        frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
-      }
-      // else move up one level
-      if (holdTimer.Get().value() < 1.0) {
-        mSuperstructure.elevatorUp(false);
-      }
-      holdTimer.Stop();
-      holdTimer.Reset();
-    }
-    else if (ctr.GetL2Button() && elevatorUp) {
-      mSuperstructure.elevatorUp(true);
-    }
+    mSuperstructure.elevatorUp(false);
+    // if (elevatorUp && !ctr.GetL2Button()) {
+    //   holdTimer.Start();
+    //   // While dPad is elevatorUp
+    //   while (elevatorUp) {
+    //     elevatorUp = (ctr.GetPOV() == 0);
+    //     // If the timer has been doing for more than second, go to level 4
+    //     if (holdTimer.Get().value() > 1.0) {
+    //       mSuperstructure.mElevator.setState(4, false);
+    //       break;
+    //     }
+    //     frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
+    //     frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
+    //   }
+    //   // else move up one level
+    //   if (holdTimer.Get().value() < 1.0) {
+    //     mSuperstructure.elevatorUp(false);
+    //   }
+    //   holdTimer.Stop();
+    //   holdTimer.Reset();
+    // }
+    // else if (ctr.GetL2Button() && elevatorUp) {
+    //   mSuperstructure.elevatorUp(true);
+    // }
   }
   else if (elevatorDown) {
-    if (elevatorDown && !ctr.GetL2Button()) {
-      holdTimer.Start();
-      // Check if dPad is telling the elevator to go down
-      while (elevatorDown) {
-        elevatorDown = (ctr.GetPOV() == 180);
-        // Check if dPad has been in the down value for a second, if so, go to level 1
-        if (holdTimer.Get().value() > 1.0) {
-          mSuperstructure.mElevator.setState(1, false);
-          break;
-        }
-        frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
-        frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
-      }
-      // else just move down one level
-      if (holdTimer.Get().value() < 1.0) {
-        mSuperstructure.elevatorDown(false);
-      }
-      holdTimer.Stop();
-      holdTimer.Reset();
-    }
-    else if (elevatorDown && ctr.GetL2Button()) {
-      mSuperstructure.elevatorDown(true);
-    }
+    mSuperstructure.elevatorDown(false);
+    // if (elevatorDown && !ctr.GetL2Button()) {
+    //   holdTimer.Start();
+    //   // Check if dPad is telling the elevator to go down
+    //   while (elevatorDown) {
+    //     elevatorDown = (ctr.GetPOV() == 180);
+    //     // Check if dPad has been in the down value for a second, if so, go to level 1
+    //     if (holdTimer.Get().value() > 1.0) {
+    //       mSuperstructure.mElevator.setState(1, false);
+    //       break;
+    //     }
+    //     frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
+    //     frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
+    //   }
+    //   // else just move down one level
+    //   if (holdTimer.Get().value() < 1.0) {
+    //     mSuperstructure.elevatorDown(false);
+    //   }
+    //   holdTimer.Stop();
+    //   holdTimer.Reset();
+    // }
+    // else if (elevatorDown && ctr.GetL2Button()) {
+    //   mSuperstructure.elevatorDown(true);
+    // }
   }
   else if (scoreCoral) {
     mSuperstructure.scoreCoral();
@@ -225,17 +232,13 @@ void Robot::TeleopPeriodic()
     mSuperstructure.controlClimber(3); // reverse
   }
   else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
-    mSuperstructure.mIntake.setIntakeSpeed(2.3);
-    mSuperstructure.mIntake.setIntakeState(Intake::IN);
+    mSuperstructure.mIntake.setState(Intake::IN);
   }
   else if (scoreAlgae) {
-    mSuperstructure.mIntake.setIntakeSpeed(1);
-    mSuperstructure.mIntake.setIntakeState(Intake::CLEAR);
-    mSuperstructure.mIntake.angleCtr.SetReference(-0.15, rev::spark::SparkLowLevel::ControlType::kPosition);
+    mSuperstructure.mIntake.setState(Intake::CLEAR);
   }
   else if (mSuperstructure.mIntake.cSensor.isTarget()){
-    mSuperstructure.mIntake.setIntakeSpeed(0.3);
-    mSuperstructure.mIntake.setIntakeState(Intake::IN);
+    mSuperstructure.mIntake.setState(Intake::HOLD);
   }
   else {
     mSuperstructure.mIntake.intakeMotor.Set(0);

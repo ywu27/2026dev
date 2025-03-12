@@ -5,7 +5,7 @@ void Climber::init(){
     config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
     config.closedLoop.Pid(0.2, 0, 0.1);
 
-    config.SmartCurrentLimit(20);
+    config.SmartCurrentLimit(25);
     motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 
     enc.SetPosition(0);

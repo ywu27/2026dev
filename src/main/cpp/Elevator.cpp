@@ -35,6 +35,6 @@ int Elevator::getCurrentState() {
 }
 
 void Elevator::disable(){
-    motor.StopMotor();
-    motor2.StopMotor();
+    motor.Set(0);
+    motor2.Set(0);
 }

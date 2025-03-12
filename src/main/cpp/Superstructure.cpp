@@ -36,24 +36,24 @@ void Superstructure::disable() {
     enableModules = false;
 }
 
-void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
-    mIntake.setIntakeSpeed(2000.0); // CHANGE IF NECESSARY
-    if (mode==0) {
-        mIntake.setIntakeState(Intake::intakeState::STOP);
-    }
-    else if (mode==1) {
-        mIntake.setIntakeSpeed(2.5);
-        mIntake.setIntakeState(Intake::IN);
-    }
-    else if (mode==2) {
-        mIntake.setIntakeSpeed(0.05);
-        mIntake.setIntakeState(Intake::IN);
-    }
-    else if (mode==3) {
-        mIntake.setIntakeSpeed(2.5);
-        mIntake.setIntakeState(Intake::intakeState::CLEAR);
-    }
-}
+// void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
+//     mIntake.setIntakeSpeed(2000.0); // CHANGE IF NECESSARY
+//     if (mode==0) {
+//         mIntake.setIntakeState(Intake::intakeState::STOP);
+//     }
+//     else if (mode==1) {
+//         mIntake.setIntakeSpeed(2.5);
+//         mIntake.setIntakeState(Intake::IN);
+//     }
+//     else if (mode==2) {
+//         mIntake.setIntakeSpeed(0.05);
+//         mIntake.setIntakeState(Intake::IN);
+//     }
+//     else if (mode==3) {
+//         mIntake.setIntakeSpeed(2.5);
+//         mIntake.setIntakeState(Intake::intakeState::CLEAR);
+//     }
+// }
 
 void Superstructure::elevatorUp(bool algae) {
     if (algae && mElevator.currentState == 6) {
