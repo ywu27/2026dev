@@ -22,6 +22,7 @@ void EndEffector::init() {
 
     angleEnc1.SetPosition(0.0);
     angleEnc2.SetPosition(0.0);
+    // scoringEnc.SetPosition(0);
 }
 
 void EndEffector::disable() {

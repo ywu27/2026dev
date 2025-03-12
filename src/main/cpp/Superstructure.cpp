@@ -5,6 +5,7 @@ void Superstructure::init() {
     mElevator.init();
     mClimber.init();
     mEndEffector.init();
+    
     mElevator.setState(0, false);
     mClimber.position(Climber::STOW);
 

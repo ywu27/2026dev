@@ -6,7 +6,7 @@
 #include <rev/SparkRelativeEncoder.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-#define climberID 5
+#define climberID 13
 
 class Climber{
     private:
@@ -15,10 +15,6 @@ class Climber{
         rev::spark::SparkMaxConfig config{};
         rev::spark::SparkClosedLoopController climberCTR = motor.GetClosedLoopController();
 
-        //Set velocity setpoint for climber
-        double velocity;
-        double climbSetpoint = 2;
-    
     public:
         enum climberState {
             STOW,

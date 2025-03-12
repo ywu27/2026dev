@@ -3,9 +3,8 @@
 void Climber::init(){
     config.Inverted(false);
     config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
-    config.closedLoop.Pid(0.2, 0.0005, 0.0);
-    
-    //This value will be changed based on testing
+    config.closedLoop.Pid(0.2, 0, 0.1);
+
     config.SmartCurrentLimit(20);
     motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 
@@ -13,16 +12,11 @@ void Climber::init(){
 }
 
 void Climber::disable() {
-    motor.StopMotor();
-}
-
-void Climber::setVelocity(double speed){
-    velocity = speed;
+    motor.Set(0);
 }
 
 void Climber::climb() {
-    //climberCTR.SetReference(velocity, rev::spark::SparkBase::ControlType::kVelocity);
-    motor.Set(1); // TRY THIS AS WELL
+    motor.Set(1);
 }
 
 void Climber::reverse() {
@@ -34,6 +28,6 @@ void Climber::position(climberState climbState) {
         case (STOW):
             climberCTR.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition);
         case (CLIMB):
-            climberCTR.SetReference(climbSetpoint, rev::spark::SparkLowLevel::ControlType::kPosition);
+            climberCTR.SetReference(145, rev::spark::SparkLowLevel::ControlType::kPosition);
     }
 }
