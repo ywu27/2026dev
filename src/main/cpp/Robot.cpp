@@ -13,7 +13,7 @@ void Robot::RobotInit()
   mDrive.initModules();
   mSuperstructure.init();
   mGyro.init();
-  //frc::CameraServer::StartAutomaticCapture(); UNCOMMENT LATER
+  //frc::CameraServer::StartAutomaticCapture();
 }
 
 void Robot::RobotPeriodic()
@@ -25,16 +25,6 @@ void Robot::AutonomousInit()
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
   mSuperstructure.enable();
- 
-  // if (frc::DriverStation::IsDSAttached()) {
-  //   mTraj.isRed = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed; // checks for alliance color
-  // }
-  // if (limelight1.targetDetected()) {
-  //   mTraj.startPose = limelight1.getRobotPoseFieldSpace();
-  //   mTraj.receivedPose = true;
-  // } else {
-  //   mTraj.receivedPose = false;
-  // }
 }
 void Robot::AutonomousPeriodic()
 {
@@ -57,6 +47,14 @@ void Robot::TeleopPeriodic()
   frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
 
   double speedLimiter = mSuperstructure.speedLimiter();
+  double climberLimiter = 1;
+  if (ctr.GetL1Button()) {
+    climberLimiter = 0.2;
+  }
+  else {
+    climberLimiter = 1;
+  }
+
   bool fieldOriented = mGyro.gyro.IsConnected();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
@@ -66,9 +64,11 @@ void Robot::TeleopPeriodic()
   // Controller inputs
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);
   double leftY = ControlUtil::deadZonePower(-ctr.GetLeftY(), ctrDeadzone, 1);
-  leftX = xStickLimiter.calculate(leftX) * speedLimiter; 
-  leftY = yStickLimiter.calculate(leftY) * speedLimiter;
-  double rightX = ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
+
+  leftX = climberLimiter * xStickLimiter.calculate(leftX) * speedLimiter; 
+  leftY = climberLimiter * yStickLimiter.calculate(leftY) * speedLimiter;
+
+  double rightX = climberLimiter * ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
   double rot = 0;
 
   // Driver
@@ -154,6 +154,10 @@ void Robot::TeleopPeriodic()
       fieldOriented,
       cleanDriveAccum);
   mDrive.updateOdometry();
+
+  if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
+    // mSuperstructure.mIntake ;
+  }
 
   if (intakeCoral) {
     mSuperstructure.intakeCoral();

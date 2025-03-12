@@ -4,7 +4,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <rev/SparkClosedLoopController.h>
 #include <rev/config/SparkMaxConfig.h>
-#include <frc/controller/PIDController.h>
+#include <rev/config/SmartMotionConfig.h>
 
 #define scoringMotorID 17
 #define angleMotorID 16
@@ -13,22 +13,16 @@
 class EndEffector {
 
 public:
-    rev::spark::SparkMax scoringMotor = rev::spark::SparkMax {scoringMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless};
-    frc::PIDController pidController{1.2, 0.0005, 0}; 
+    rev::spark::SparkMax scoringMotor = rev::spark::SparkMax {scoringMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless}; 
     rev::spark::SparkMaxConfig scoringConfig{};
-
-    rev::spark::SparkMax angleMotor1 = rev::spark::SparkMax {angleMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless};
-    rev::spark::SparkMax angleMotor2 = rev::spark::SparkMax {angleMotor2ID, rev::spark::SparkLowLevel::MotorType::kBrushless};
-    rev::spark::SparkMaxConfig angleConfig{};
-    
-    // rev::spark::SparkMaxConfig angle3Config{};
-
     rev::spark::SparkClosedLoopController scoringCTR = scoringMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder scoringEnc = scoringMotor.GetEncoder();
 
-    rev::spark::SparkMaxConfig angle2Config{};
+    rev::spark::SparkMax angleMotor1 = rev::spark::SparkMax {angleMotorID, rev::spark::SparkLowLevel::MotorType::kBrushless};
+    rev::spark::SparkMax angleMotor2 = rev::spark::SparkMax {angleMotor2ID, rev::spark::SparkLowLevel::MotorType::kBrushless};
 
-    rev::spark::SparkMaxConfig config;
+    rev::spark::SparkMaxConfig angle1Config{};
+    rev::spark::SparkMaxConfig angle2Config{};
 
     rev::spark::SparkClosedLoopController angleCTR1 = angleMotor1.GetClosedLoopController();
     rev::spark::SparkClosedLoopController angleCTR2 = angleMotor2.GetClosedLoopController();

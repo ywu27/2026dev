@@ -2,13 +2,13 @@
 void Elevator::init(){
     config.Inverted(true);
     config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
-    config.closedLoop.Pid(0.6, 0, 0.0);
-    config.SmartCurrentLimit(20);
+    config.closedLoop.Pid(0.6, 0, 0.1);
+    config.SmartCurrentLimit(30);
 
     config2.Inverted(true);
     config2.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
-    config2.closedLoop.Pid(0.6, 0, 0.0);
-    config2.SmartCurrentLimit(20);
+    config2.closedLoop.Pid(0.6, 0, 0.1);
+    config2.SmartCurrentLimit(30);
 
     motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
     motor2.Configure(config2, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
