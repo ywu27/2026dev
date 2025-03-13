@@ -42,7 +42,12 @@ public:
         STOP
     };
 
-    frc::Timer timer{};
+    enum intakeAngle{
+        UP,
+        DOWN
+    };
+
+    // frc::Timer timer{};
 
     void init();
     void disable();
@@ -50,4 +55,5 @@ public:
     void setSpeed(double speed);
     void clear();
     void hold();
+    void setAngle(intakeAngle angle);
 };

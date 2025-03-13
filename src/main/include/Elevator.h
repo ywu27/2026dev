@@ -27,7 +27,7 @@ class Elevator {
         double setpointState;
 
         void init();
-        void setState(int setpointState, bool algae); // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station
+        void setState(int setpointState, bool algae); // 0 = start, 1 = level 1, 2 = level 2, 3 = level 3, 4 = level 4, 5 = coral station, 6 = algaelevel1, 7 = algaelevel2
         void runMotor(double speed);
         void disable();
         int getCurrentState();

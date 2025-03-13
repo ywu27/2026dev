@@ -43,6 +43,18 @@ void Intake::setState(intakeState state) {
     }
 }
 
+void Intake::setAngle(intakeAngle angle) {
+    switch (angle) {
+    case UP:
+        //test position
+        angleCtr.SetReference(0.5, rev::spark::SparkLowLevel::ControlType::kPosition);
+        break;
+    case DOWN:
+        angleCtr.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition);
+        break;
+    }
+}
+
 void Intake::hold() {
     intakeMotor.Set(0.02);
 }

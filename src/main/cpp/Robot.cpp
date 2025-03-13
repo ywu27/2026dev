@@ -90,10 +90,9 @@ void Robot::TeleopPeriodic()
   bool elevatorDown = ctr.GetL1ButtonPressed();
   
   // Co-driver
-  bool stowClimber = ctrOperator.GetCircleButtonPressed();
-  // bool setClimberSetpoint = ctrOperator.GetTriangleButtonPressed();
-  bool climb = ctrOperator.GetSquareButton();
-  bool reverseClimb = ctrOperator.GetTriangleButton();
+  bool setClimberSetpoint = ctrOperator.GetCircleButton();
+  bool climb = ctrOperator.GetTriangleButton();
+  bool reverseClimb = ctrOperator.GetSquareButton(); // for testing
   int dPadOperator = ctrOperator.GetPOV();
 
   // Driving Modes
@@ -101,35 +100,35 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode
-    if (limelight1.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
-    }
-    targetDistance = 1;
-    zeroSetpoint = limelight1.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-  else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode
-    if (limelight2.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
-    }
-    targetDistance = 1;
-    zeroSetpoint = limelight2.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-  else if (dPadOperator!=-1) { // Snap mode
+  // if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode
+  //   if (limelight1.getTagType()==Limelight::REEF) {
+  //     offSet = 0.0381; // meters
+  //   }
+  //   targetDistance = 1;//set this
+  //   zeroSetpoint = limelight1.getAngleSetpoint();
+  //   ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+  //   vx = speeds.vxMetersPerSecond;
+  //   vy = speeds.vyMetersPerSecond;
+  //   fieldOriented = false;
+  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+  //   mHeadingController.setSetpoint(zeroSetpoint);
+  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  // }
+  // else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode
+  //   if (limelight2.getTagType()==Limelight::REEF) {
+  //     offSet = 0.0381; // meters
+  //   }
+  //   targetDistance = 1;
+  //   zeroSetpoint = limelight2.getAngleSetpoint();
+  //   ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+  //   vx = speeds.vxMetersPerSecond;
+  //   vy = speeds.vyMetersPerSecond;
+  //   fieldOriented = false;
+  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+  //   mHeadingController.setSetpoint(zeroSetpoint);
+  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  // }
+  if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
     zeroSetpoint = dPadOperator;
     mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
     mHeadingController.setSetpoint(zeroSetpoint);
@@ -160,15 +159,32 @@ void Robot::TeleopPeriodic()
       cleanDriveAccum);
   mDrive.updateOdometry();
 
+  // for testing elevator setpoints:
+
+  if (elevatorUp) {
+    mSuperstructure.mElevator.motor2.Set(0.2);
+    mSuperstructure.mElevator.motor.Set(0.2);
+  }
+  else if (elevatorDown) {
+    mSuperstructure.mElevator.motor2.Set(-0.2);
+    mSuperstructure.mElevator.motor.Set(-0.2);
+  }
+
+  frc::SmartDashboard::PutNumber("elevator Encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
+  frc::SmartDashboard::PutNumber("elevator Encoder222", mSuperstructure.mElevator.motor2.GetEncoder().GetPosition());
+
   if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
-    mSuperstructure.mIntake.setState(Intake::STOP);
+    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
+  }
+  else{
+    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
   }
 
   if (intakeCoral) {
     mSuperstructure.intakeCoral();
   }
-  else if (elevatorUp) {
-    mSuperstructure.elevatorUp(false);
+  // else if (elevatorUp) {
+  //   mSuperstructure.elevatorUp(false);
     // if (elevatorUp && !ctr.GetL2Button()) {
     //   holdTimer.Start();
     //   // While dPad is elevatorUp
@@ -192,9 +208,9 @@ void Robot::TeleopPeriodic()
     // else if (ctr.GetL2Button() && elevatorUp) {
     //   mSuperstructure.elevatorUp(true);
     // }
-  }
-  else if (elevatorDown) {
-    mSuperstructure.elevatorDown(false);
+  // }
+  // else if (elevatorDown) {
+  //   mSuperstructure.elevatorDown(false);
     // if (elevatorDown && !ctr.GetL2Button()) {
     //   holdTimer.Start();
     //   // Check if dPad is telling the elevator to go down
@@ -218,7 +234,7 @@ void Robot::TeleopPeriodic()
     // else if (elevatorDown && ctr.GetL2Button()) {
     //   mSuperstructure.elevatorDown(true);
     // }
-  }
+  // }
   else if (scoreCoral) {
     mSuperstructure.scoreCoral();
   }
