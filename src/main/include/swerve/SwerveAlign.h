@@ -14,10 +14,13 @@ private:
     double strafeSpeed = 0;
     double targetDistance = 0;
     double targetOffset = 0;
-    double currentX = 0;
-    double currentY = 0;
 
 public:
+
+    double currentX = 0;
+    double currentY = 0;
+    double prevErrorX = 0;
+    double prevErrorY = 0;
 
     bool isAligned(Limelight& limelight) {
         if (abs(limelight.getTargetPoseRobotSpace().x-targetOffset)<0.05 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
@@ -43,14 +46,57 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpoint(double setpointX, double setpointY, SwerveDrive& drive) {
+    ChassisSpeeds driveToSetpointX(double setpointX, SwerveDrive& drive, NavX &mGyro) { 
+        // Variables
         ChassisSpeeds speeds;
-        if (abs(setpointX-currentX)>0.2 && abs(setpointY-currentY)>0.2) {
+        double currentX = drive.getOdometryPose().X().value();
 
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0);
+        //Tolerance
+        strafePID.SetTolerance(0.02, 0.01);
+
+        if (!strafePID.AtSetpoint()) {
+            double strafeSpeed = strafePID.Calculate(currentX, setpointX);
+            if (prevErrorX < (setpointX-currentX)) {
+                strafeSpeed = -fabs(strafeSpeed);
+            }
+            else {
+                strafeSpeed = fabs(strafeSpeed);
+            }
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, 0, 0);
         }
         else {
+            strafeSpeed = 0;
             speeds = ChassisSpeeds(0, 0, 0);
         }
+
+        prevErrorX = setpointX-currentX;
+        return speeds;
+    }
+
+    ChassisSpeeds driveToSetpointY(double setpointY, SwerveDrive& drive, NavX &mGyro) { 
+        // Variables
+        ChassisSpeeds speeds;
+        double currentY = drive.getOdometryPose().Y().value();
+
+        // Tolerance
+        forwardPID.SetTolerance(0.02, 0.01);
+
+        if (!forwardPID.AtSetpoint()) {
+            double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
+            if (prevErrorY < (setpointY - currentY)) {
+                forwardSpeed = -fabs(forwardSpeed);
+            }
+            else {
+                forwardSpeed = fabs(forwardSpeed);
+            }
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, forwardSpeed, 0);
+        }
+        else {
+            forwardSpeed = 0;
+            speeds = ChassisSpeeds(0, 0, 0);
+        }
+
+        prevErrorY = setpointY - currentY;
+        return speeds;
     }
 };
