@@ -109,6 +109,10 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("Top Coral Station to A", flipAlliance, false, false);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
+
+            
+    angleCTR1.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition);
+    angleCTR2.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition);
             break;
         case auto_1B:
             follow("1 to B", flipAlliance, false, true, 0.0);
