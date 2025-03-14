@@ -8,7 +8,7 @@
 #include <string>
 #include <cameraserver/CameraServer.h>
 
-void Robot::Robot()
+void Robot::RobotInit()
 {
   mDrive.initModules();
   mSuperstructure.init();

@@ -32,7 +32,7 @@
 class Robot : public frc::TimedRobot
 {
 public:
-  void Robot() override;
+  void RobotInit() override;
   void RobotPeriodic() override;
 
   void AutonomousInit() override;
@@ -62,7 +62,8 @@ public:
 
   // For Auto Align
   SwerveAlign align;
-  Trajectory traj{mDrive, mSuperstructure, mGyro, limelight1, pathplanner::RobotConfig::fromGUISettings()};
+  pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
+  Trajectory traj = Trajectory(mDrive, mSuperstructure, mGyro, limelight1, pathConfig);
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};
