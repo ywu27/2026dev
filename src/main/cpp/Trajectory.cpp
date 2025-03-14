@@ -94,14 +94,19 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
 /**
  * Calls sequences of follow functions for set paths
  */
-void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
+void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance) // true for red alliance
 {
     switch (autoTrajectory)
     {
         case DO_NOTHING:
             break;
+        case MOVE_STRAIGHT:
+            follow ("Move Straight", flipAlliance, false, false);
+            waitToScore(2);
+            break;
         case auto_1A:
             //follow("Test Movement", flipAlliance, false, true, 0.0);
+            mSuperstructure.mEndEffector.setState(EndEffector::AIM);
             follow("1 to A", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
@@ -109,10 +114,6 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("Top Coral Station to A", flipAlliance, false, false);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
-
-            
-    angleCTR1.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition);
-    angleCTR2.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition);
             break;
         case auto_1B:
             follow("1 to B", flipAlliance, false, true, 0.0);
@@ -230,7 +231,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
-    mSuperstructure.mElevator.setState(4, false);
+    // mSuperstructure.mElevator.setState(4, false);
     mSuperstructure.mEndEffector.setState(EndEffector::AIM);
 
     // while (!mAlign.isAligned(mLimelight)) { // TEST THIS

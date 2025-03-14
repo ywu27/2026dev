@@ -6,9 +6,9 @@
 #include <rev/config/SparkMaxConfig.h>
 #include <rev/config/SmartMotionConfig.h>
 
-#define scoringMotorID 17
-#define angleMotorID 16
-#define angleMotor2ID 15
+#define scoringMotorID 14
+#define angleMotorID 15
+#define angleMotor2ID 17
 
 class EndEffector {
 

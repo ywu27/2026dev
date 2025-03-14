@@ -42,6 +42,7 @@ public:
 
     enum autos {
         DO_NOTHING,
+        MOVE_STRAIGHT,
         auto_1A,  
         auto_1B,  
         auto_1C,  

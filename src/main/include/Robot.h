@@ -27,11 +27,12 @@
 #include "sensors/Limelight.h"
 #include <ctre/phoenix6/CANBus.hpp>
 #include <frc/GenericHID.h>
+#include <Trajectory.h>
 
 class Robot : public frc::TimedRobot
 {
 public:
-  void RobotInit() override;
+  void Robot() override;
   void RobotPeriodic() override;
 
   void AutonomousInit() override;
@@ -61,6 +62,7 @@ public:
 
   // For Auto Align
   SwerveAlign align;
+  Trajectory traj{mDrive, mSuperstructure, mGyro, limelight1, pathplanner::RobotConfig::fromGUISettings()};
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

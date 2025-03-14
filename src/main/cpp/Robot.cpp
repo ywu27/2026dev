@@ -8,12 +8,12 @@
 #include <string>
 #include <cameraserver/CameraServer.h>
 
-void Robot::RobotInit()
+void Robot::Robot()
 {
   mDrive.initModules();
   mSuperstructure.init();
   mGyro.init();
-  //frc::CameraServer::StartAutomaticCapture();
+  frc::CameraServer::StartAutomaticCapture();
 }
 
 void Robot::RobotPeriodic()
@@ -25,6 +25,7 @@ void Robot::AutonomousInit()
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
   mSuperstructure.enable();
+  traj.followPath(Trajectory::MOVE_STRAIGHT, true); // RED ALLIANCE
 }
 void Robot::AutonomousPeriodic()
 {
@@ -44,21 +45,21 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
+  // frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
 
-  double speedLimiter = mSuperstructure.speedLimiter();
+  // double speedLimiter = mSuperstructure.speedLimiter();
   double climberLimiter = 1;
 
   if (ctr.GetL2Button()) {
     climberLimiter = 0.2;
   }
   else {
-    climberLimiter = 1;
+    climberLimiter = 0.8;
   }
 
-  if (mSuperstructure.mElevator.limitSwitch.Get()) {
-    mSuperstructure.mElevator.disable();
-  }
+  // if (mSuperstructure.mElevator.limitSwitch.Get()) {
+  //   mSuperstructure.mElevator.disable();
+  // }
 
   bool fieldOriented = mGyro.gyro.IsConnected();
 
@@ -78,16 +79,20 @@ void Robot::TeleopPeriodic()
 
   // Driver
   int dPad = ctr.GetPOV();
-  bool rumbleController = false; //ADD THIS
+  // bool rumbleController = false; //ADD THIS
   bool alignLimelight = ctr.GetR2Button();
 
-  bool intakeAlgae = ctr.GetCircleButton();
-  bool scoreAlgae = ctr.GetSquareButton();
+  bool intakeAlgae = ctr.GetL1Button();
+  bool scoreAlgae = ctr.GetR1Button();
   bool scoreCoral = ctr.GetCrossButton(); // TEST THIS
   bool intakeCoral = ctr.GetTriangleButton();
+  bool aimCoral = ctr.GetSquareButton();
 
-  bool elevatorUp = ctr.GetR1ButtonPressed();
-  bool elevatorDown = ctr.GetL1ButtonPressed();
+  // bool elevatorUp = ctr.GetR1ButtonPressed();
+  // bool elevatorDown = ctr.GetL1ButtonPressed();
+
+  mSuperstructure.mEndEffector.angleMotor1.Set(ctrOperator.GetLeftY());
+  mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
   
   // Co-driver
   bool setClimberSetpoint = ctrOperator.GetCircleButton();
@@ -100,34 +105,34 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  // if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode
-  //   if (limelight1.getTagType()==Limelight::REEF) {
-  //     offSet = 0.0381; // meters
-  //   }
-  //   targetDistance = 1;//set this
-  //   zeroSetpoint = limelight1.getAngleSetpoint();
-  //   ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
-  //   vx = speeds.vxMetersPerSecond;
-  //   vy = speeds.vyMetersPerSecond;
-  //   fieldOriented = false;
-  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  // }
-  // else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode
-  //   if (limelight2.getTagType()==Limelight::REEF) {
-  //     offSet = 0.0381; // meters
-  //   }
-  //   targetDistance = 1;
-  //   zeroSetpoint = limelight2.getAngleSetpoint();
-  //   ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
-  //   vx = speeds.vxMetersPerSecond;
-  //   vy = speeds.vyMetersPerSecond;
-  //   fieldOriented = false;
-  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  // }
+  if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
+    if (limelight1.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
+    targetDistance = 0.5;//set this
+    zeroSetpoint = limelight1.getAngleSetpoint();
+    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
+    fieldOriented = false;
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
+  else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
+    if (limelight2.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
+    targetDistance = 0.5; // set this
+    zeroSetpoint = limelight2.getAngleSetpoint();
+    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
+    fieldOriented = false;
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
   if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
     zeroSetpoint = dPadOperator;
     mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
@@ -161,24 +166,25 @@ void Robot::TeleopPeriodic()
 
   // for testing elevator setpoints:
 
-  if (elevatorUp) {
-    mSuperstructure.mElevator.motor2.Set(0.2);
-    mSuperstructure.mElevator.motor.Set(0.2);
-  }
-  else if (elevatorDown) {
-    mSuperstructure.mElevator.motor2.Set(-0.2);
-    mSuperstructure.mElevator.motor.Set(-0.2);
-  }
+  // if (elevatorUp) {
+  //   mSuperstructure.mElevator.motor2.Set(0.2);
+  //   mSuperstructure.mElevator.motor.Set(0.2);
+  // }
+  // else if (elevatorDown) {
+  //   mSuperstructure.mElevator.motor2.Set(-0.2);
+  //   mSuperstructure.mElevator.motor.Set(-0.2);
+  // }
 
-  frc::SmartDashboard::PutNumber("elevator Encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
-  frc::SmartDashboard::PutNumber("elevator Encoder222", mSuperstructure.mElevator.motor2.GetEncoder().GetPosition());
+  // frc::SmartDashboard::PutNumber("elevator Encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
+  frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mEndEffector.angleMotor2.GetEncoder().GetPosition());
+  frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
 
-  if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
-    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
-  }
-  else{
-    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
-  }
+  // if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
+  //   mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
+  // }
+  // else{
+  //   mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
+  // }
 
   if (intakeCoral) {
     mSuperstructure.intakeCoral();
@@ -238,9 +244,9 @@ void Robot::TeleopPeriodic()
   else if (scoreCoral) {
     mSuperstructure.scoreCoral();
   }
-  // else if (setClimberSetpoint) {
-  //   mSuperstructure.controlClimber(1);
-  // }
+  else if (setClimberSetpoint) {
+    mSuperstructure.controlClimber(1);
+  }
   else if (climb) {
     mSuperstructure.controlClimber(2); // climb
   }

@@ -14,7 +14,7 @@ private:
 
 public:
     Intake mIntake;
-    Elevator mElevator;
+    //Elevator mElevator;
     Climber mClimber;
     EndEffector mEndEffector;
 
@@ -23,7 +23,7 @@ public:
     void enable();
     void disable();
     void intakeCoral();
-    // void controlIntake(int mode);
+    void controlIntake(int mode);
     void elevatorUp(bool algae);
     void elevatorDown(bool algae);
     void scoreCoral();

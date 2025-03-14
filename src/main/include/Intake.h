@@ -10,8 +10,8 @@
 #include "sensors/ColorSensor.h"
 #include "frc/Timer.h"
 
-#define intakeID 11
-#define angleID 12
+#define intakeID 17
+#define angleID 16
 
 class Intake
 {
@@ -23,7 +23,7 @@ private:
 
 public:
 
-    rev::spark::SparkMax intakeMotor = rev::spark::SparkMax(intakeID, rev::spark::SparkMax::MotorType::kBrushed);
+    rev::spark::SparkMax intakeMotor = rev::spark::SparkMax(intakeID, rev::spark::SparkMax::MotorType::kBrushless);
     rev::spark::SparkClosedLoopController intakeCtr = intakeMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder intakeEnc = intakeMotor.GetEncoder();
     rev::spark::SparkMaxConfig intakeConfig{};

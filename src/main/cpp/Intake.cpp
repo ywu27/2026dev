@@ -30,7 +30,7 @@ void Intake::setState(intakeState state) {
     switch (state) {
     case IN:
         // intakeCtr.SetReference(intakeSpeed, rev::spark::SparkBase::ControlType::kVelocity);
-        intakeMotor.Set(0.5);
+        intakeMotor.Set(-0.5);
         break;
     case HOLD:
         hold();
@@ -56,7 +56,7 @@ void Intake::setAngle(intakeAngle angle) {
 }
 
 void Intake::hold() {
-    intakeMotor.Set(0.02);
+    intakeMotor.Set(-0.02);
 }
 
 void Intake::clear() {

@@ -8,7 +8,7 @@
 class SwerveAlign {
 private:
     frc::PIDController forwardPID{7, 0, 0.1};
-    frc::PIDController strafePID{0.5, 0, 0.1};
+    frc::PIDController strafePID{2, 0, 0.1};
     
     double forwardSpeed = 0;
     double strafeSpeed = 0;

@@ -57,18 +57,18 @@ void EndEffector::setState(EndEffectorState state) {
 }
 
 void EndEffector::intake() {
-    angleCTR1.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition);
-    angleCTR2.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition);
-    scoringMotor.Set(-1);
+    angleCTR1.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, 0.1);
+    angleCTR2.SetReference(0.1, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, 0.1);
+    scoringMotor.Set(-0.5);
 }
 
 void EndEffector::aim() {
-    angleCTR2.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition);
-    angleCTR1.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, 0.2);
-    scoringMotor.Set(-1);
+    angleCTR2.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, -0.1);
+    angleCTR1.SetReference(2.714, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0, -0.1);
+    scoringMotor.Set(-0.5);
 }
 
 void EndEffector::score() {
-    scoringMotor.Set(1);
+    scoringMotor.Set(0.5);
     //scoringCTR.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition); //TEST THIS
 }

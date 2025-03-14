@@ -2,11 +2,11 @@
 
 void Superstructure::init() {
     mIntake.init();
-    mElevator.init();
+    //mElevator.init();
     mClimber.init();
     mEndEffector.init();
     
-    mElevator.setState(0, false);
+    //mElevator.setState(0, false);
     mClimber.position(Climber::STOW);
 
     enableModules = false;
@@ -20,7 +20,7 @@ void Superstructure::periodic() {
         {
             // Disable modules here
             mIntake.disable();
-            mElevator.disable();
+            //mElevator.disable();
             mClimber.disable();
             mEndEffector.disable();
         }
@@ -36,46 +36,46 @@ void Superstructure::disable() {
     enableModules = false;
 }
 
-// void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
-//     mIntake.setIntakeSpeed(2000.0); // CHANGE IF NECESSARY
-//     if (mode==0) {
-//         mIntake.setIntakeState(Intake::intakeState::STOP);
+void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
+    mIntake.setSpeed(2000.0); // CHANGE IF NECESSARY
+    if (mode==0) {
+        mIntake.setState(Intake::intakeState::STOP);
+    }
+    else if (mode==1) {
+        mIntake.setSpeed(2.5);
+        mIntake.setState(Intake::IN);
+    }
+    else if (mode==2) {
+        mIntake.setSpeed(0.05);
+        mIntake.setState(Intake::IN);
+    }
+    else if (mode==3) {
+        mIntake.setSpeed(2.5);
+        mIntake.setState(Intake::intakeState::CLEAR);
+    }
+}
+
+// void Superstructure::elevatorUp(bool algae) {
+//     if (algae && mElevator.currentState == 6) {
+//         mElevator.setState(mElevator.getCurrentState() + 1, true);
 //     }
-//     else if (mode==1) {
-//         mIntake.setIntakeSpeed(2.5);
-//         mIntake.setIntakeState(Intake::IN);
+//     else if (mElevator.currentState < 4) {
+//         mElevator.setState(mElevator.getCurrentState() + 1, false);
+//         mEndEffector.setState(EndEffector::AIM);
 //     }
-//     else if (mode==2) {
-//         mIntake.setIntakeSpeed(0.05);
-//         mIntake.setIntakeState(Intake::IN);
+// }
+// void Superstructure::elevatorDown(bool algae) {
+//     if (algae && mElevator.currentState == 7) { // TRY ZERO AS WELL
+//         mElevator.setState(mElevator.getCurrentState() - 1, true);
 //     }
-//     else if (mode==3) {
-//         mIntake.setIntakeSpeed(2.5);
-//         mIntake.setIntakeState(Intake::intakeState::CLEAR);
+//     else if (mElevator.currentState > 1) {
+//         mElevator.setState(mElevator.getCurrentState() - 1, false);
+//         mEndEffector.setState(EndEffector::AIM);
 //     }
 // }
 
-void Superstructure::elevatorUp(bool algae) {
-    if (algae && mElevator.currentState == 6) {
-        mElevator.setState(mElevator.getCurrentState() + 1, true);
-    }
-    else if (mElevator.currentState < 4) {
-        mElevator.setState(mElevator.getCurrentState() + 1, false);
-        mEndEffector.setState(EndEffector::AIM);
-    }
-}
-void Superstructure::elevatorDown(bool algae) {
-    if (algae && mElevator.currentState == 7) { // TRY ZERO AS WELL
-        mElevator.setState(mElevator.getCurrentState() - 1, true);
-    }
-    else if (mElevator.currentState > 1) {
-        mElevator.setState(mElevator.getCurrentState() - 1, false);
-        mEndEffector.setState(EndEffector::AIM);
-    }
-}
-
 void Superstructure::intakeCoral() {
-    mElevator.setState(5, false);
+    // mElevator.setState(5, false);
     mEndEffector.setState(EndEffector::INTAKE);
 }
 
@@ -102,17 +102,17 @@ void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint /
     }
 }
 
-double Superstructure::speedLimiter() {
-    if (mElevator.currentState == 0 || mElevator.currentState == 1) {
-        return 1.0;
-    }
-    else if (mElevator.currentState == 2 || mElevator.currentState == 3) {
-        return 0.75;
-    }
-    else if (mElevator.currentState == 4 || mElevator.currentState == 5) {
-        return 0.5;
-    }
-    else {
-        return 1.0;
-    }
-}
+// double Superstructure::speedLimiter() {
+//     if (mElevator.currentState == 0 || mElevator.currentState == 1) {
+//         return 1.0;
+//     }
+//     else if (mElevator.currentState == 2 || mElevator.currentState == 3) {
+//         return 0.75;
+//     }
+//     else if (mElevator.currentState == 4 || mElevator.currentState == 5) {
+//         return 0.5;
+//     }
+//     else {
+//         return 1.0;
+//     }
+// }
