@@ -22,29 +22,29 @@ public:
     double prevErrorX = 0;
     double prevErrorY = 0;
 
-    bool isAligned(Limelight& limelight) {
-        if (abs(limelight.getTargetPoseRobotSpace().x-targetOffset)<0.05 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
-            return true;
-        }
-        return false;
-    }
+    // bool isAligned(Limelight& limelight) {
+    //     if (abs(limelight.getTargetPoseRobotSpace().x-targetOffset)<0.05 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
-    ChassisSpeeds autoAlign(Limelight& limelight, double setpointDistance, double offsetSetpoint) { // distance in meters
-        ChassisSpeeds speeds;
-        double offset = limelight.getTargetPoseRobotSpace().x;
-        double distanceToTag = limelight.getDistanceToWall();
-        targetDistance = setpointDistance;
-        targetOffset = offsetSetpoint;
-        if (!isAligned(limelight)) {
-            double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
-            double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0); //CHECK THIS
-        }
-        else {
-            speeds = ChassisSpeeds(0, 0, 0);
-        }
-        return speeds;
-    }
+    // ChassisSpeeds autoAlign(Limelight& limelight, double setpointDistance, double offsetSetpoint) { // distance in meters
+    //     ChassisSpeeds speeds;
+    //     double offset = limelight.getTargetPoseRobotSpace().x;
+    //     double distanceToTag = limelight.getDistanceToWall();
+    //     targetDistance = setpointDistance;
+    //     targetOffset = offsetSetpoint;
+    //     if (!isAligned(limelight)) {
+    //         double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
+    //         double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
+    //         speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0); //CHECK THIS
+    //     }
+    //     else {
+    //         speeds = ChassisSpeeds(0, 0, 0);
+    //     }
+    //     return speeds;
+    // }
 
     ChassisSpeeds driveToSetpointX(double setpointX, SwerveDrive& drive, NavX &mGyro) { 
         // Variables
