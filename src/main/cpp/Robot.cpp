@@ -15,6 +15,7 @@ void Robot::RobotInit()
   mGyro.init();
   frc::CameraServer::StartAutomaticCapture();
   limelight1.setPipelineIndex(0);
+  limelight2.setPipelineIndex(0);
 
   // Choosers
   allianceChooser.SetDefaultOption("Red Alliance", redAlliance);
@@ -31,8 +32,8 @@ void Robot::RobotInit()
     // alliance = Limelight::Alliance::BLUE;
     allianceIsRed = false;
   }
-  limelight1 = Limelight("one", alliance);
-  limelight2 = Limelight("two", alliance);
+  
+  // limelight2 = Limelight("two", alliance);
 
   positionChooser.SetDefaultOption(kAutoStartDefault, kAutoStartDefault);
   positionChooser.AddOption(kAutoStartB, kAutoStartB);
@@ -208,40 +209,42 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
-    if (limelight1.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
+  if (alignLimelight) { // Alignment Mode // LL1 is reef
+    if(limelight1.isTargetDetected2()){
+      if (limelight1.getTagType()==Limelight::REEF) {
+        offSet = 0.0381; // meters
+      }
+      targetDistance = 0.5;//set this
+      zeroSetpoint = limelight1.getAngleSetpoint();
+      ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+      vx = speeds.vxMetersPerSecond;
+      vy = speeds.vyMetersPerSecond;
+      fieldOriented = false;
+      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      mHeadingController.setSetpoint(zeroSetpoint);
+      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
     }
-    targetDistance = 0.5;//set this
-    zeroSetpoint = limelight1.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+    if(limelight2.isTargetDetected2()){ // Alignment Mode // LL2 is coral station
+      if (limelight2.getTagType()==Limelight::REEF) {
+        offSet = 0.0381; // meters
+      }
+      targetDistance = 0.5; // set this
+      zeroSetpoint = limelight2.getAngleSetpoint();
+      ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+      vx = speeds.vxMetersPerSecond;
+      vy = speeds.vyMetersPerSecond;
+      fieldOriented = false;
+      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      mHeadingController.setSetpoint(zeroSetpoint);
+      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+    } 
   }
-  else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
-    if (limelight2.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
-    }
-    targetDistance = 0.5; // set this
-    zeroSetpoint = limelight2.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-  else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
-    zeroSetpoint = dPadOperator;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
+  // else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
+  //   zeroSetpoint = dPadOperator;
+  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
+  //   mHeadingController.setSetpoint(zeroSetpoint);
+  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  // }
   else // Normal driving mode
   {
     mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
@@ -254,10 +257,10 @@ void Robot::TeleopPeriodic()
   if (ctrOperator.GetCrossButtonReleased()) {
     mGyro.init();
   }
-  if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
-    mGyro.setYaw(zeroSetpoint);
-    // scoreCoral = true; // TEST THIS
-  }
+  // if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
+  //   mGyro.setYaw(zeroSetpoint);
+  //   // scoreCoral = true; // TEST THIS
+  // }
 
   // Drive function
   mDrive.Drive(

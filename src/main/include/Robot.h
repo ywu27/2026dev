@@ -58,8 +58,8 @@ public:
   Superstructure mSuperstructure;
 
   Limelight::Alliance alliance;
-  Limelight limelight1;
-  Limelight limelight2;
+  Limelight limelight1 = Limelight("one");
+  Limelight limelight2 = Limelight("two");
 
   // For Auto Align
   SwerveAlign align;
