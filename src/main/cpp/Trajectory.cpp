@@ -142,91 +142,132 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
             break;
-        // case auto_1E:
-        //     follow("1 to E");
-        //     follow("E to Bottom Coral Station");
-        //     follow("Bottom Coral Station to E");
-        //     follow("E to Bottom Coral Station");
-        //     break;
-        // case auto_1F:
-        //     follow("1 to F");
-        //     follow("F to Bottom Coral Station");
-        //     follow("Bottom Coral Station to F");
-        //     follow("F to Bottom Coral Station");
-        //     break;
-        // case auto_2A:
-        //     follow("2 to A");
-        //     follow("A to Top Coral Station");
-        //     follow("Top Coral Station to A");
-        //     follow("A to Top Coral Station");
-        //     break;
-        // case auto_2B:
-        //     follow("2 to B");
-        //     follow("B to Top Coral Station");
-        //     follow("Top Coral Station to B");
-        //     follow("B to Top Coral Station");
-        //     break;
-        // case auto_2C:
-        //     follow("2 to C");
-        //     follow("C to Bottom Coral Station");
-        //     follow("Bottom Coral Station to C");
-        //     follow("C to Bottom Coral Station");
-        //     break;
-        // case auto_2D:
-        //     follow("2 to D");
-        //     follow("D to Bottom Coral Station");
-        //     follow("Bottom Coral Station to D");
-        //     follow("D to Bottom Coral Stationn");
-        //     break;
-        // case auto_2E:
-        //     follow("2 to E");
-        //     follow("E to Bottom Coral Station");
-        //     follow("Bottom Coral Station to E");
-        //     follow("E to Bottom Coral Station");
-        //     break;
-        // case auto_2F:    
-        //     follow("2 to F");
-        //     follow("F to Bottom Coral Station");
-        //     follow("Bottom Coral Station to F");
-        //     follow("F to Bottom Coral Station");
-        //     break;
-        // case auto_3A:
-        //     follow("3 to A");
-        //     follow("A to Top Coral Station");
-        //     follow("Top Coral Station to A");
-        //     follow("A to Top Coral Station");
-        //     break;
-        // case auto_3B:
-        //     follow("3 to B");
-        //     follow("B to Top Coral Station");
-        //     follow("Top Coral Station to B");
-        //     follow("B to Top Coral Station");
-        //     break;
-        // case auto_3C:
-        //     follow("3 to C");
-        //     follow("C to Bottom Coral Station");
-        //     follow("Bottom Coral Station to C");
-        //     follow("C to Bottom Coral Station");
-        //     break;
-        // case auto_3D:
-        //     follow("3 to D");
-        //     follow("D to Bottom Coral Station");
-        //     follow("Bottom Coral Station to D");
-        //     follow("D to Bottom Coral Station");
-        //     break;
-        // case auto_3E:
-        //     follow("3 to E");
-        //     follow("E to Bottom Coral Station");
-        //     follow("Bottom Coral Station to E");
-        //     follow("E to Bottom Coral Station");
-        //     break;
-        // case auto_3F:
-        //     follow("3 to F");
-        //     follow("F to Bottom Coral Station");
-        //     follow("Bottom Coral Station to F");
-        //     follow("F to Bottom Coral Station");
-        //     break;
-
+        case auto_1E:
+            follow("1 to E", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to E", flipAlliance, false, false);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_1F:
+            follow("1 to F", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to F", flipAlliance, false, false);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_2A:
+            follow("2 to A", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to A", flipAlliance, false, false);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
+            break;
+        case auto_2B:
+            follow("2 to B", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to B", flipAlliance, false, false);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            break;
+        case auto_2C:
+            follow("2 to C", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to C", flipAlliance, false, false);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_2D:
+            follow("2 to D", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("D to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to D", flipAlliance, false, false);
+            waitToScore(2);
+            follow("D to Bottom Coral Stationn", flipAlliance, false, false);
+            break;
+        case auto_2E:
+            follow("2 to E", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to E", flipAlliance, false, false);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_2F:    
+            follow("2 to F", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to F", flipAlliance, false, false);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3A:
+            follow("3 to A", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to A", flipAlliance, false, false);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3B:
+            follow("3 to B", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Top Coral Station to B", flipAlliance, false, false);
+            waitToScore(2);
+            follow("B to Top Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3C:
+            follow("3 to C", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to C", flipAlliance, false, false);
+            waitToScore(2);
+            follow("C to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3D:
+            follow("3 to D", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("D to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to D", flipAlliance, false, false);
+            waitToScore(2);
+            follow("D to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3E:
+            follow("3 to E", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to E", flipAlliance, false, false);
+            waitToScore(2);
+            follow("E to Bottom Coral Station", flipAlliance, false, false);
+            break;
+        case auto_3F:
+            follow("3 to F", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            waitToScore(2);
+            follow("Bottom Coral Station to F", flipAlliance, false, false);
+            waitToScore(2);
+            follow("F to Bottom Coral Station", flipAlliance, false, false);
+            break;
     }
 }
 

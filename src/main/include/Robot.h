@@ -97,12 +97,14 @@ public:
 
   // Field Positions and Chooser
   frc::SendableChooser<std::string> positionChooser;
+  const std::string kSimpleAuto = "0";
   const std::string kAutoStartDefault = "1";
   const std::string kAutoStartB = "2";
   const std::string kAutoStartC = "3";
 
   // Reef Target Position and Chooser
   frc::SendableChooser<std::string> reefChooser;
+  const std::string kOneCoral = "0";
   const std::string kAutoReefDefault = "A";
   const std::string kAutoReefB = "B";
   const std::string kAutoReefC = "C";

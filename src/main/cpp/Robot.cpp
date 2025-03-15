@@ -115,8 +115,11 @@ void Robot::AutonomousInit()
   else if(start_pos=="3" && reef_pos=="F") {
     mTrajectory.followPath(Trajectory::auto_3F, allianceIsRed);
   }
+  else if (start_pos == "0" && reef_pos == "0") {
+    mTrajectory.followPath(Trajectory::MOVE_STRAIGHT, allianceIsRed);
+  }
   else {
-    mTrajectory.followPath(Trajectory::auto_1A, allianceIsRed);
+    mTrajectory.followPath(Trajectory::MOVE_STRAIGHT, allianceIsRed);
   }
 }
 void Robot::AutonomousPeriodic()
