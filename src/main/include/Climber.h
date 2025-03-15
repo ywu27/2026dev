@@ -9,7 +9,7 @@
 #define climberID 13
 
 class Climber{
-    private:
+    public:
         rev::spark::SparkMax motor = rev::spark::SparkMax(climberID, rev::spark::SparkLowLevel::MotorType::kBrushless);
         rev::spark::SparkRelativeEncoder enc = motor.GetEncoder();
         rev::spark::SparkMaxConfig config{};

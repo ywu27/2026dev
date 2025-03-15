@@ -32,7 +32,7 @@ private:
     SwerveDrive &mDrive;
     Superstructure &mSuperstructure; 
     NavX &mGyro;
-    Limelight &mLimelight; 
+    // Limelight &mLimelight; 
     RobotConfig &config;
 
 public:
@@ -63,10 +63,9 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Superstructure &mSSInput, NavX &mGyroInput, Limelight &mLimelightInput, RobotConfig &configInput) : mDrive(mDriveInput),
+    Trajectory(SwerveDrive &mDriveInput, Superstructure &mSSInput, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput),
                                                                                                                                         mSuperstructure(mSSInput), 
                                                                                                                                         mGyro(mGyroInput),
-                                                                                                                                        mLimelight(mLimelightInput),
                                                                                                                                         config(configInput) {};
 
     void driveToState(PathPlannerTrajectoryState const &state);

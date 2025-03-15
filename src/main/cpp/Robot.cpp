@@ -23,19 +23,20 @@ void Robot::RobotInit()
   // Determines alliance color
   std::string allianceColor = allianceChooser.GetSelected();
   if (allianceColor == "RED") {
-    alliance = Limelight::Alliance::RED;
+    // alliance = Limelight::Alliance::RED;
     allianceIsRed = true;
   }
   else {
-    alliance = Limelight::Alliance::BLUE;
+    // alliance = Limelight::Alliance::BLUE;
     allianceIsRed = false;
   }
-  limelight1 = Limelight("one", alliance);
-  limelight2 = Limelight("two", alliance);
+  // limelight1 = Limelight("one", Limelight::Alliance::BLUE);
+  // limelight2 = Limelight("two", Limelight::Alliance::BLUE);
 
   positionChooser.SetDefaultOption(kAutoStartDefault, kAutoStartDefault);
   positionChooser.AddOption(kAutoStartB, kAutoStartB);
   positionChooser.AddOption(kAutoStartC, kAutoStartC);
+  positionChooser.AddOption(kSimpleAuto, kSimpleAuto);
   frc::SmartDashboard::PutData("Auto Start Position", &positionChooser);
 
   reefChooser.SetDefaultOption(kAutoReefDefault, kAutoReefDefault);
@@ -44,6 +45,7 @@ void Robot::RobotInit()
   reefChooser.AddOption(kAutoReefD, kAutoReefD);
   reefChooser.AddOption(kAutoReefE, kAutoReefE);
   reefChooser.AddOption(kAutoReefF, kAutoReefF);
+  reefChooser.AddOption(kOneCoral, kOneCoral);
   frc::SmartDashboard::PutData("Auto Reef Position", &reefChooser);
 }
 
@@ -189,10 +191,13 @@ void Robot::TeleopPeriodic()
   // bool elevatorDown = ctr.GetL1ButtonPressed();
 
   mSuperstructure.mEndEffector.angleMotor1.Set(ctrOperator.GetLeftY());
+  mSuperstructure.mEndEffector.angleMotor2.Set(ctrOperator.GetLeftY());
   mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
+
+  frc::SmartDashboard::PutNumber("climber encoder", mSuperstructure.mClimber.enc.GetPosition());
   
   // Co-driver
-  bool setClimberSetpoint = ctrOperator.GetCircleButton();
+  // bool setClimberSetpoint = ctrOperator.GetCircleButton();
   bool climb = ctrOperator.GetTriangleButton();
   bool reverseClimb = ctrOperator.GetSquareButton(); // for testing
   int dPadOperator = ctrOperator.GetPOV();
@@ -202,35 +207,35 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
-    if (limelight1.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
-    }
-    targetDistance = 0.5;//set this
-    zeroSetpoint = limelight1.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-  else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
-    if (limelight2.getTagType()==Limelight::REEF) {
-      offSet = 0.0381; // meters
-    }
-    targetDistance = 0.5; // set this
-    zeroSetpoint = limelight2.getAngleSetpoint();
-    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
-    vx = speeds.vxMetersPerSecond;
-    vy = speeds.vyMetersPerSecond;
-    fieldOriented = false;
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(zeroSetpoint);
-    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  }
-  else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
+  // if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
+  //   if (limelight1.getTagType()==Limelight::REEF) {
+  //     offSet = 0.0381; // meters
+  //   }
+  //   targetDistance = 0.5;//set this
+  //   zeroSetpoint = limelight1.getAngleSetpoint();
+  //   ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+  //   vx = speeds.vxMetersPerSecond;
+  //   vy = speeds.vyMetersPerSecond;
+  //   fieldOriented = false;
+  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+  //   mHeadingController.setSetpoint(zeroSetpoint);
+  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  // }
+  // else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
+  //   if (limelight2.getTagType()==Limelight::REEF) {
+  //     offSet = 0.0381; // meters
+  //   }
+  //   targetDistance = 0.5; // set this
+  //   zeroSetpoint = limelight2.getAngleSetpoint();
+  //   ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+  //   vx = speeds.vxMetersPerSecond;
+  //   vy = speeds.vyMetersPerSecond;
+  //   fieldOriented = false;
+  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+  //   mHeadingController.setSetpoint(zeroSetpoint);
+  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  // }
+  if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
     zeroSetpoint = dPadOperator;
     mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
     mHeadingController.setSetpoint(zeroSetpoint);
@@ -248,10 +253,10 @@ void Robot::TeleopPeriodic()
   if (ctrOperator.GetCrossButtonReleased()) {
     mGyro.init();
   }
-  if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
-    mGyro.setYaw(zeroSetpoint);
-    // scoreCoral = true; // TEST THIS
-  }
+  // if (align.isAligned(limelight1)) {
+  //   mGyro.setYaw(zeroSetpoint);
+  //   // scoreCoral = true; // TEST THIS
+  // }
 
   // Drive function
   mDrive.Drive(
@@ -337,9 +342,9 @@ void Robot::TeleopPeriodic()
   else if (scoreCoral) {
     mSuperstructure.scoreCoral();
   }
-  else if (setClimberSetpoint) {
-    mSuperstructure.controlClimber(1);
-  }
+  // else if (setClimberSetpoint) {
+  //   mSuperstructure.controlClimber(1);
+  // }
   else if (climb) {
     mSuperstructure.controlClimber(2); // climb
   }
@@ -358,16 +363,20 @@ void Robot::TeleopPeriodic()
   else {
     mSuperstructure.mIntake.intakeMotor.Set(0);
     mSuperstructure.mIntake.angleMotor.Set(0);
+    mSuperstructure.controlClimber(6);
   }
   
   // Smart Dashboard Info
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
-  frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
+  // frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("rot", rot);
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
+
+  frc::SmartDashboard::PutNumber("endeffector endcorder", mSuperstructure.mEndEffector.angleMotor1.GetEncoder().GetPosition());
+  frc::SmartDashboard::PutNumber("intake order", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
 
   // frc::SmartDashboard::PutNumber("tx1", limelight1.getTX());
   // frc::SmartDashboard::PutNumber("ty1", limelight1.getTX());

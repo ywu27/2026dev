@@ -5,8 +5,8 @@
 
 // controller used to track trajectories + correct minor disturbances
 static frc::HolonomicDriveController controller{
-    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
-    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{6e-4, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{6e-4, 0, 0}, // Change PIDs to be more accurate
     frc::ProfiledPIDController<units::radian>{
         0.55, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{

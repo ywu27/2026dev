@@ -2,12 +2,12 @@
 
 void Intake::init() {
     intakeConfig.Inverted(false);
-    intakeConfig.SmartCurrentLimit(10);
+    intakeConfig.SmartCurrentLimit(30);
     intakeConfig.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake); // TRY WITH COAST / don't know design
     intakeConfig.closedLoop.Pid(0.2, 0, 0.05);
 
     angleConfig.Inverted(false);
-    angleConfig.SmartCurrentLimit(10);
+    angleConfig.SmartCurrentLimit(30);
     angleConfig.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
     angleConfig.closedLoop.Pid(0.2, 0, 0.05);
 
