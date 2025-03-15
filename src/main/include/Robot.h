@@ -58,14 +58,13 @@ public:
   Superstructure mSuperstructure;
 
   Limelight::Alliance alliance;
-  
-  Limelight limelight1 = Limelight("one", alliance);
-  Limelight limelight2 = Limelight("two", alliance);
+  Limelight limelight1;
+  Limelight limelight2;
 
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory traj = Trajectory(mDrive, mSuperstructure, mGyro, limelight1, pathConfig);
+  Trajectory mTrajectory = Trajectory(mDrive, mSuperstructure, mGyro, limelight1, pathConfig);
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};
@@ -89,4 +88,25 @@ public:
   SwerveHeadingController mHeadingController = SwerveHeadingController(-4.0, 4.0);
   SlewRateLimiter xStickLimiter = SlewRateLimiter(ctrSlewRate);
   SlewRateLimiter yStickLimiter = SlewRateLimiter(ctrSlewRate);
+
+  // Alliance Color and Chooser
+  frc::SendableChooser<std::string> allianceChooser;
+  const std::string redAlliance = "RED";
+  const std::string blueAlliance = "BLUE";
+  bool allianceIsRed = false;
+
+  // Field Positions and Chooser
+  frc::SendableChooser<std::string> positionChooser;
+  const std::string kAutoStartDefault = "1";
+  const std::string kAutoStartB = "2";
+  const std::string kAutoStartC = "3";
+
+  // Reef Target Position and Chooser
+  frc::SendableChooser<std::string> reefChooser;
+  const std::string kAutoReefDefault = "A";
+  const std::string kAutoReefB = "B";
+  const std::string kAutoReefC = "C";
+  const std::string kAutoReefD = "D";
+  const std::string kAutoReefE = "E";
+  const std::string kAutoReefF = "F";
 };
