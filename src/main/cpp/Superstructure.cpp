@@ -1,7 +1,7 @@
 #include "Superstructure.h"
 
 void Superstructure::init() {
-    mIntake.init();
+    // mIntake.init();
     //mElevator.init();
     mClimber.init();
     mEndEffector.init();
@@ -19,7 +19,7 @@ void Superstructure::periodic() {
         if (!enableModules)
         {
             // Disable modules here
-            mIntake.disable();
+            // mIntake.disable();
             //mElevator.disable();
             mClimber.disable();
             mEndEffector.disable();
@@ -36,24 +36,24 @@ void Superstructure::disable() {
     enableModules = false;
 }
 
-void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
-    mIntake.setSpeed(2000.0); // CHANGE IF NECESSARY
-    if (mode==0) {
-        mIntake.setState(Intake::intakeState::STOP);
-    }
-    else if (mode==1) {
-        mIntake.setSpeed(2.5);
-        mIntake.setState(Intake::IN);
-    }
-    else if (mode==2) {
-        mIntake.setSpeed(0.05);
-        mIntake.setState(Intake::IN);
-    }
-    else if (mode==3) {
-        mIntake.setSpeed(2.5);
-        mIntake.setState(Intake::intakeState::CLEAR);
-    }
-}
+// void Superstructure::controlIntake(int mode) { // 0 for stop / 1 for intake / 2 for hold / 3 for score
+//     mIntake.setSpeed(2000.0); // CHANGE IF NECESSARY
+//     if (mode==0) {
+//         mIntake.setState(Intake::intakeState::STOP);
+//     }
+//     else if (mode==1) {
+//         mIntake.setSpeed(2.5);
+//         mIntake.setState(Intake::IN);
+//     }
+//     else if (mode==2) {
+//         mIntake.setSpeed(0.05);
+//         mIntake.setState(Intake::IN);
+//     }
+//     else if (mode==3) {
+//         mIntake.setSpeed(2.5);
+//         mIntake.setState(Intake::intakeState::CLEAR);
+//     }
+// }
 
 // void Superstructure::elevatorUp(bool algae) {
 //     if (algae && mElevator.currentState == 6) {
@@ -84,7 +84,7 @@ void Superstructure::scoreCoral() {
 }
 
 void Superstructure::controlClimber(int mode) { // 0 for stow / 1 for setpoint / 2 for climbing / 3 for reverse
-    mClimber.setVelocity(3000.0); // CHANGE IF NECESSARY
+    // mClimber.setVelocity(3000.0); // CHANGE IF NECESSARY
     if (mode==0) {
         mClimber.position(Climber::STOW);
     }

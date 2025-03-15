@@ -13,7 +13,7 @@ void Robot::RobotInit()
   mDrive.initModules();
   mSuperstructure.init();
   mGyro.init();
-  frc::CameraServer::StartAutomaticCapture();
+  // frc::CameraServer::StartAutomaticCapture();
 }
 
 void Robot::RobotPeriodic()
@@ -33,6 +33,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
   mDrive.state = DriveState::Teleop;
+  mGyro.init();
   mDrive.enableModules();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
   mSuperstructure.enable();
@@ -92,7 +93,7 @@ void Robot::TeleopPeriodic()
   // bool elevatorDown = ctr.GetL1ButtonPressed();
 
   mSuperstructure.mEndEffector.angleMotor1.Set(ctrOperator.GetLeftY());
-  mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
+  // mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
   
   // Co-driver
   bool setClimberSetpoint = ctrOperator.GetCircleButton();
@@ -177,7 +178,7 @@ void Robot::TeleopPeriodic()
 
   // frc::SmartDashboard::PutNumber("elevator Encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
   frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mEndEffector.angleMotor2.GetEncoder().GetPosition());
-  frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
+  // frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
 
   // if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
   //   mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
@@ -253,18 +254,18 @@ void Robot::TeleopPeriodic()
   else if (reverseClimb) {
     mSuperstructure.controlClimber(3); // reverse
   }
-  else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
-    mSuperstructure.mIntake.setState(Intake::IN);
-  }
-  else if (scoreAlgae) {
-    mSuperstructure.mIntake.setState(Intake::CLEAR);
-  }
-  else if (mSuperstructure.mIntake.cSensor.isTarget()){
-    mSuperstructure.mIntake.setState(Intake::HOLD);
-  }
+  // else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
+  //   mSuperstructure.mIntake.setState(Intake::IN);
+  // }
+  // else if (scoreAlgae) {
+  //   mSuperstructure.mIntake.setState(Intake::CLEAR);
+  // }
+  // else if (mSuperstructure.mIntake.cSensor.isTarget()){
+  //   mSuperstructure.mIntake.setState(Intake::HOLD);
+  // }
   else {
-    mSuperstructure.mIntake.intakeMotor.Set(0);
-    mSuperstructure.mIntake.angleMotor.Set(0);
+    // mSuperstructure.mIntake.intakeMotor.Set(0);
+    // mSuperstructure.mIntake.angleMotor.Set(0);
   }
   
   // Smart Dashboard Info

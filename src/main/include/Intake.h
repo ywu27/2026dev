@@ -10,7 +10,7 @@
 #include "sensors/ColorSensor.h"
 #include "frc/Timer.h"
 
-#define intakeID 17
+#define intakeID 19
 #define angleID 16
 
 class Intake
@@ -33,7 +33,7 @@ public:
     rev::spark::SparkRelativeEncoder angleEnc = angleMotor.GetEncoder();
     rev::spark::SparkMaxConfig angleConfig{};
     
-    ColorSensor cSensor{frc::I2C::Port::kOnboard};
+    //ColorSensor cSensor{frc::I2C::Port::kOnboard};
     enum intakeState
     {
         IN,

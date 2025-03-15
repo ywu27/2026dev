@@ -16,18 +16,6 @@ class ColorSensor{
              return detectedColor;
 
         }
-        u_int32_t getproximity(){
-            return colorSensor.GetProximity();
-        }
-
-        bool inRange(){
-            if (getproximity() < 2047 && getproximity() > 500){
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
 
         bool isTarget(){
             frc::Color detectedColor = colorSensor.GetColor();
