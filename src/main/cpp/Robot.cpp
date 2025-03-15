@@ -13,7 +13,7 @@ void Robot::RobotInit()
   mDrive.initModules();
   mSuperstructure.init();
   mGyro.init();
-  // frc::CameraServer::StartAutomaticCapture();
+  frc::CameraServer::StartAutomaticCapture();
 }
 
 void Robot::RobotPeriodic()
@@ -25,7 +25,7 @@ void Robot::AutonomousInit()
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
   mSuperstructure.enable();
-  // traj.followPath(Trajectory::MOVE_STRAIGHT, true); // RED ALLIANCE
+  traj.followPath(Trajectory::MOVE_STRAIGHT, true); // RED ALLIANCE
 }
 void Robot::AutonomousPeriodic()
 {
@@ -93,7 +93,7 @@ void Robot::TeleopPeriodic()
   // bool elevatorDown = ctr.GetL1ButtonPressed();
 
   mSuperstructure.mEndEffector.angleMotor1.Set(ctrOperator.GetLeftY());
-  // mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
+  mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
   
   // Co-driver
   bool setClimberSetpoint = ctrOperator.GetCircleButton();
@@ -106,35 +106,35 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  // if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
-  //   if (limelight1.getTagType()==Limelight::REEF) {
-  //     offSet = 0.0381; // meters
-  //   }
-  //   targetDistance = 0.5;//set this
-  //   zeroSetpoint = limelight1.getAngleSetpoint();
-  //   // ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
-  //   vx = speeds.vxMetersPerSecond;
-  //   vy = speeds.vyMetersPerSecond;
-  //   fieldOriented = false;
-  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  // }
-  // else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
-  //   if (limelight2.getTagType()==Limelight::REEF) {
-  //     offSet = 0.0381; // meters
-  //   }
-  //   targetDistance = 0.5; // set this
-  //   zeroSetpoint = limelight2.getAngleSetpoint();
-  //   // ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
-  //   vx = speeds.vxMetersPerSecond;
-  //   vy = speeds.vyMetersPerSecond;
-  //   fieldOriented = false;
-  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-  //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-  // }
-  if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
+  if (alignLimelight && limelight1.isTargetDetected2()) { // Alignment Mode // LL1 is reef
+    if (limelight1.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
+    targetDistance = 0.5;//set this
+    zeroSetpoint = limelight1.getAngleSetpoint();
+    ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
+    fieldOriented = false;
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
+  else if (alignLimelight && limelight2.isTargetDetected2()) { // Alignment Mode // LL2 is coral station
+    if (limelight2.getTagType()==Limelight::REEF) {
+      offSet = 0.0381; // meters
+    }
+    targetDistance = 0.5; // set this
+    zeroSetpoint = limelight2.getAngleSetpoint();
+    ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+    vx = speeds.vxMetersPerSecond;
+    vy = speeds.vyMetersPerSecond;
+    fieldOriented = false;
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(zeroSetpoint);
+    rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  }
+  else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
     zeroSetpoint = dPadOperator;
     mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
     mHeadingController.setSetpoint(zeroSetpoint);
@@ -152,10 +152,10 @@ void Robot::TeleopPeriodic()
   if (ctrOperator.GetCrossButtonReleased()) {
     mGyro.init();
   }
-  // if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
-  //   mGyro.setYaw(zeroSetpoint);
-  //   // scoreCoral = true; // TEST THIS
-  // }
+  if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
+    mGyro.setYaw(zeroSetpoint);
+    // scoreCoral = true; // TEST THIS
+  }
 
   // Drive function
   mDrive.Drive(
@@ -176,16 +176,12 @@ void Robot::TeleopPeriodic()
   //   mSuperstructure.mElevator.motor.Set(-0.2);
   // }
 
-  // frc::SmartDashboard::PutNumber("elevator Encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
-  frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mEndEffector.angleMotor2.GetEncoder().GetPosition());
-  // frc::SmartDashboard::PutNumber("endeffector Encoder222", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
-
-  // if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
-  //   mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
-  // }
-  // else{
-  //   mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
-  // }
+  if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
+    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
+  }
+  else{
+    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
+  }
 
   if (intakeCoral) {
     mSuperstructure.intakeCoral();
@@ -254,23 +250,23 @@ void Robot::TeleopPeriodic()
   else if (reverseClimb) {
     mSuperstructure.controlClimber(3); // reverse
   }
-  // else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
-  //   mSuperstructure.mIntake.setState(Intake::IN);
-  // }
-  // else if (scoreAlgae) {
-  //   mSuperstructure.mIntake.setState(Intake::CLEAR);
-  // }
-  // else if (mSuperstructure.mIntake.cSensor.isTarget()){
-  //   mSuperstructure.mIntake.setState(Intake::HOLD);
-  // }
+  else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
+    mSuperstructure.mIntake.setState(Intake::IN);
+  }
+  else if (scoreAlgae) {
+    mSuperstructure.mIntake.setState(Intake::CLEAR);
+  }
+  else if (mSuperstructure.mIntake.cSensor.isTarget()){
+    mSuperstructure.mIntake.setState(Intake::HOLD);
+  }
   else {
-    // mSuperstructure.mIntake.intakeMotor.Set(0);
-    // mSuperstructure.mIntake.angleMotor.Set(0);
+    mSuperstructure.mIntake.intakeMotor.Set(0);
+    mSuperstructure.mIntake.angleMotor.Set(0);
   }
   
   // Smart Dashboard Info
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
-  // frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
+  frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("rot", rot);

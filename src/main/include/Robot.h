@@ -56,14 +56,16 @@ public:
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Superstructure mSuperstructure;
+
+  Limelight::Alliance alliance;
   
-  // Limelight limelight1 = Limelight("one", frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kRed)); // FIX THIS
-  // Limelight limelight2 = Limelight("two", frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kRed));
+  Limelight limelight1 = Limelight("one", alliance);
+  Limelight limelight2 = Limelight("two", alliance);
 
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  // Trajectory traj = Trajectory(mDrive, mSuperstructure, mGyro, limelight1, pathConfig);
+  Trajectory traj = Trajectory(mDrive, mSuperstructure, mGyro, limelight1, pathConfig);
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

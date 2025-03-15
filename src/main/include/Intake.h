@@ -33,7 +33,7 @@ public:
     rev::spark::SparkRelativeEncoder angleEnc = angleMotor.GetEncoder();
     rev::spark::SparkMaxConfig angleConfig{};
     
-    //ColorSensor cSensor{frc::I2C::Port::kOnboard};
+    ColorSensor cSensor{frc::I2C::Port::kOnboard};
     enum intakeState
     {
         IN,

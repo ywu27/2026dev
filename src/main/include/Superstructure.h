@@ -13,7 +13,7 @@ private:
     bool enableModules;
 
 public:
-    //Intake mIntake;
+    Intake mIntake;
     //Elevator mElevator;
     Climber mClimber;
     EndEffector mEndEffector;
