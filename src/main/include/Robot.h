@@ -57,9 +57,9 @@ public:
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Superstructure mSuperstructure;
 
-  // Limelight::Alliance alliance;
-  // Limelight limelight1 = Limelight("one", Limelight::RED);
-  // Limelight limelight2 = Limelight("two", Limelight::RED);
+  Limelight::Alliance alliance;
+  Limelight limelight1;
+  Limelight limelight2;
 
   // For Auto Align
   SwerveAlign align;

@@ -8,7 +8,7 @@ void Climber::init(){
     config.SmartCurrentLimit(40);
     motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 
-    enc.SetPosition(0);
+    //enc.SetPosition(0);
 }
 
 void Climber::disable() {

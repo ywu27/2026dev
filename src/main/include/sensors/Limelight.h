@@ -35,9 +35,10 @@ public:
     Alliance alliance;
     TagType tagType;
 
-    Limelight(std::string name, Alliance a) { // TEST THIS
+    Limelight(std::string name, double mountAngle, double heightOffFloor){
         limelightName = name;
-        alliance = a;
+        limelightMountAngle = mountAngle; // degrees
+        limelightHeight = heightOffFloor; // inches
     }
 
     bool isTargetDetected() {
