@@ -56,6 +56,7 @@ void Robot::AutonomousInit()
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
   mSuperstructure.enable();
+  mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
 
   std::string start_pos = positionChooser.GetSelected();
   std::string reef_pos = reefChooser.GetSelected();
