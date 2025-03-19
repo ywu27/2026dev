@@ -21,13 +21,12 @@
 #include "util/SlewRateLimiter.h"
 #include <frc/GenericHID.h>
 #include "SwerveDrive.h"
-#include "Superstructure.h"
 #include "swerve/SwerveAlign.h"
 #include "util/TimeDelayButton.h"
 #include "sensors/Limelight.h"
 #include <ctre/phoenix6/CANBus.hpp>
 #include <frc/GenericHID.h>
-#include <Trajectory.h>
+#include "Trajectory.h"
 
 class Robot : public frc::TimedRobot
 {
@@ -55,8 +54,6 @@ public:
 
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
-  Superstructure mSuperstructure;
-
   Limelight::Alliance alliance;
   Limelight limelight1 = Limelight("one");
   Limelight limelight2 = Limelight("two");
@@ -64,7 +61,7 @@ public:
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory mTrajectory = Trajectory(mDrive, mSuperstructure, mGyro, pathConfig);
+  Trajectory mTrajectory = Trajectory(mDrive, mGyro, pathConfig);
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

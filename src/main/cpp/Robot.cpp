@@ -11,7 +11,6 @@
 void Robot::RobotInit()
 {
   mDrive.initModules();
-  mSuperstructure.init();
   mGyro.init();
   frc::CameraServer::StartAutomaticCapture();
   limelight1.setPipelineIndex(0);
@@ -59,7 +58,6 @@ void Robot::AutonomousInit()
 {
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
-  mSuperstructure.enable();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
 
   std::string start_pos = positionChooser.GetSelected();
@@ -148,7 +146,6 @@ void Robot::TeleopInit()
   // mGyro.init();
   mDrive.enableModules();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
-  mSuperstructure.enable();
   holdTimer.Reset();
 
   mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
@@ -158,21 +155,14 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  // frc::SmartDashboard::PutNumber("elevator encoder", mSuperstructure.mElevator.motor.GetEncoder().GetPosition());
-
-  // double speedLimiter = mSuperstructure.speedLimiter();
-  double climberLimiter = 1;
+  float climberLimiter = 1.0;
 
   if (ctr.GetL2Button()) {
     climberLimiter = 0.2;
   }
   else {
-    climberLimiter = 0.8;
+    climberLimiter = 1.0;
   }
-
-  // if (mSuperstructure.mElevator.limitSwitch.Get()) {
-  //   mSuperstructure.mElevator.disable();
-  // }
 
   bool fieldOriented = mGyro.gyro.IsConnected();
 
@@ -194,27 +184,6 @@ void Robot::TeleopPeriodic()
   int dPad = ctr.GetPOV();
   // bool rumbleController = false; //ADD THIS
   bool alignLimelight = ctr.GetR2Button();
-
-  bool intakeAlgae = ctr.GetL1Button();
-  bool scoreAlgae = ctr.GetR1Button();
-  bool scoreCoral = ctr.GetCrossButton(); // TEST THIS
-  bool intakeCoral = ctr.GetTriangleButton();
-  bool aimCoral = ctr.GetSquareButton();
-
-  // bool elevatorUp = ctr.GetR1ButtonPressed();
-  // bool elevatorDown = ctr.GetL1ButtonPressed();
-
-  mSuperstructure.mEndEffector.angleMotor1.Set(ctrOperator.GetLeftY());
-  mSuperstructure.mEndEffector.angleMotor2.Set(ctrOperator.GetLeftY());
-  mSuperstructure.mIntake.angleMotor.Set(ctrOperator.GetRightY());
-
-  frc::SmartDashboard::PutNumber("climber encoder", mSuperstructure.mClimber.enc.GetPosition());
-  
-  // Co-driver
-  // bool setClimberSetpoint = ctrOperator.GetCircleButton();
-  bool climb = ctrOperator.GetTriangleButton();
-  bool reverseClimb = ctrOperator.GetSquareButton(); // for testing
-  int dPadOperator = ctrOperator.GetPOV();
 
   // Driving Modes
   double offSet = 0;
@@ -269,10 +238,6 @@ void Robot::TeleopPeriodic()
   if (ctrOperator.GetCrossButtonReleased()) {
     mGyro.init();
   }
-  // if (align.isAligned(limelight1) || align.isAligned(limelight2)) {
-  //   mGyro.setYaw(zeroSetpoint);
-  //   // scoreCoral = true; // TEST THIS
-  // }
 
   // Drive function
   mDrive.Drive(
@@ -281,148 +246,14 @@ void Robot::TeleopPeriodic()
       fieldOriented,
       cleanDriveAccum);
   mDrive.updateOdometry();
-
-  // for testing elevator setpoints:
-
-  // if (elevatorUp) {
-  //   mSuperstructure.mElevator.motor2.Set(0.2);
-  //   mSuperstructure.mElevator.motor.Set(0.2);
-  // }
-  // else if (elevatorDown) {
-  //   mSuperstructure.mElevator.motor2.Set(-0.2);
-  //   mSuperstructure.mElevator.motor.Set(-0.2);
-  // }
-
-  if (mSuperstructure.mEndEffector.currentState == EndEffector::AIM || mSuperstructure.mEndEffector.currentState == EndEffector::SCORE) {
-    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::UP);
-  }
-  else{
-    mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
-  }
-
-  // if (intakeCoral) {
-  //   mSuperstructure.intakeCoral();
-  // }
-  if ((!aimCoral && !scoreCoral && !intakeCoral)) { // INTAKE CORAL
-    mSuperstructure.mEndEffector.angleCTR1.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition);
-    mSuperstructure.mEndEffector.angleCTR2.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition);
-    mSuperstructure.mEndEffector.scoringMotor.Set(0);
-  }
-  else if ((mSuperstructure.mEndEffector.angleMotor1.GetEncoder().GetPosition() > 0.7428) && aimCoral) {
-    mSuperstructure.mEndEffector.angleCTR1.SetReference(1.345, rev::spark::SparkLowLevel::ControlType::kPosition);
-    mSuperstructure.mEndEffector.angleCTR2.SetReference(1.345, rev::spark::SparkLowLevel::ControlType::kPosition);
-  }
-  // else if (elevatorUp) {
-  //   mSuperstructure.elevatorUp(false);
-    // if (elevatorUp && !ctr.GetL2Button()) {
-    //   holdTimer.Start();
-    //   // While dPad is elevatorUp
-    //   while (elevatorUp) {
-    //     elevatorUp = (ctr.GetPOV() == 0);
-    //     // If the timer has been doing for more than second, go to level 4
-    //     if (holdTimer.Get().value() > 1.0) {
-    //       mSuperstructure.mElevator.setState(4, false);
-    //       break;
-    //     }
-    //     frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
-    //     frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
-    //   }
-    //   // else move up one level
-    //   if (holdTimer.Get().value() < 1.0) {
-    //     mSuperstructure.elevatorUp(false);
-    //   }
-    //   holdTimer.Stop();
-    //   holdTimer.Reset();
-    // }
-    // else if (ctr.GetL2Button() && elevatorUp) {
-    //   mSuperstructure.elevatorUp(true);
-    // }
-  // }
-  // else if (elevatorDown) {
-  //   mSuperstructure.elevatorDown(false);
-    // if (elevatorDown && !ctr.GetL2Button()) {
-    //   holdTimer.Start();
-    //   // Check if dPad is telling the elevator to go down
-    //   while (elevatorDown) {
-    //     elevatorDown = (ctr.GetPOV() == 180);
-    //     // Check if dPad has been in the down value for a second, if so, go to level 1
-    //     if (holdTimer.Get().value() > 1.0) {
-    //       mSuperstructure.mElevator.setState(1, false);
-    //       break;
-    //     }
-    //     frc::SmartDashboard::PutNumber("dPad val", ctr.GetPOV());
-    //     frc::SmartDashboard::PutNumber("Hold Timer", holdTimer.Get().value());
-    //   }
-    //   // else just move down one level
-    //   if (holdTimer.Get().value() < 1.0) {
-    //     mSuperstructure.elevatorDown(false);
-    //   }
-    //   holdTimer.Stop();
-    //   holdTimer.Reset();
-    // }
-    // else if (elevatorDown && ctr.GetL2Button()) {
-    //   mSuperstructure.elevatorDown(true);
-    // }
-  // }
-  else if (aimCoral) {
-    mSuperstructure.mEndEffector.setState(EndEffector::AIM);
-  }
-  else if (intakeCoral) {
-    mSuperstructure.intakeCoral();
-  }
-  else if (scoreCoral) { // RELEASE
-    mSuperstructure.scoreCoral();
-  }
-  // else if ((mSuperstructure.mEndEffector.angleEnc1.GetPosition() > 0.7428) && aimCoral) {
-  //   mSuperstructure.mEndEffector.angleMotor1.Set(0.05);
-  //   mSuperstructure.mEndEffector.angleMotor2.Set(0.05);
-  // }
-  // else if (((mSuperstructure.mEndEffector.angleEnc1.GetPosition() > 0.7428) && (mSuperstructure.mEndEffector.angleEnc1.GetPosition() < 0.9)) && aimCoral) {
-  //   mSuperstructure.mEndEffector.setState(EndEffector::AIM);
-  // }
-  // else if (setClimberSetpoint) {
-  //   mSuperstructure.controlClimber(1);
-  // }
-  else if (climb) {
-    mSuperstructure.controlClimber(2); // climb
-  }
-  else if (reverseClimb) {
-    mSuperstructure.controlClimber(3); // reverse
-  }
-  else if(intakeAlgae && !(mSuperstructure.mIntake.cSensor.isTarget())) {
-    mSuperstructure.mIntake.setState(Intake::IN);
-  }
-  else if (scoreAlgae) {
-    mSuperstructure.mIntake.setState(Intake::CLEAR);
-  }
-  else if (mSuperstructure.mIntake.cSensor.isTarget()){
-    mSuperstructure.mIntake.setState(Intake::HOLD);
-  }
-  else {
-    mSuperstructure.mIntake.intakeMotor.Set(0);
-    mSuperstructure.mIntake.angleMotor.Set(0);
-    mSuperstructure.mEndEffector.scoringMotor.Set(0);
-    mSuperstructure.controlClimber(6);
-  }
   
   // Smart Dashboard Info
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
-  // frc::SmartDashboard::PutBoolean("aligned?", align.isAligned(limelight1));
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("rot", rot);
   frc::SmartDashboard::PutNumber("driveX", mDrive.getOdometryPose().X().value());
   frc::SmartDashboard::PutNumber("driveY", mDrive.getOdometryPose().Y().value());
-
-  frc::SmartDashboard::PutNumber("endeffector endcorder", mSuperstructure.mEndEffector.angleMotor1.GetEncoder().GetPosition());
-  frc::SmartDashboard::PutNumber("intake order", mSuperstructure.mIntake.angleMotor.GetEncoder().GetPosition());
-
-  // frc::SmartDashboard::PutNumber("tx1", limelight1.getTX());
-  // frc::SmartDashboard::PutNumber("ty1", limelight1.getTX());
-  // frc::SmartDashboard::PutNumber("tx2", limelight2.getTY());
-  // frc::SmartDashboard::PutNumber("ty2", limelight2.getTY());
-  // frc::SmartDashboard::PutNumber("distance1", limelight1.getDistanceToWall());
-  // frc::SmartDashboard::PutNumber("distance2", limelight2.getDistanceToWall());
 }
 
 void Robot::DisabledInit()

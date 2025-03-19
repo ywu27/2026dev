@@ -106,7 +106,6 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             break;
         case auto_1A:
             //follow("Test Movement", flipAlliance, false, true, 0.0);
-            mSuperstructure.mEndEffector.setState(EndEffector::AIM);
             follow("1 to A", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
@@ -272,24 +271,5 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
-    // mSuperstructure.mElevator.setState(4, false);
-    mSuperstructure.mEndEffector.setState(EndEffector::AIM);
-
-    // while (!mAlign.isAligned(mLimelight)) { // TEST THIS
-    //     ChassisSpeeds speeds = mAlign.align();
-    //     mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false, false);
-    // }
-    // mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
-
-    double startTime = frc::Timer::GetFPGATimestamp().value();
-    while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - startTime < 2.0 + delaySeconds) {
-        // DELAY
-    };
-    mSuperstructure.scoreCoral();
-
-    startTime = frc::Timer::GetFPGATimestamp().value();
-    while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - startTime < 1.0 + delaySeconds) {
-        // DELAY
-    };
-    mSuperstructure.intakeCoral();
+    std::this_thread::sleep_for(std::chrono::seconds(delaySeconds));
 }

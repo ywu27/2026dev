@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SwerveDrive.h"
-#include "Superstructure.h"
 #include "Constants.h"
 #include "sensors/Limelight.h"
 #include "geometry/Translation2d.h"
@@ -30,7 +29,7 @@ class Trajectory
 private:
     
     SwerveDrive &mDrive;
-    Superstructure &mSuperstructure; 
+    // Superstructure &mSuperstructure; 
     NavX &mGyro;
     // Limelight &mLimelight; 
     RobotConfig &config;
@@ -63,10 +62,9 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Superstructure &mSSInput, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput),
-                                                                                                                                        mSuperstructure(mSSInput), 
-                                                                                                                                        mGyro(mGyroInput),
-                                                                                                                                        config(configInput) {};
+    Trajectory(SwerveDrive &mDriveInput, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+                                                                                                                mGyro(mGyroInput),
+                                                                                                                config(configInput) {};
 
     void driveToState(PathPlannerTrajectoryState const &state);
 
