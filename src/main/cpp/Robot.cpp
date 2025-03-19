@@ -155,13 +155,13 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-  float climberLimiter = 1.0;
+  float currentScale = mPowerModule.currentScale();
 
   if (ctr.GetL2Button()) {
-    climberLimiter = 0.2;
+    speedLimiter = 0.2;
   }
   else {
-    climberLimiter = 1.0;
+    speedLimiter = 1.0;
   }
 
   bool fieldOriented = mGyro.gyro.IsConnected();
@@ -174,10 +174,10 @@ void Robot::TeleopPeriodic()
   double leftX = ControlUtil::deadZonePower(ctr.GetLeftX(), ctrDeadzone, 1);
   double leftY = ControlUtil::deadZonePower(-ctr.GetLeftY(), ctrDeadzone, 1);
 
-  leftX = climberLimiter * xStickLimiter.calculate(leftX) * speedLimiter; 
-  leftY = climberLimiter * yStickLimiter.calculate(leftY) * speedLimiter;
+  leftX = xStickLimiter.calculate(leftX) * speedLimiter * currentScale; 
+  leftY = yStickLimiter.calculate(leftY) * speedLimiter * currentScale;
 
-  double rightX = climberLimiter * ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
+  double rightX = currentScale * speedLimiter * ControlUtil::deadZoneQuadratic(ctr.GetRightX(), ctrDeadzone);
   double rot = 0;
 
   // Driver
@@ -246,6 +246,14 @@ void Robot::TeleopPeriodic()
       fieldOriented,
       cleanDriveAccum);
   mDrive.updateOdometry();
+
+  // Brownouts
+  if (currentScale < 1.0) {
+    frc::SmartDashboard::PutBoolean("Power Scaled?", true);
+  }
+  else {
+    frc::SmartDashboard::PutBoolean("Power Scaled?", false);
+  }
   
   // Smart Dashboard Info
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());

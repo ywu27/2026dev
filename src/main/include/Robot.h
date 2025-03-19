@@ -27,6 +27,7 @@
 #include <ctre/phoenix6/CANBus.hpp>
 #include <frc/GenericHID.h>
 #include "Trajectory.h"
+#include "control/PowerModule.h"
 
 class Robot : public frc::TimedRobot
 {
@@ -76,10 +77,13 @@ public:
   bool scoreAmp = false;
   bool liftElev = false;
   bool cleanDriveAccum = true;
-  double speedLimiter = 1.0;
+  float speedLimiter = 1.0;
 
   // Hold Timer for dPad hold
   frc::Timer holdTimer;
+
+  // Power Module
+  PowerModule mPowerModule;
 
   // Controllers
   SwerveHeadingController mHeadingController = SwerveHeadingController(-4.0, 4.0);
