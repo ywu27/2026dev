@@ -6,14 +6,18 @@ void EndEffector::init() {
     scoringConfig.closedLoop.Pid(1, 0, 0.01);
     scoringConfig.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
 
-    angle1Config.SmartCurrentLimit(30);
+    angle1Config.SmartCurrentLimit(35);
     angle1Config.Inverted(false);
-    angle1Config.closedLoop.Pid(20, 0.1, 0.1);
+    angle1Config.closedLoop.Pid(8, 0.1, 0.1, rev::spark::kSlot0);
+    angle1Config.closedLoop.Pid(1, 0, 0.1, rev::spark::kSlot1);
+    angle2Config.closedLoop.maxMotion.MaxVelocity(1);
     angle1Config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
 
-    angle2Config.SmartCurrentLimit(30);
+    angle2Config.SmartCurrentLimit(35);
     angle2Config.Inverted(true);
-    angle2Config.closedLoop.Pid(20, 0.1, 0.1);
+    angle2Config.closedLoop.Pid(8, 0.1, 0.1, rev::spark::kSlot0);
+    angle2Config.closedLoop.Pid(0, 0, 0, rev::spark::kSlot1);
+    angle2Config.closedLoop.maxMotion.MaxVelocity(1);
     angle2Config.SetIdleMode(rev::spark::SparkMaxConfig::IdleMode::kBrake);
 
     scoringMotor.Configure(scoringConfig, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
@@ -57,18 +61,18 @@ void EndEffector::setState(EndEffectorState state) {
 }
 
 void EndEffector::intake() {
-    angleCTR1.SetReference(2.3847, rev::spark::SparkLowLevel::ControlType::kPosition);
-    angleCTR2.SetReference(2.3847, rev::spark::SparkLowLevel::ControlType::kPosition);
-    scoringMotor.Set(-1);
+    angleCTR1.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0);
+    angleCTR2.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot0);
+    scoringMotor.Set(-0.5);
 }
 
 void EndEffector::aim() {
-    angleCTR2.SetReference(0.6428, rev::spark::SparkLowLevel::ControlType::kPosition);
-    angleCTR1.SetReference(0.6428, rev::spark::SparkLowLevel::ControlType::kPosition);
-    scoringMotor.Set(-1);
+    // angleCTR2.SetReference(0.7428, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot1, -0.2);
+    angleCTR1.SetReference(0.7428, rev::spark::SparkLowLevel::ControlType::kPosition, rev::spark::kSlot1, -0.2);
+    scoringMotor.Set(-0.3);
 }
 
 void EndEffector::score() {
-    scoringMotor.Set(1);
+    scoringMotor.Set(0.5);
     //scoringCTR.SetReference(0, rev::spark::SparkLowLevel::ControlType::kPosition); //TEST THIS
 }

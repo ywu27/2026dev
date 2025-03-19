@@ -124,16 +124,28 @@ void Robot::AutonomousInit()
     mTrajectory.followPath(Trajectory::MOVE_STRAIGHT, allianceIsRed);
   }
   else {
-    mTrajectory.followPath(Trajectory::MOVE_STRAIGHT, allianceIsRed);
+    
   }
 }
 void Robot::AutonomousPeriodic()
 {
+  // ChassisSpeeds speeds = align.driveToSetpointY(-1, mDrive, mGyro);
+  // float vx = speeds.vxMetersPerSecond;
+  // float vy = speeds.vyMetersPerSecond;
+  // float rot = 0.0;
+  // bool fieldOriented = false;
+
+  // mDrive.Drive(
+  //     ChassisSpeeds(vx, vy, rot),
+  //     mGyro.getBoundedAngleCCW(),
+  //     fieldOriented,
+  //     false);
+  // mDrive.updateOdometry();
 }
 void Robot::TeleopInit()
 {
   mDrive.state = DriveState::Teleop;
-  mGyro.init();
+  // mGyro.init();
   mDrive.enableModules();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
   mSuperstructure.enable();
@@ -264,7 +276,7 @@ void Robot::TeleopPeriodic()
 
   // Drive function
   mDrive.Drive(
-      ChassisSpeeds(vx, vy, -rot),
+      ChassisSpeeds(vx, vy, rot),
       mGyro.getBoundedAngleCCW(),
       fieldOriented,
       cleanDriveAccum);
@@ -288,8 +300,17 @@ void Robot::TeleopPeriodic()
     mSuperstructure.mIntake.setAngle(Intake::intakeAngle::DOWN);
   }
 
-  if (intakeCoral) {
-    mSuperstructure.intakeCoral();
+  // if (intakeCoral) {
+  //   mSuperstructure.intakeCoral();
+  // }
+  if ((!aimCoral && !scoreCoral && !intakeCoral)) { // INTAKE CORAL
+    mSuperstructure.mEndEffector.angleCTR1.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition);
+    mSuperstructure.mEndEffector.angleCTR2.SetReference(2.447, rev::spark::SparkLowLevel::ControlType::kPosition);
+    mSuperstructure.mEndEffector.scoringMotor.Set(0);
+  }
+  else if ((mSuperstructure.mEndEffector.angleMotor1.GetEncoder().GetPosition() > 0.7428) && aimCoral) {
+    mSuperstructure.mEndEffector.angleCTR1.SetReference(1.345, rev::spark::SparkLowLevel::ControlType::kPosition);
+    mSuperstructure.mEndEffector.angleCTR2.SetReference(1.345, rev::spark::SparkLowLevel::ControlType::kPosition);
   }
   // else if (elevatorUp) {
   //   mSuperstructure.elevatorUp(false);
@@ -343,9 +364,22 @@ void Robot::TeleopPeriodic()
     //   mSuperstructure.elevatorDown(true);
     // }
   // }
-  else if (scoreCoral) {
+  else if (aimCoral) {
+    mSuperstructure.mEndEffector.setState(EndEffector::AIM);
+  }
+  else if (intakeCoral) {
+    mSuperstructure.intakeCoral();
+  }
+  else if (scoreCoral) { // RELEASE
     mSuperstructure.scoreCoral();
   }
+  // else if ((mSuperstructure.mEndEffector.angleEnc1.GetPosition() > 0.7428) && aimCoral) {
+  //   mSuperstructure.mEndEffector.angleMotor1.Set(0.05);
+  //   mSuperstructure.mEndEffector.angleMotor2.Set(0.05);
+  // }
+  // else if (((mSuperstructure.mEndEffector.angleEnc1.GetPosition() > 0.7428) && (mSuperstructure.mEndEffector.angleEnc1.GetPosition() < 0.9)) && aimCoral) {
+  //   mSuperstructure.mEndEffector.setState(EndEffector::AIM);
+  // }
   // else if (setClimberSetpoint) {
   //   mSuperstructure.controlClimber(1);
   // }
@@ -367,6 +401,7 @@ void Robot::TeleopPeriodic()
   else {
     mSuperstructure.mIntake.intakeMotor.Set(0);
     mSuperstructure.mIntake.angleMotor.Set(0);
+    mSuperstructure.mEndEffector.scoringMotor.Set(0);
     mSuperstructure.controlClimber(6);
   }
   

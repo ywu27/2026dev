@@ -60,56 +60,72 @@ public:
     }
 
     int getTagID() {
-        return (int)LimelightHelpers::getFiducialID();
+        if (isTargetDetected2()) {
+            return (int)LimelightHelpers::getFiducialID();
+        }
     }
 
     double getTX() {
-        return LimelightHelpers::getTX(limelightName);
+        if (isTargetDetected()) {
+            return LimelightHelpers::getTX(limelightName);
+        }
+        return 0;
     }
 
     double getTY() {
-        return LimelightHelpers::getTY(limelightName);
+        if (isTargetDetected()) {
+            return LimelightHelpers::getTY(limelightName);
+        }
+        return 0;
     }
 
     TagType getTagType() {
-        int tagID = getTagID();
-        if (tagID >= 10 && tagID <= 22) {
-            return REEF;
-        } else if (tagID == 1 || tagID == 2 || tagID == 12 || tagID == 13) {
-            return CORALSTATION;
-        } else if (tagID == 3 || tagID == 16) {
-            return PROCESSOR;
-        } else if (tagID == 4 || tagID == 5 || tagID == 14 || tagID == 15) {
-            return BARGE;
-        } else {
-            return REEF;
+        if(isTargetDetected2()) {
+            int tagID = getTagID();
+            if (tagID >= 10 && tagID <= 22) {
+                return REEF;
+            } else if (tagID == 1 || tagID == 2 || tagID == 12 || tagID == 13) {
+                return CORALSTATION;
+            } else if (tagID == 3 || tagID == 16) {
+                return PROCESSOR;
+            } else if (tagID == 4 || tagID == 5 || tagID == 14 || tagID == 15) {
+                return BARGE;
+            } else {
+                return REEF;
+            }
         }
     }
 
     double getTagHeight() {
-        int tagID = getTagID();
-        if (tagData.count(tagID)) {
-            return tagData[tagID].height;
-        } else {
-            return 0;
+        if (isTargetDetected2()) {
+            int tagID = getTagID();
+            if (tagData.count(tagID)) {
+                return tagData[tagID].height;
+            } else {
+                return 0;
+            }
         }
     }
 
     double getAngleSetpoint() {
-        int tagID = getTagID();
-        if (tagData.count(tagID)) {
-            return tagData[tagID].angleSetpoint;
-        } else {
-            return 0;
-        }
+        if (isTargetDetected2()) {
+            int tagID = getTagID();
+            if (tagData.count(tagID)) {
+                return tagData[tagID].angleSetpoint;
+            } else {
+                return 0;
+            }
+        }   
     }
 
     double getDistanceToWall() {
-        return getTargetPoseRobotSpace().y;
+        if (isTargetDetected2()) {
+            return getTargetPoseRobotSpace().y;
+        }
     }
 
     double getAngleLimelightToTag() {
-        if (isTargetDetected()) {
+        if (isTargetDetected2()) {
             return limelightMountAngle + getTY();
         } else {
             return 0;

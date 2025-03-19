@@ -5,6 +5,7 @@
 #include <rev/SparkClosedLoopController.h>
 #include <rev/config/SparkMaxConfig.h>
 #include <rev/config/SmartMotionConfig.h>
+#include <rev/ClosedLoopSlot.h>
 
 #define scoringMotorID 14
 #define angleMotorID 15
