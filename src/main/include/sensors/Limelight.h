@@ -66,17 +66,11 @@ public:
     }
 
     double getTX() {
-        if (isTargetDetected()) {
-            return LimelightHelpers::getTX(limelightName);
-        }
-        return 0;
+        return LimelightHelpers::getTX(limelightName);
     }
 
     double getTY() {
-        if (isTargetDetected()) {
-            return LimelightHelpers::getTY(limelightName);
-        }
-        return 0;
+        return LimelightHelpers::getTY(limelightName);
     }
 
     TagType getTagType() {
@@ -118,9 +112,9 @@ public:
         }   
     }
 
-    double getDistanceToWall() {
+    double getDistanceToWall(std::string limelightName) {
         if (isTargetDetected2()) {
-            return getTargetPoseRobotSpace().y;
+            return getTargetPoseRobotSpace(limelightName).y;
         }
     }
 
@@ -132,20 +126,20 @@ public:
         }
     }
 
-    std::vector<double> getPolarCoords() {
-        return {getTX(), getDistanceToWall()};
+    std::vector<double> getPolarCoords(std::string limelightName) {
+        return {getTX(), getDistanceToWall(limelightName)};
     }
 
-    std::vector<double> getXYCoords() {
+    std::vector<double> getXYCoords(std::string limelightName) {
         double angle = getTX() * (3.14153 / 180);
-        double dist = getDistanceToWall();
+        double dist = getDistanceToWall(limelightName);
         double x = dist * sin(angle);
         double y = dist * cos(angle);
         return {x, y};
     }
 
-    Pose3d getTargetPoseRobotSpace() {
-        std::vector<double> x = LimelightHelpers::getTargetPose_RobotSpace();
+    Pose3d getTargetPoseRobotSpace(std::string limelightName) {
+        std::vector<double> x = LimelightHelpers::getTargetPose_RobotSpace(limelightName);
         Pose3d output = Pose3d(x);
         double tempY = output.y;
         output.y = output.z;
@@ -153,8 +147,8 @@ public:
         return output;
     }
 
-    Pose3d getRobotPoseFieldSpace() {
-        std::vector<double> x = LimelightHelpers::getBotpose();
+    Pose3d getRobotPoseFieldSpace(std::string limelightName) {
+        std::vector<double> x = LimelightHelpers::getBotpose(limelightName);
         Pose3d output = Pose3d(x);
         double tempY = output.y;
         output.y = output.z;

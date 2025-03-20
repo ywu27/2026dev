@@ -6,7 +6,7 @@
 #include "SwerveDrive.h"
 
 class SwerveAlign {
-private:
+public:
     frc::PIDController forwardPID{7, 0, 0.1};
     frc::PIDController strafePID{2, 0, 0.1};
     
@@ -23,19 +23,18 @@ public:
     double prevErrorY = 0;
 
     bool isAligned(Limelight& limelight) {
-        if (abs(limelight.getTargetPoseRobotSpace().x-targetOffset)<0.05 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
-            return true;
-        }
         return false;
     }
 
-    ChassisSpeeds autoAlign(Limelight& limelight, double setpointDistance, double offsetSetpoint) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, std::string limelightName, double setpointDistance, double offsetSetpoint) { // distance in meters
         ChassisSpeeds speeds;
-        double offset = limelight.getTargetPoseRobotSpace().x;
-        double distanceToTag = limelight.getDistanceToWall();
+        double offset = limelight.getTargetPoseRobotSpace(limelightName).x;
+        double distanceToTag = limelight.getDistanceToWall(limelightName);
         targetDistance = setpointDistance;
         targetOffset = offsetSetpoint;
-        if (!isAligned(limelight)) {
+        forwardPID.SetTolerance(0.05, 0.01);
+        strafePID.SetTolerance(0.05, 0.01);
+        if (forwardPID.AtSetpoint() && strafePID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
             speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0); //CHECK THIS
@@ -62,7 +61,7 @@ public:
             else {
                 strafeSpeed = fabs(strafeSpeed);
             }
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, 0, 0);
+            speeds = ChassisSpeeds::fromFieldRelativeSpeeds(strafeSpeed, 0, 0, mGyro.getBoundedAngleCW());
         }
         else {
             strafeSpeed = 0;
@@ -89,7 +88,7 @@ public:
             else {
                 forwardSpeed = fabs(forwardSpeed);
             }
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, forwardSpeed, 0);
+            speeds = ChassisSpeeds::fromFieldRelativeSpeeds(0, forwardSpeed, 0, mGyro.getBoundedAngleCW());
         }
         else {
             forwardSpeed = 0;

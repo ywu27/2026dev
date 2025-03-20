@@ -2,6 +2,7 @@
 
 #include "geometry/Rotation2d.h"
 #include "NavX.h"
+#include <frc/controller/PIDController.h>
 
 class FusedGyro
 {
@@ -72,5 +73,21 @@ public:
     Rotation2d getAngleCCW()
     {
         return Rotation2d::fromDegrees(Rotation2d::degreesBound(-trueAngle.getDegrees()));
+    }
+
+    float autoRot(double leftX, double leftY, double rightX, NavX &mGyro) {
+        if (leftX == 0 && rightX == 0 && leftY != 0) {
+            float deviation = (mGyro.getBoundedAngleCW().getDegrees() > 0) ? mGyro.getBoundedAngleCW().getDegrees() : -1*mGyro.getBoundedAngleCW().getDegrees();
+
+            if (abs(deviation) < 0.1) {
+                return 0.0;
+            }
+            else {
+                return ((1.0 - (deviation - 0.1) / 180.0) > 0) ? (1.0 - (deviation - 0.1) / 180.0) : -1 * (1.0 - (deviation - 0.1) / 180.0);
+            }
+        }
+        else {
+            return 1.0;
+        }
     }
 };

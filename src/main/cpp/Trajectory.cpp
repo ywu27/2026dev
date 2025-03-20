@@ -8,10 +8,10 @@ static frc::HolonomicDriveController controller{
     frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
     frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
     frc::ProfiledPIDController<units::radian>{
-        0.55, 0, 0,
+        0.45, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{
-            units::radians_per_second_t(6.0), // prev: 5.0
-            units::radians_per_second_squared_t(120)}}}; // prev: 100
+            units::radians_per_second_t(5.0), // prev: 5.0
+            units::radians_per_second_squared_t(100)}}}; // prev: 100
 
 /**
  * Drives robot to the next state on trajectory
@@ -25,10 +25,12 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
     // Calculate x, y speeds from MPS
     double vy_feet = correction.vx.value() * 3.281;
     double vx_feet = correction.vy.value() * 3.281;
-
+// 
     // Clamp rot speed to 2.0 since that is the max rot we allow
-    double rot = std::clamp(correction.omega.value(), -moduleMaxRot, moduleMaxRot);
+    double rot = -std::clamp(correction.omega.value()*0.52, -moduleMaxRot, moduleMaxRot);
 
+    frc::SmartDashboard::PutNumber("autoHeading", state.heading.Degrees().value());
+    frc::SmartDashboard::PutNumber("auto odometry x", mDrive.getOdometryPose().X().value());
     frc::SmartDashboard::PutNumber("autoVY", vy_feet);
     frc::SmartDashboard::PutNumber("autoVX", vx_feet);
     frc::SmartDashboard::PutNumber("autoRot", rot);

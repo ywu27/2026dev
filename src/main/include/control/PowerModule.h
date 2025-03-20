@@ -3,6 +3,7 @@
 #include <frc/Timer.h>
 #include <util/ShuffleUI.h>
 #include <frc/PowerDistribution.h>
+#include <frc/RobotController.h>
 
 #define swerveDriveStartCurrent 60
 #define totalMatchSeconds 150
@@ -17,8 +18,9 @@ private:
 public:
     frc::Timer updateTimer = frc::Timer();
     int driveCurrentLimit = swerveDriveStartCurrent;
-    float minVoltage = 10.50;
+    float minVoltage = 9.00;
     float maxVoltage = 13.0;
+    bool underVoltage = false;
 
     frc::PowerDistribution mPDH = frc::PowerDistribution(1, frc::PowerDistribution::ModuleType::kRev);
 
@@ -54,10 +56,11 @@ public:
     }
 
     float currentScale() {
-        frc::SmartDashboard::PutBoolean("Brownout?", mPDH.GetFaults().Brownout);
-        if ((mPDH.GetFaults().Brownout == true) || (mPDH.GetVoltage() < minVoltage)) {
-            float scale = (mPDH.GetVoltage() - minVoltage) / (maxVoltage - minVoltage);
-            if (scale < minVoltage) {
+        frc::SmartDashboard::PutBoolean("Brownout?", underVoltage);
+        if (frc::RobotController::GetBrownoutVoltage().value() > frc::RobotController::GetBatteryVoltage().value()) {
+            underVoltage = true;
+            float scale = (frc::RobotController::GetBatteryVoltage().value() - minVoltage) / (maxVoltage - minVoltage);
+            if (scale < 0.0) {
                 scale = 0.0;
             }
             return scale;

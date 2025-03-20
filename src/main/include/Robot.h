@@ -28,6 +28,7 @@
 #include <frc/GenericHID.h>
 #include "Trajectory.h"
 #include "control/PowerModule.h"
+#include "sensors/FusedGyro.h"
 
 class Robot : public frc::TimedRobot
 {
@@ -56,8 +57,8 @@ public:
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Limelight::Alliance alliance;
-  Limelight limelight1 = Limelight("one");
-  Limelight limelight2 = Limelight("two");
+  // Limelight limelight1 = Limelight("limelight-one");
+  Limelight limelight2 = Limelight("limelight-two");
 
   // For Auto Align
   SwerveAlign align;
@@ -68,6 +69,9 @@ public:
   ctre::phoenix6::CANBus canbus{"Drivetrain"};
   ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
   float busUtil = canInfo.BusUtilization;
+
+  // Fused Gyro
+  FusedGyro mFsGyro; 
 
   // Teleop Controls
   float ctrPercent = 1.0;
