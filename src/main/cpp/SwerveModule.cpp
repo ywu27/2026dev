@@ -128,7 +128,7 @@ frc::SwerveModulePosition SwerveModule::getModulePosition() {
 
     pos.angle = frc::Rotation2d(units::radian_t(Rotation2d::polarToCompass(getSteerEncoder().getRadians())));
 
-    // changes from encoder rotations to feet to meters
+    // changes from encoder rotations from feet to meters
     pos.distance = units::meter_t(getDriveEncoderPos() * moduleDriveRatio * wheelCircumFeet / 3.281);
 
     return pos;
