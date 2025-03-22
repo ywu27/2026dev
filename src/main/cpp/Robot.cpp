@@ -195,16 +195,22 @@ void Robot::TeleopPeriodic()
   frc::SmartDashboard::PutNumber("transY", transY);
   frc::SmartDashboard::PutNumber("transX", transX);
 
-  if (alignLimelight) { // Alignment Mode // LL1 is reef
+  if (ctr.GetR2ButtonPressed()) {
+    align.forwardPID.Reset();
+    align.strafePID.Reset();
+    // Pose3d robotPose = limelight1.getRobotPoseFieldSpace(limelight1Name);
+    Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(limelight1Name); // In meters
+    float apriltagPoseFeetX = aprilTagPose.x * 3.281; // Convert to feet
+    float apriltagPoseFeetY = aprilTagPose.y * 3.281; // Convert to feet
+    transY = mDrive.getOdometryPose().Y().value() + aprilTagPose.y - 0.75;
+    transX = mDrive.getOdometryPose().X().value() + aprilTagPose.x - 0.75;
+  }
+  else if (alignLimelight) { // Alignment Mode // LL1 is reef
     if(limelight1.isTargetDetected2()){
       // if (limelight2.getTagType()==Limelight::REEF) {
       //   offSet = 0.0381; // meters
       // }
-      Pose3d robotPose = limelight1.getRobotPoseFieldSpace(limelight1Name);
-      Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(limelight1Name);
-      transY = aprilTagPose.y;
-      transX = aprilTagPose.x;
-      targetDistance = 1;//set this
+      targetDistance = 1; //set this
       // zeroSetpoint = 0;
       // zeroSetpoint = limelight1.getAngleSetpoint();
       ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
