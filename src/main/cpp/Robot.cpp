@@ -192,26 +192,29 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
+  frc::SmartDashboard::PutNumber("transY", transY);
+  frc::SmartDashboard::PutNumber("transX", transX);
+
   if (alignLimelight) { // Alignment Mode // LL1 is reef
-    if(limelight2.isTargetDetected2()){
-      if (limelight2.getTagType()==Limelight::REEF) {
-        offSet = 0.0381; // meters
-      }
-      Pose3d robotPose = limelight2.getRobotPoseFieldSpace("limelight-two");
-      Pose3d aprilTagPose = limelight2.getTargetPoseRobotSpace("limelight-two");
-      float transY = aprilTagPose.y - robotPose.y;
-      float transX = aprilTagPose.x - robotPose.x;
+    if(limelight1.isTargetDetected2()){
+      // if (limelight2.getTagType()==Limelight::REEF) {
+      //   offSet = 0.0381; // meters
+      // }
+      Pose3d robotPose = limelight1.getRobotPoseFieldSpace(limelight1Name);
+      Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(limelight1Name);
+      transY = aprilTagPose.y;
+      transX = aprilTagPose.x;
       targetDistance = 1;//set this
-      zeroSetpoint = 0;
+      // zeroSetpoint = 0;
       // zeroSetpoint = limelight1.getAngleSetpoint();
       ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
       // ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
       vx = speeds.vxMetersPerSecond;
       vy = speeds.vyMetersPerSecond;
       fieldOriented = false;
-      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      mHeadingController.setSetpoint(zeroSetpoint);
-      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+      // mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      // mHeadingController.setSetpoint(zeroSetpoint);
+      // rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
     }
     // if(limelight2.isTargetDetected2()){ // Alignment Mode // LL2 is coral station
     //   if (limelight2.getTagType()==Limelight::REEF) {
@@ -261,7 +264,7 @@ void Robot::TeleopPeriodic()
   // frc::SmartDashboard::PutNumber("Power Scaled?", currentScale);
   
   // Smart Dashboard Info
-  frc::SmartDashboard::PutBoolean("Limelight get target", limelight2.isTargetDetected2());
+  frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);

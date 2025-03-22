@@ -82,20 +82,20 @@ public:
 
         if (!forwardPID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
-            if (prevErrorY < (setpointY - currentY)) {
-                forwardSpeed = -fabs(forwardSpeed);
-            }
-            else {
-                forwardSpeed = fabs(forwardSpeed);
-            }
-            speeds = ChassisSpeeds::fromFieldRelativeSpeeds(0, forwardSpeed, 0, mGyro.getBoundedAngleCW());
+            // if (prevErrorY < (setpointY - currentY)) {
+            //     forwardSpeed = -fabs(forwardSpeed);
+            // }
+            // else {
+            //     forwardSpeed = fabs(forwardSpeed);
+            // }
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, forwardSpeed, 0);
         }
         else {
             forwardSpeed = 0;
             speeds = ChassisSpeeds(0, 0, 0);
         }
 
-        prevErrorY = setpointY - currentY;
+        // prevErrorY = setpointY - currentY;
         return speeds;
     }
 };
