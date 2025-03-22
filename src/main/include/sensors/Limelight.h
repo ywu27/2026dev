@@ -112,9 +112,9 @@ public:
         }   
     }
 
-    double getDistanceToWall(std::string limelightName) {
+    double getDistanceToWall() {
         if (isTargetDetected2()) {
-            return getTargetPoseRobotSpace(limelightName).y;
+            return getTargetPoseRobotSpace().y;
         }
     }
 
@@ -126,19 +126,19 @@ public:
         }
     }
 
-    std::vector<double> getPolarCoords(std::string limelightName) {
-        return {getTX(), getDistanceToWall(limelightName)};
+    std::vector<double> getPolarCoords() {
+        return {getTX(), getDistanceToWall()};
     }
 
-    std::vector<double> getXYCoords(std::string limelightName) {
+    std::vector<double> getXYCoords() {
         double angle = getTX() * (3.14153 / 180);
-        double dist = getDistanceToWall(limelightName);
+        double dist = getDistanceToWall();
         double x = dist * sin(angle);
         double y = dist * cos(angle);
         return {x, y};
     }
 
-    Pose3d getTargetPoseRobotSpace(std::string limelightName) {
+    Pose3d getTargetPoseRobotSpace() {
         std::vector<double> x = LimelightHelpers::getTargetPose_RobotSpace(limelightName);
         Pose3d output = Pose3d(x);
         double tempY = output.y;
@@ -147,7 +147,7 @@ public:
         return output;
     }
 
-    Pose3d getRobotPoseFieldSpace(std::string limelightName) {
+    Pose3d getRobotPoseFieldSpace() {
         std::vector<double> x = LimelightHelpers::getBotpose(limelightName);
         Pose3d output = Pose3d(x);
         double tempY = output.y;

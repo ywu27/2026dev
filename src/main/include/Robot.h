@@ -57,10 +57,8 @@ public:
   NavX mGyro = NavX();
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Limelight::Alliance alliance;
-  std::string limelight1Name = "limelight-one";
-  std::string limelight2Name = "limelight-two";
-  Limelight limelight1 = Limelight(limelight1Name);
-  Limelight limelight2 = Limelight(limelight2Name);
+  Limelight limelight1 = Limelight("limelight-one");
+  Limelight limelight2 = Limelight("limelight-two");
   float transY = 0.0;
   float transX = 0.0;
 

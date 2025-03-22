@@ -6,9 +6,9 @@
 #include "SwerveDrive.h"
 
 class SwerveAlign {
-public:
-    frc::PIDController forwardPID{7, 0, 0.1};
-    frc::PIDController strafePID{2, 0, 0.1};
+public: 
+    frc::PIDController forwardPID{8, 0, 0.1};
+    frc::PIDController strafePID{8, 0, 0.1};
     
     double forwardSpeed = 0;
     double strafeSpeed = 0;
@@ -26,18 +26,18 @@ public:
         return false;
     }
 
-    ChassisSpeeds autoAlign(Limelight& limelight, std::string limelightName, double setpointDistance, double offsetSetpoint) { // distance in meters
+    ChassisSpeeds autoAlign(Limelight& limelight, double setpointDistance, double offsetSetpoint) { // distance in meters
         ChassisSpeeds speeds;
-        double offset = limelight.getTargetPoseRobotSpace(limelightName).x;
-        double distanceToTag = limelight.getDistanceToWall(limelightName);
+        double offset = limelight.getTargetPoseRobotSpace().x;
+        double distanceToTag = limelight.getDistanceToWall();
         targetDistance = setpointDistance;
         targetOffset = offsetSetpoint;
         forwardPID.SetTolerance(0.05, 0.01);
         strafePID.SetTolerance(0.05, 0.01);
-        if (forwardPID.AtSetpoint() && strafePID.AtSetpoint()) {
+        if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(-strafeSpeed, -forwardSpeed, 0); //CHECK THIS
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0); //CHECK THIS
         }
         else {
             speeds = ChassisSpeeds(0, 0, 0);
@@ -82,20 +82,37 @@ public:
 
         if (!forwardPID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
-            // if (prevErrorY < (setpointY - currentY)) {
-            //     forwardSpeed = -fabs(forwardSpeed);
-            // }
-            // else {
-            //     forwardSpeed = fabs(forwardSpeed);
-            // }
+            if (prevErrorY < (setpointY - currentY)) {
+                forwardSpeed = -fabs(forwardSpeed);
+            }
+            else {
+                forwardSpeed = fabs(forwardSpeed);
+            }
             speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, forwardSpeed, 0);
         }
         else {
             forwardSpeed = 0;
             speeds = ChassisSpeeds(0, 0, 0);
         }
+        prevErrorY = setpointY - currentY;
+        return speeds;
+    }
 
-        // prevErrorY = setpointY - currentY;
+    ChassisSpeeds driveToSetpoint(float setpointX, float setpointY, SwerveDrive &drive, NavX &mGyro) {
+        ChassisSpeeds speeds;
+        forwardPID.SetTolerance(0.05, 0.01);
+        strafePID.SetTolerance(0.05, 0.01);
+        double currentX = drive.getOdometryPose().X().value();
+        double currentY = drive.getOdometryPose().Y().value();
+
+        if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
+            double forwardSpeed = forwardPID.Calculate(currentY, setpointY);
+            double strafeSpeed = strafePID.Calculate(currentX, setpointX);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0); //CHECK THIS
+        }
+        else {
+            speeds = ChassisSpeeds(0, 0, 0);
+        }
         return speeds;
     }
 };

@@ -194,34 +194,38 @@ void Robot::TeleopPeriodic()
 
   frc::SmartDashboard::PutNumber("transY", transY);
   frc::SmartDashboard::PutNumber("transX", transX);
+  frc::SmartDashboard::PutBoolean("At setpoint", align.forwardPID.AtSetpoint());
+  frc::SmartDashboard::PutNumber("desired setpoint", transY);
+  frc::SmartDashboard::PutNumber("current setpoint", mDrive.getOdometryPose().Y().value());
 
   if (ctr.GetR2ButtonPressed()) {
     align.forwardPID.Reset();
     align.strafePID.Reset();
-    // Pose3d robotPose = limelight1.getRobotPoseFieldSpace(limelight1Name);
-    Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(limelight1Name); // In meters
-    float apriltagPoseFeetX = aprilTagPose.x * 3.281; // Convert to feet
-    float apriltagPoseFeetY = aprilTagPose.y * 3.281; // Convert to feet
-    transY = mDrive.getOdometryPose().Y().value() + aprilTagPose.y - 0.75;
-    transX = mDrive.getOdometryPose().X().value() + aprilTagPose.x - 0.75;
+    Pose3d robotPose = limelight1.getRobotPoseFieldSpace();
+    Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(); // In meters
+    float apriltagPoseFeetX = aprilTagPose.x; // Convert to feet
+    float apriltagPoseFeetY = aprilTagPose.y; // Convert to feet
+    transY = mDrive.getOdometryPose().Y().value() + 3.0;
+    transX = mDrive.getOdometryPose().X().value() + 3.0;
+    // transY = mDrive.getOdometryPose().Y().value() + 2.0;
   }
   else if (alignLimelight) { // Alignment Mode // LL1 is reef
-    if(limelight1.isTargetDetected2()){
+    // if(limelight1.isTargetDetected2()){
       // if (limelight2.getTagType()==Limelight::REEF) {
       //   offSet = 0.0381; // meters
       // }
-      targetDistance = 1; //set this
+      // targetDistance = 1; //set this
       // zeroSetpoint = 0;
       // zeroSetpoint = limelight1.getAngleSetpoint();
       ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
-      // ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+      // ChassisSpeeds speeds = align.autoAlign(limelight1, limelight1Name, targetDistance, offSet);
       vx = speeds.vxMetersPerSecond;
       vy = speeds.vyMetersPerSecond;
       fieldOriented = false;
       // mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       // mHeadingController.setSetpoint(zeroSetpoint);
       // rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-    }
+    // }
     // if(limelight2.isTargetDetected2()){ // Alignment Mode // LL2 is coral station
     //   if (limelight2.getTagType()==Limelight::REEF) {
     //     offSet = 0.0381; // meters
