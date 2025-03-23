@@ -13,8 +13,6 @@ class Limelight {
 
 private:
     std::string limelightName;
-    double limelightMountAngle = 20;
-    double limelightHeight = 12;
     
     struct TagInfo {
         double height;
@@ -115,14 +113,6 @@ public:
     double getDistanceToWall() {
         if (isTargetDetected2()) {
             return getTargetPoseRobotSpace().y;
-        }
-    }
-
-    double getAngleLimelightToTag() {
-        if (isTargetDetected2()) {
-            return limelightMountAngle + getTY();
-        } else {
-            return 0;
         }
     }
 
