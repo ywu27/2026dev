@@ -39,6 +39,8 @@ public: // put back to private
     std::thread modulePIDThread;
     float maxRot = moduleMaxRot;
     std::array<Translation2d, 4> wheelPs = {Translation2d(trackWidthNumber, wheelBase), Translation2d(trackWidthNumber, -wheelBase), Translation2d(-trackWidthNumber, wheelBase), Translation2d(-trackWidthNumber, -wheelBase)};
+    int index;
+    bool goodWheelPos = true;
 
     SwerveDriveKinematics m_kinematics = SwerveDriveKinematics(wheelPs);
     NavX &mGyro; 
@@ -79,6 +81,8 @@ public:
     void resetOdometry(frc::Translation2d trans, frc::Rotation2d angle);
     frc::Pose2d getOdometryPose();
     void updateOdometry();
+    void autoRot();
+    float roundToTwoDecimals(float num);
     // void displayDriveTelemetry();
     // void zeroAccumulation();
 };

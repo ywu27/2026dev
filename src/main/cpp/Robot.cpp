@@ -12,8 +12,9 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
-  frc::CameraServer::StartAutomaticCapture();
-  limelight2.setPipelineIndex(0);
+  // mGyro.setYaw(180);
+  // frc::CameraServer::StartAutomaticCapture();
+  limelight1.setPipelineIndex(0);
   // limelight2.setPipelineIndex(0);
 
   // Choosers
@@ -52,16 +53,18 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
+  frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
+  frc::SmartDashboard::PutBoolean("Limelight aligned? ", align.isAligned(limelight1));
 }
 
 void Robot::AutonomousInit()
 {
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
+
+  align.forwardPID.Reset();
+  align.strafePID.Reset();
   // mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
-
-  // mTrajectory.followPath(Trajectory::MOVE_STRAIGHT, false);
-
   std::string start_pos = positionChooser.GetSelected();
   std::string reef_pos = reefChooser.GetSelected();
 
@@ -126,6 +129,23 @@ void Robot::AutonomousInit()
 }
 void Robot::AutonomousPeriodic()
 {
+  if (limelight1.isTargetDetected2() && !align.forwardPID.AtSetpoint()) {
+    // zeroSetpoint = limelight1.getAngleSetpoint();
+    // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
+    ChassisSpeeds speeds = align.autoAlign(limelight1, 1, 0);
+    double vx = speeds.vxMetersPerSecond;
+    double vy = speeds.vyMetersPerSecond;
+
+    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+    mHeadingController.setSetpoint(0);
+    double rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+    mDrive.Drive(
+    ChassisSpeeds(vx, vy, rot),
+    mGyro.getBoundedAngleCCW(),
+    false,
+    false);
+    mDrive.updateOdometry();
+  }
   // ChassisSpeeds speeds = align.driveToSetpointY(-1, mDrive, mGyro);
   // float vx = speeds.vxMetersPerSecond;
   // float vy = speeds.vyMetersPerSecond;
@@ -192,27 +212,40 @@ void Robot::TeleopPeriodic()
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
 
-  if (alignLimelight) { // Alignment Mode // LL1 is reef
-    if(limelight2.isTargetDetected2()){
-      if (limelight2.getTagType()==Limelight::REEF) {
-        offSet = 0.0381; // meters
-      }
-      Pose3d robotPose = limelight2.getRobotPoseFieldSpace("limelight-two");
-      Pose3d aprilTagPose = limelight2.getTargetPoseRobotSpace("limelight-two");
-      float transY = aprilTagPose.y - robotPose.y;
-      float transX = aprilTagPose.x - robotPose.x;
-      targetDistance = 1;//set this
+  // frc::SmartDashboard::PutNumber("transY", transY);
+  // frc::SmartDashboard::PutNumber("transX", transX);
+  frc::SmartDashboard::PutBoolean("At setpoint forward", align.forwardPID.AtSetpoint());
+  frc::SmartDashboard::PutBoolean("At setpoint side", align.strafePID.AtSetpoint());
+  // frc::SmartDashboard::PutNumber("desired setpoint", transY);
+  frc::SmartDashboard::PutNumber("current setpoint", mDrive.getOdometryPose().Y().value());
+
+  if (ctr.GetR2ButtonPressed()) {
+    align.forwardPID.Reset();
+    align.strafePID.Reset();
+    Pose3d robotPose = limelight1.getRobotPoseFieldSpace();
+    Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(); // In meters
+    float apriltagPoseFeetX = aprilTagPose.x; // Convert to feet
+    float apriltagPoseFeetY = aprilTagPose.y; // Convert to feet
+    // transY = mDrive.getOdometryPose().Y().value() + 3.0;
+    // transX = mDrive.getOdometryPose().X().value() + 3.0;
+  }
+  else if (alignLimelight) { // Alignment Mode // LL1 is reef
+    // if(limelight1.isTargetDetected2()){
+      // if (limelight2.getTagType()==Limelight::REEF) {
+      //   offSet = 0.0381; // meters
+      // }
+      targetDistance = 1; //set this
       zeroSetpoint = 0;
       // zeroSetpoint = limelight1.getAngleSetpoint();
-      ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
-      // ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+      // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
+      ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
       vx = speeds.vxMetersPerSecond;
       vy = speeds.vyMetersPerSecond;
       fieldOriented = false;
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       mHeadingController.setSetpoint(zeroSetpoint);
       rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-    }
+    // }
     // if(limelight2.isTargetDetected2()){ // Alignment Mode // LL2 is coral station
     //   if (limelight2.getTagType()==Limelight::REEF) {
     //     offSet = 0.0381; // meters
@@ -248,6 +281,9 @@ void Robot::TeleopPeriodic()
   if (ctr.GetCrossButtonReleased()) {
     mGyro.init();
   }
+  if(ctr.GetTriangleButton()) {
+    mDrive.autoRot();
+  }
 
   // Drive function
   mDrive.Drive(
@@ -261,7 +297,7 @@ void Robot::TeleopPeriodic()
   // frc::SmartDashboard::PutNumber("Power Scaled?", currentScale);
   
   // Smart Dashboard Info
-  frc::SmartDashboard::PutBoolean("Limelight get target", limelight2.isTargetDetected2());
+  frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
   frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);

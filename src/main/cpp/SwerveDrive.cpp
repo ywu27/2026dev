@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 void SwerveDrive::Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyro, bool useFieldOriented, bool cleanAccum) {
     double desiredVx = desiredSpeeds.vxMetersPerSecond;
@@ -158,6 +159,72 @@ void SwerveDrive::updateOdometry() {
          mFrontLeft.getModulePosition(),
          mFrontRight.getModulePosition(),
          mBackRight.getModulePosition()});
+}
+
+float SwerveDrive::roundToTwoDecimals(float num) {
+    return std::round(num * 100.0) / 100.0;
+}
+
+void SwerveDrive::autoRot() {
+    // Gets encoder positions of all the modules
+    float backLeftpos = mBackLeft.getModulePosition().angle.Degrees().value();
+    float backRightpos = mBackRight.getModulePosition().angle.Degrees().value();
+    float frontLeftpos = mFrontLeft.getModulePosition().angle.Degrees().value();
+    float frontRightpos = mFrontRight.getModulePosition().angle.Degrees().value();
+
+    /*
+    Transfers the encoder positions to a vector then rounds it to the nearest two decimal points
+    */
+    std::vector<float> modulePos {roundToTwoDecimals(backLeftpos), 
+                            roundToTwoDecimals(backRightpos), 
+                            roundToTwoDecimals(frontLeftpos), 
+                            roundToTwoDecimals(frontRightpos)};
+
+    // Using a set in order to take out duplicates
+    std::set<float> moduleSet(modulePos.begin(), modulePos.end());
+
+    // Since sets sort from least to greatest, lowerDrivePos gets the lowest val and higherDrivePos gets the highest val
+    float lowerDrivePos = *moduleSet.begin();
+    float higherDrivePos = *std::prev(moduleSet.end());
+
+    // See how many times lowerDrivePos and higherDrivePos occur in the vector
+    int lowerDrivePosOccur = std::count(modulePos.begin(), modulePos.end(), lowerDrivePos);
+    int higherDrivePosOccur = std::count(modulePos.begin(), modulePos.end(), higherDrivePos);
+
+    frc::SmartDashboard::PutNumber("lowerDrivePos", lowerDrivePos);
+    frc::SmartDashboard::PutNumber("higherDrivePos", higherDrivePos);
+    frc::SmartDashboard::PutNumber("lowerDrivePosOccur", lowerDrivePosOccur);
+    frc::SmartDashboard::PutNumber("higherDrivePosOccur", higherDrivePosOccur);
+
+    // See if there's an odd one out, if not, the wheels are in the right pos
+    if (lowerDrivePosOccur == 1) {
+        index = std::distance(modulePos.begin(), std::find(modulePos.begin(), modulePos.end(), lowerDrivePos));
+    }
+    else if (higherDrivePosOccur == 1) {
+        index = std::distance(modulePos.begin(), std::find(modulePos.begin(), modulePos.end(), higherDrivePos));
+    }
+    else if (lowerDrivePosOccur == 4 || higherDrivePosOccur == 4) {
+        goodWheelPos = true;
+    }
+
+    frc::SmartDashboard::PutNumber("swerve index rot", index);
+
+    // Change angle setpoint is the wheels aren't in the right position
+    if (goodWheelPos == false) {
+        if (index == 0) {
+            mBackLeft.setSteerAngleSetpoint(backRightpos);
+        }
+        else if (index == 1) {
+            mBackRight.setSteerAngleSetpoint(frontRightpos);
+        }
+        else if (index == 2) {
+            mFrontLeft.setSteerAngleSetpoint(backLeftpos);
+        }
+        else if (index == 3) {
+            mFrontRight.setSteerAngleSetpoint(frontLeftpos);
+        }
+        goodWheelPos = true;
+    }
 }
 
 /**
