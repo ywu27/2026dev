@@ -104,7 +104,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             break;
         case MOVE_STRAIGHT:
             follow ("Move Straight", flipAlliance, false, false);
-            // waitToScore(2);
+            waitToScore(2);
             break;
         case auto_1A:
             //follow("Test Movement", flipAlliance, false, true, 0.0);
@@ -273,5 +273,11 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
+    while (!mAlign.isAligned(mLimelight)) { // TEST THIS
+        ChassisSpeeds speeds = mAlign.autoAlign(mLimelight, 1, 0);
+        mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false);
+        mDrive.updateOdometry();
+    }
+    mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
     std::this_thread::sleep_for(std::chrono::seconds(delaySeconds));
 }

@@ -65,7 +65,7 @@ public:
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory mTrajectory = Trajectory(mDrive, mGyro, pathConfig);
+  Trajectory mTrajectory = Trajectory(mDrive, limelight1, align, mGyro, pathConfig);
 
   //CANivore
   ctre::phoenix6::CANBus canbus{"Drivetrain"};

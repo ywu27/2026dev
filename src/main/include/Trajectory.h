@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "sensors/Limelight.h"
 #include "geometry/Translation2d.h"
+#include "swerve/SwerveAlign.h"
 
 #include <pathplanner/lib/trajectory/PathPlannerTrajectory.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
@@ -30,8 +31,9 @@ private:
     
     SwerveDrive &mDrive;
     // Superstructure &mSuperstructure; 
+    SwerveAlign &mAlign;
     NavX &mGyro;
-    // Limelight &mLimelight; 
+    Limelight &mLimelight; 
     RobotConfig &config;
 
 public:
@@ -62,7 +64,9 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+    Trajectory(SwerveDrive &mDriveInput, Limelight &limelight, SwerveAlign align, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+                                                                                                                mLimelight(limelight),
+                                                                                                                mAlign(align),
                                                                                                                 mGyro(mGyroInput),
                                                                                                                 config(configInput) {};
 
