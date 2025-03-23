@@ -41,6 +41,8 @@ public:
     bool receivedPose;
     bool isRed = false;
 
+    frc::Timer alignTimer;
+
     enum autos {
         DO_NOTHING,
         MOVE_STRAIGHT,

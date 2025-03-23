@@ -273,11 +273,15 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
-    while (!mAlign.isAligned(mLimelight)) { // TEST THIS
+    alignTimer.Start();
+    mDrive.enableModules();
+
+    while (!mAlign.isAligned(mLimelight) && alignTimer.Get() < 3_s) { // Timeout after 3 seconds
         ChassisSpeeds speeds = mAlign.autoAlign(mLimelight, 1, 0);
         mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false);
         mDrive.updateOdometry();
     }
     mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
+    mDrive.stopModules();
     std::this_thread::sleep_for(std::chrono::seconds(delaySeconds));
 }

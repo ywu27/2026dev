@@ -129,23 +129,6 @@ void Robot::AutonomousInit()
 }
 void Robot::AutonomousPeriodic()
 {
-  if (limelight1.isTargetDetected2() && !align.forwardPID.AtSetpoint()) {
-    // zeroSetpoint = limelight1.getAngleSetpoint();
-    // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
-    ChassisSpeeds speeds = align.autoAlign(limelight1, 1, 0);
-    double vx = speeds.vxMetersPerSecond;
-    double vy = speeds.vyMetersPerSecond;
-
-    mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-    mHeadingController.setSetpoint(0);
-    double rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
-    mDrive.Drive(
-    ChassisSpeeds(vx, vy, rot),
-    mGyro.getBoundedAngleCCW(),
-    false,
-    false);
-    mDrive.updateOdometry();
-  }
   // ChassisSpeeds speeds = align.driveToSetpointY(-1, mDrive, mGyro);
   // float vx = speeds.vxMetersPerSecond;
   // float vy = speeds.vyMetersPerSecond;
