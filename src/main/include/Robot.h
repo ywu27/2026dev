@@ -58,7 +58,9 @@ public:
   SwerveDrive mDrive = SwerveDrive(mGyro);
   Limelight::Alliance alliance;
   Limelight limelight1 = Limelight("limelight-one");
-  // Limelight limelight2 = Limelight("limelight-two");
+  Limelight limelight2 = Limelight("limelight-two");
+  float transY = 0.0;
+  float transX = 0.0;
 
   // For Auto Align
   SwerveAlign align;

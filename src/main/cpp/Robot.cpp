@@ -210,7 +210,7 @@ void Robot::TeleopPeriodic()
   // Driving Modes
   double offSet = 0;
   double targetDistance = 0; // CHECK THIS
-  double zeroSetpoint = 0;
+  double zeroSetpoint = 180;
 
   // frc::SmartDashboard::PutNumber("transY", transY);
   // frc::SmartDashboard::PutNumber("transX", transX);
@@ -226,8 +226,8 @@ void Robot::TeleopPeriodic()
     Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(); // In meters
     float apriltagPoseFeetX = aprilTagPose.x; // Convert to feet
     float apriltagPoseFeetY = aprilTagPose.y; // Convert to feet
-    // transY = mDrive.getOdometryPose().Y().value() + 3.0;
-    // transX = mDrive.getOdometryPose().X().value() + 3.0;
+    transY = mDrive.getOdometryPose().Y().value() + 3.0;
+    transX = mDrive.getOdometryPose().X().value() + 3.0;
   }
   else if (alignLimelight) { // Alignment Mode // LL1 is reef
     // if(limelight1.isTargetDetected2()){
