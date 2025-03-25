@@ -64,7 +64,7 @@ void Robot::AutonomousInit()
 
   align.forwardPID.Reset();
   align.strafePID.Reset();
-  // mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
+  mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
   std::string start_pos = positionChooser.GetSelected();
   std::string reef_pos = reefChooser.GetSelected();
 
@@ -129,7 +129,8 @@ void Robot::AutonomousInit()
 }
 void Robot::AutonomousPeriodic()
 {
-  // ChassisSpeeds speeds = align.driveToSetpointY(-1, mDrive, mGyro);
+  // mDrive.enableModules();
+  // ChassisSpeeds speeds = align.autoAlign(limelight1, 1, 0);
   // float vx = speeds.vxMetersPerSecond;
   // float vy = speeds.vyMetersPerSecond;
   // float rot = 0.0;
@@ -193,7 +194,7 @@ void Robot::TeleopPeriodic()
   // Driving Modes
   double offSet = 0;
   double targetDistance = 0; // CHECK THIS
-  double zeroSetpoint = 180;
+  double zeroSetpoint = 0;
 
   // frc::SmartDashboard::PutNumber("transY", transY);
   // frc::SmartDashboard::PutNumber("transX", transX);

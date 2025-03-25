@@ -43,7 +43,6 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
  */
 void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance, bool intake, bool first, float startAngle)
 {
-    mDrive.enableModules();
     auto path = PathPlannerPath::fromPathFile(traj_dir_file_path);
 
     // switches path to red alliance (mirrors it)
@@ -89,7 +88,8 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
         while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - delayStart < 0.02) {
         };
     }
-    mDrive.stopModules();
+    mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
+
 }
 
 // EDIT LATER 
@@ -103,18 +103,18 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
         case DO_NOTHING:
             break;
         case MOVE_STRAIGHT:
-            follow ("Move Straight", flipAlliance, false, false);
+            // follow ("Move Straight", flipAlliance, false, false);
             waitToScore(2);
             break;
         case auto_1A:
             //follow("Test Movement", flipAlliance, false, true, 0.0);
             follow("1 to A", flipAlliance, false, true, 0.0);
-            waitToScore(2);
-            follow("A to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
-            follow("Top Coral Station to A", flipAlliance, false, false);
-            waitToScore(2);
-            follow("A to Top Coral Station", flipAlliance, false, false);
+            // waitToScore(2);
+            // follow("A to Top Coral Station", flipAlliance, false, false);
+            // waitToScore(2);
+            // follow("Top Coral Station to A", flipAlliance, false, false);
+            // waitToScore(2);
+            // follow("A to Top Coral Station", flipAlliance, false, false);
             break;
         case auto_1B:
             follow("1 to B", flipAlliance, false, true, 0.0);
@@ -273,15 +273,19 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
-    alignTimer.Start();
     mDrive.enableModules();
-
-    while (!mAlign.isAligned(mLimelight) && alignTimer.Get() < 3_s) { // Timeout after 3 seconds
+    while (true) {
         ChassisSpeeds speeds = mAlign.autoAlign(mLimelight, 1, 0);
-        mDrive.Drive(speeds, mGyro.getBoundedAngleCCW(), false);
+        double vx = speeds.vxMetersPerSecond;
+        double vy = speeds.vyMetersPerSecond;
+        mDrive.Drive(
+            ChassisSpeeds(0, vy, 0),
+            mGyro.getBoundedAngleCCW(),
+            false, false);
         mDrive.updateOdometry();
+        //std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        frc::SmartDashboard::PutNumber("auto vx", vx);
+        frc::SmartDashboard::PutNumber("auto vy", vy);
     }
     mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
-    mDrive.stopModules();
-    std::this_thread::sleep_for(std::chrono::seconds(delaySeconds));
 }
