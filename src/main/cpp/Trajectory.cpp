@@ -20,7 +20,7 @@ static frc::HolonomicDriveController controller{
 void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
 {
     // Calculate new chassis speeds given robot position and next desired state in trajectory
-    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.getOdometryPose(), frc::Pose2d{state.pose.Translation(), state.heading}, state.linearVelocity, state.heading);
+    frc::ChassisSpeeds const correction = controller.Calculate(mDrive.GetPoseEstimatorPose(), frc::Pose2d{state.pose.Translation(), state.heading}, state.linearVelocity, state.heading);
 
     // Calculate x, y speeds from MPS
     double vy_feet = correction.vx.value() * 3.281;
@@ -30,12 +30,12 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
     double rot = -std::clamp(correction.omega.value()*0.52, -moduleMaxRot, moduleMaxRot);
 
     frc::SmartDashboard::PutNumber("autoHeading", state.heading.Degrees().value());
-    frc::SmartDashboard::PutNumber("auto odometry x", mDrive.getOdometryPose().X().value());
+    frc::SmartDashboard::PutNumber("auto odometry x", mDrive.mSwervePose.GetEstimatedPosition().X().value());
     frc::SmartDashboard::PutNumber("autoVY", vy_feet);
     frc::SmartDashboard::PutNumber("autoVX", vx_feet);
     frc::SmartDashboard::PutNumber("autoRot", rot);
 
-    mDrive.Drive(ChassisSpeeds{-vx_feet, vy_feet, rot}, mGyro.getBoundedAngleCCW(), true, true);
+    mDrive.Drive(ChassisSpeeds{-vx_feet, vy_feet, rot}, pigeon.getBoundedAngleCCW(), true, true);
 }
 
 /**
@@ -59,7 +59,8 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
         auto const initialPose = initialState.pose.Translation();
 
         // set second param to initial holonomic rotation
-        mDrive.resetOdometry(initialPose, units::angle::degree_t(startAngle));
+        // mDrive.resetOdometry(initialPose, units::angle::degree_t(startAngle));
+        mDrive.resetPoseEstimator(initialPose, units::angle::degree_t(startAngle));
     }
 
     frc::Timer trajTimer;
@@ -76,8 +77,10 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
         auto sample = traj.sample(currentTime);
 
         driveToState(sample);
-        mDrive.updateOdometry();
+        mDrive.updatePoseEstimator(mLimelight, frc::Timer::GetFPGATimestamp());
 
+        // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
+        // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
         frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
         frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
 
@@ -88,8 +91,7 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
         while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - delayStart < 0.02) {
         };
     }
-    mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
-
+    mDrive.Drive(ChassisSpeeds(0, 0, 0), pigeon.getBoundedAngleCCW(), true, false);
 }
 
 // EDIT LATER 
@@ -281,9 +283,9 @@ void Trajectory::waitToScore(int delaySeconds) {
         double vy = speeds.vyMetersPerSecond;
         mDrive.Drive(
             ChassisSpeeds(vx, vy, 0),
-            mGyro.getBoundedAngleCCW(),
+            pigeon.getBoundedAngleCCW(),
             false, false);
         mDrive.updateOdometry();
     }
-    mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
+    mDrive.Drive(ChassisSpeeds(0, 0, 0), pigeon.getBoundedAngleCCW(), true, false);
 }

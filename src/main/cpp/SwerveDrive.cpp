@@ -137,7 +137,7 @@ bool SwerveDrive::stopModules() {
  */
 void SwerveDrive::resetOdometry(frc::Translation2d trans, frc::Rotation2d angle) {
     m_odometry.ResetPosition(
-        mGyro.getRotation2d(),
+        pigeon.getRotation2d(),
         {mBackLeft.getModulePosition(),
          mFrontLeft.getModulePosition(),
          mFrontRight.getModulePosition(),
@@ -154,13 +154,50 @@ frc::Pose2d SwerveDrive::getOdometryPose() { // gets odometry pose in feet
  */
 void SwerveDrive::updateOdometry() {
     m_odometry.Update(
-        -mGyro.getRotation2d(),
+        -pigeon.getRotation2d(),
         {mBackLeft.getModulePosition(),
          mFrontLeft.getModulePosition(),
          mFrontRight.getModulePosition(),
          mBackRight.getModulePosition()});
 }
 
+/**
+ * Swerve Drive Pose Esimator Resets
+ * Better than odometry for vision, etc.
+ */
+
+void SwerveDrive::resetPoseEstimator(frc::Translation2d trans, frc::Rotation2d angle) {
+    mSwervePose.ResetPosition(
+        pigeon.getRotation2d(),
+        {mBackLeft.getModulePosition(),
+         mFrontLeft.getModulePosition(),
+         mFrontRight.getModulePosition(),
+         mBackRight.getModulePosition()},
+        frc::Pose2d{trans, angle});
+}
+
+frc::Pose2d SwerveDrive::GetPoseEstimatorPose() { // In feet 
+    frc::Pose2d pose = mSwervePose.GetEstimatedPosition(); // Get Estimated Position is in meters
+    return frc::Pose2d{units::foot_t(pose.X().value() * 3.281), units::foot_t(pose.Y().value() * 3.281), pose.Rotation()};
+}
+
+void SwerveDrive::updatePoseEstimator(Limelight &limelight, units::second_t timestamp) {
+    mSwervePose.UpdateWithTime(timestamp, 
+        -pigeon.getRotation2d(),
+        {mBackLeft.getModulePosition(),
+         mFrontLeft.getModulePosition(),
+         mFrontRight.getModulePosition(),
+         mBackRight.getModulePosition()});
+
+    if (limelight.isTargetDetected2()) {
+        mSwervePose.AddVisionMeasurement(frc::Pose2d{units::foot_t(limelight.getRobotPoseFieldSpace().x * 3.281), 
+                                                    units::foot_t(limelight.getRobotPoseFieldSpace().y * 3.281), 
+                                                    units::degree_t(limelight.getRobotPoseFieldSpace().yaw)}, 
+                                                    timestamp);
+    }
+}
+
+// Auto Rotation Section
 float SwerveDrive::roundToTwoDecimals(float num) {
     return std::round(num * 100.0) / 100.0;
 }

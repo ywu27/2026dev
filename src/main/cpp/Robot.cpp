@@ -11,10 +11,8 @@
 void Robot::RobotInit()
 {
   mDrive.initModules();
-  mGyro.init();
   pigeon.init();
   
-  // mGyro.setYaw(180);
   // frc::CameraServer::StartAutomaticCapture();
   limelight1.setPipelineIndex(0);
   // limelight2.setPipelineIndex(0);
@@ -135,7 +133,7 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit()
 {
   mDrive.state = DriveState::Teleop;
-  // mGyro.init();
+  pigeon.pigeon.Reset();
   mDrive.enableModules();
   mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
   holdTimer.Reset();
@@ -159,7 +157,7 @@ void Robot::TeleopPeriodic()
     speedLimiter = 1.0;
   }
 
-  bool fieldOriented = mGyro.gyro.IsConnected();
+  bool fieldOriented = pigeon.pigeon.IsConnected();
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   double vx = 0;
@@ -210,14 +208,14 @@ void Robot::TeleopPeriodic()
       targetDistance = 1; //set this
       zeroSetpoint = 0;
       // zeroSetpoint = limelight1.getAngleSetpoint();
-      // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, mGyro);
+      // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, pigeon);
       ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
       vx = speeds.vxMetersPerSecond;
       vy = speeds.vyMetersPerSecond;
       fieldOriented = false;
       mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
       mHeadingController.setSetpoint(zeroSetpoint);
-      rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+      rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
     // }
     // if(limelight2.isTargetDetected2()){ // Alignment Mode // LL2 is coral station
     //   if (limelight2.getTagType()==Limelight::REEF) {
@@ -231,14 +229,14 @@ void Robot::TeleopPeriodic()
     //   fieldOriented = false;
     //   mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
     //   mHeadingController.setSetpoint(zeroSetpoint);
-    //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+    //   rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
     // } 
   }
   // else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
   //   zeroSetpoint = dPadOperator;
   //   mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
   //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(mGyro.getBoundedAngleCW().getDegrees());
+  //   rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
   // }
   else // Normal driving mode
   {
@@ -247,12 +245,10 @@ void Robot::TeleopPeriodic()
     vy = leftY * moduleMaxFPS;
     rot = rightX * moduleMaxRot * 2;
   }
-
-  // rot = (rot == 0) ? mFsGyro.autoRot(leftX, leftY, rightX, mGyro) : rightX * moduleMaxRot * 2; // TEST THIS
   
   // Gyro Resets
   if (ctr.GetCrossButtonReleased()) {
-    mGyro.init();
+    pigeon.pigeon.Reset();
   }
   if(ctr.GetTriangleButton()) {
     mDrive.autoRot();
@@ -261,7 +257,7 @@ void Robot::TeleopPeriodic()
   // Drive function
   mDrive.Drive(
       ChassisSpeeds(vx, vy, rot),
-      mGyro.getBoundedAngleCCW(),
+      pigeon.getBoundedAngleCCW(),
       fieldOriented,
       cleanDriveAccum);
   mDrive.updateOdometry();
@@ -271,7 +267,7 @@ void Robot::TeleopPeriodic()
   
   // Smart Dashboard Info
   frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
-  frc::SmartDashboard::PutNumber("Gyro Position", mGyro.getBoundedAngleCW().getDegrees());
+  frc::SmartDashboard::PutNumber("Gyro Position", pigeon.getBoundedAngleCW().getDegrees());
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("rot", rot);

@@ -56,8 +56,15 @@ public:
   frc::PS5Controller ctr = frc::PS5Controller(0);
   frc::PS5Controller ctrOperator = frc::PS5Controller(1);
 
-  NavX mGyro = NavX();
-  SwerveDrive mDrive = SwerveDrive(mGyro);
+  //CANivore
+  ctre::phoenix6::CANBus canbus{"Drivetrain"};
+  ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
+  float busUtil = canInfo.BusUtilization;
+
+  // Pigeon
+  Pigeon pigeon{60};
+
+  SwerveDrive mDrive = SwerveDrive(pigeon);
   Limelight::Alliance alliance;
   Limelight limelight1 = Limelight("limelight-one");
   Limelight limelight2 = Limelight("limelight-two");
@@ -67,15 +74,7 @@ public:
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory mTrajectory = Trajectory(mDrive, limelight1, align, mGyro, pathConfig);
-
-  //CANivore
-  ctre::phoenix6::CANBus canbus{"Drivetrain"};
-  ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
-  float busUtil = canInfo.BusUtilization;
-
-  // Pigeon
-  Pigeon pigeon{60};
+  Trajectory mTrajectory = Trajectory(mDrive, limelight1, align, pigeon, pathConfig);
 
   // Fused Gyro
   // FusedGyro mFsGyro; 

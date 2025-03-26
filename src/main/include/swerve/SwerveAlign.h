@@ -51,7 +51,7 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpointX(double setpointX, SwerveDrive& drive, NavX &mGyro) { 
+    ChassisSpeeds driveToSetpointX(double setpointX, SwerveDrive& drive, Pigeon &pigeon) { 
         // Variables
         ChassisSpeeds speeds;
         double currentX = drive.getOdometryPose().X().value();
@@ -67,7 +67,7 @@ public:
             // else {
             //     strafeSpeed = fabs(strafeSpeed);
             // }
-            speeds = ChassisSpeeds::fromFieldRelativeSpeeds(strafeSpeed, 0, 0, mGyro.getBoundedAngleCW());
+            speeds = ChassisSpeeds::fromFieldRelativeSpeeds(strafeSpeed, 0, 0, pigeon.getBoundedAngleCW());
         }
         else {
             // strafeSpeed = 0;
@@ -77,7 +77,7 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpointY(double setpointY, SwerveDrive& drive, NavX &mGyro) { 
+    ChassisSpeeds driveToSetpointY(double setpointY, SwerveDrive& drive, Pigeon &pigeon) { 
         // Variables
         ChassisSpeeds speeds;
         double currentY = drive.getOdometryPose().Y().value();
@@ -103,7 +103,7 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds driveToSetpoint(float setpointX, float setpointY, SwerveDrive &drive, NavX &mGyro) {
+    ChassisSpeeds driveToSetpoint(float setpointX, float setpointY, SwerveDrive &drive, Pigeon &pigeon) {
         ChassisSpeeds speeds;
         forwardPID.SetTolerance(0.05, 0.01);
         strafePID.SetTolerance(0.05, 0.01);

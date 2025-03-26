@@ -8,7 +8,7 @@ class FusedGyro
 {
 
 private:
-    NavX mGyro = NavX();
+    Pigeon pigeon;
     Rotation2d trueAngle;
 
     // drift increment when outside driftBoundDegrees
@@ -21,8 +21,8 @@ private:
 public:
     void init()
     {
-        mGyro.init();
-        trueAngle = mGyro.getBoundedAngleCW();
+        pigeon.pigeon.Reset();
+        trueAngle = pigeon.getBoundedAngleCW();
         previousRawGyro = trueAngle.getDegrees();
     }
 
@@ -36,7 +36,7 @@ public:
         // Convert all angles to 0-360 deg, CW positive, compass system
         double parentAngle = Rotation2d::degreesBound(trueDetectedAngle.getDegrees());
         double currTrueAngle = Rotation2d::degreesBound(trueAngle.getDegrees());
-        double currGyroChange = mGyro.getBoundedAngleCW().getDegrees() - previousRawGyro;
+        double currGyroChange = pigeon.getBoundedAngleCW().getDegrees() - previousRawGyro;
 
         // Determine drift direction
         bool driftPositive = false;
@@ -75,9 +75,9 @@ public:
         return Rotation2d::fromDegrees(Rotation2d::degreesBound(-trueAngle.getDegrees()));
     }
 
-    float autoRot(double leftX, double leftY, double rightX, NavX &mGyro) {
+    float autoRot(double leftX, double leftY, double rightX, Pigeon &pigeon) {
         if (leftX == 0 && rightX == 0 && leftY != 0) {
-            float deviation = (mGyro.getBoundedAngleCW().getDegrees() > 0) ? mGyro.getBoundedAngleCW().getDegrees() : -1*mGyro.getBoundedAngleCW().getDegrees();
+            float deviation = pigeon.getBoundedAngleCW().getDegrees();
 
             if (abs(deviation) < 0.1) {
                 return 0.0;

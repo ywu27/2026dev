@@ -14,9 +14,12 @@
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <networktables/NetworkTableEntry.h>
 #include "sensors/NavX.h"
+#include "sensors/Pigeon.h"
+#include "sensors/Limelight.h"
 
 #include "frc/kinematics/SwerveDriveKinematics.h"
 #include "frc/kinematics/SwerveDriveOdometry.h"
+#include "frc/estimator/SwerveDrivePoseEstimator.h"
 #include "pathplanner/lib/path/PathPlannerPath.h"
 
 // TODO: inherit thread helper
@@ -43,7 +46,7 @@ public: // put back to private
     bool goodWheelPos = true;
 
     SwerveDriveKinematics m_kinematics = SwerveDriveKinematics(wheelPs);
-    NavX &mGyro; 
+    Pigeon& pigeon;
 
     // wpi lib class ver of kinemactics used to initialize odometry
     frc::SwerveDriveKinematics<4> frckinematics{ 
@@ -55,7 +58,7 @@ public: // put back to private
 
     frc::SwerveDriveOdometry<4> m_odometry{
         frckinematics,
-        mGyro.getRotation2d(), 
+        pigeon.getRotation2d(), 
         // might need to edit order of motors (double check)
         {
             mBackLeft.getModulePosition(), 
@@ -66,11 +69,23 @@ public: // put back to private
         frc::Pose2d{0_m, 0_m, 0_deg}
     };
 
+    frc::SwerveDrivePoseEstimator<4> mSwervePose{
+        frckinematics, 
+        pigeon.getRotation2d(), 
+        { 
+            mBackLeft.getModulePosition(),
+            mFrontLeft.getModulePosition(),
+            mFrontRight.getModulePosition(),
+            mBackRight.getModulePosition()
+        },
+        frc::Pose2d{0_m, 0_m, 0_deg} 
+    };
+
     void runModules(); // Private - do not call outside of init
 
 public:
 
-    SwerveDrive(NavX &mGyroInput) : mGyro(mGyroInput) {
+    SwerveDrive(Pigeon& pigeonInput) : pigeon(pigeonInput) {
     }
 
     DriveState state = DriveState::Teleop;
@@ -83,6 +98,9 @@ public:
     void updateOdometry();
     void autoRot();
     float roundToTwoDecimals(float num);
+    void resetPoseEstimator(frc::Translation2d trans, frc::Rotation2d angle);
+    frc::Pose2d GetPoseEstimatorPose();
+    void updatePoseEstimator(Limelight &limelight, units::second_t timestamp);
     // void displayDriveTelemetry();
     // void zeroAccumulation();
 };

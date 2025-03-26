@@ -20,7 +20,7 @@
 
 #include <chrono>
 #include <frc/Timer.h>
-#include "sensors/NavX.h"
+#include "sensors/Pigeon.h"
 #include <frc/DriverStation.h>
 
 using namespace pathplanner;
@@ -32,7 +32,7 @@ private:
     SwerveDrive &mDrive;
     // Superstructure &mSuperstructure; 
     SwerveAlign &mAlign;
-    NavX &mGyro;
+    Pigeon &pigeon;
     Limelight& mLimelight;
     RobotConfig &config;
 
@@ -66,10 +66,10 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, SwerveAlign &align, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, SwerveAlign &align, Pigeon &pigeonInput, RobotConfig &configInput) : mDrive(mDriveInput), 
                                                                                                                 mLimelight(limelight),
                                                                                                                 mAlign(align),
-                                                                                                                mGyro(mGyroInput),
+                                                                                                                pigeon(pigeonInput),
                                                                                                                 config(configInput) {};
 
     void driveToState(PathPlannerTrajectoryState const &state);
