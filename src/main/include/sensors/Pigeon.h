@@ -1,15 +1,12 @@
 #pragma once
 
 #include "ctre/phoenix6/Pigeon2.hpp"
-#include <math.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 #include "geometry/Rotation2d.h"
 
 class Pigeon 
 {
 private:
     ctre::phoenix6::configs::Pigeon2Configuration currentConfiguration{};
-    Rotation2d angleOffset = Rotation2d(0.0);
 
 public:
     ctre::phoenix6::hardware::Pigeon2 pigeon;
@@ -36,35 +33,27 @@ public:
         pigeon.GetConfigurator().Apply(pigeonConfigs);
         currentConfiguration = pigeonConfigs;
 
-        angleOffset = Rotation2d(0.0);
-    }
-
-    void setYaw(double desiredYaw) {
-        double currentYaw = pigeon.GetAngle();
-        angleOffset = Rotation2d::fromDegrees(currentYaw - desiredYaw);
-    }
-
-    void setOffset(Rotation2d angleOffsetInput) 
-    {
-        angleOffset = angleOffsetInput;
+        pigeon.Reset();
+        pigeon.ClearStickyFaults();
     }
 
     /**
-     * Radians
-     * Counter clockwise(idk why this is stupid)
+     * In Radians
+     * GetYaw(): CCW+
+     * GetAngle(): CW+
      */
     Rotation2d getBoundedAngleCCW()
     {
-        return Rotation2d(Rotation2d::degreesBound(-pigeon.GetAngle() - angleOffset.getDegrees()) * PI / 180);
+        return Rotation2d(Rotation2d::degreesBound(pigeon.GetYaw().GetValueAsDouble()) * PI / 180);
     }
 
     Rotation2d getBoundedAngleCW()
     {
-        return Rotation2d(Rotation2d::degreesBound(pigeon.GetAngle() + angleOffset.getDegrees()) * PI / 180);
+        return Rotation2d(Rotation2d::degreesBound(-pigeon.GetYaw().GetValueAsDouble()) * PI / 180);
     }
 
     frc::Rotation2d getRotation2d()
     {
-        return frc::Rotation2d(units::radian_t((pigeon.GetAngle() + angleOffset.getDegrees()) * PI / 180));
+        return frc::Rotation2d(pigeon.GetRotation2d() * PI / 180);
     }
 };
