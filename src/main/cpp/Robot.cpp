@@ -12,6 +12,8 @@ void Robot::RobotInit()
 {
   mDrive.initModules();
   mGyro.init();
+  pigeon.init();
+  
   // mGyro.setYaw(180);
   // frc::CameraServer::StartAutomaticCapture();
   limelight1.setPipelineIndex(0);
@@ -129,19 +131,6 @@ void Robot::AutonomousInit()
 }
 void Robot::AutonomousPeriodic()
 {
-  // mDrive.enableModules();
-  // ChassisSpeeds speeds = align.autoAlign(limelight1, 1, 0);
-  // float vx = speeds.vxMetersPerSecond;
-  // float vy = speeds.vyMetersPerSecond;
-  // float rot = 0.0;
-  // bool fieldOriented = false;
-
-  // mDrive.Drive(
-  //     ChassisSpeeds(vx, vy, rot),
-  //     mGyro.getBoundedAngleCCW(),
-  //     fieldOriented,
-  //     false);
-  // mDrive.updateOdometry();
 }
 void Robot::TeleopInit()
 {

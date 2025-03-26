@@ -5,8 +5,8 @@
 
 // controller used to track trajectories + correct minor disturbances
 static frc::HolonomicDriveController controller{
-    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
-    frc::PIDController{6e-5, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{5e-4, 0, 0}, // Change PIDs to be more accurate
+    frc::PIDController{5e-4, 0, 0}, // Change PIDs to be more accurate
     frc::ProfiledPIDController<units::radian>{
         0.45, 0, 0,
         frc::TrapezoidProfile<units::radian>::Constraints{
@@ -103,24 +103,23 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
         case DO_NOTHING:
             break;
         case MOVE_STRAIGHT:
-            // follow ("Move Straight", flipAlliance, false, false);
+            follow ("Move Straight", flipAlliance, false, false); // if not able to see tag use gyro instead
             waitToScore(2);
             break;
         case auto_1A:
-            //follow("Test Movement", flipAlliance, false, true, 0.0);
             follow("1 to A", flipAlliance, false, true, 0.0);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
             // waitToScore(2);
-            // follow("A to Top Coral Station", flipAlliance, false, false);
-            // waitToScore(2);
-            // follow("Top Coral Station to A", flipAlliance, false, false);
-            // waitToScore(2);
-            // follow("A to Top Coral Station", flipAlliance, false, false);
+            follow("Top Coral Station to A", flipAlliance, false, false);
+            waitToScore(2);
+            follow("A to Top Coral Station", flipAlliance, false, false);
             break;
         case auto_1B:
             follow("1 to B", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Top Coral Station to B", flipAlliance, false, false);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
@@ -129,7 +128,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("1 to C", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to C", flipAlliance, false, false);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
@@ -138,7 +137,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("1 to D", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to D", flipAlliance, false, false);
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
@@ -147,7 +146,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("1 to E", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to E", flipAlliance, false, false);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
@@ -156,7 +155,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("1 to F", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to F", flipAlliance, false, false);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
@@ -165,7 +164,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to A", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Top Coral Station to A", flipAlliance, false, false);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
@@ -174,7 +173,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to B", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Top Coral Station to B", flipAlliance, false, false);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
@@ -183,7 +182,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to C", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to C", flipAlliance, false, false);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
@@ -192,7 +191,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to D", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to D", flipAlliance, false, false);
             waitToScore(2);
             follow("D to Bottom Coral Stationn", flipAlliance, false, false);
@@ -201,7 +200,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to E", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to E", flipAlliance, false, false);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
@@ -210,7 +209,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to F", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to F", flipAlliance, false, false);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
@@ -219,7 +218,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to A", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Top Coral Station to A", flipAlliance, false, false);
             waitToScore(2);
             follow("A to Top Coral Station", flipAlliance, false, false);
@@ -228,7 +227,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to B", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Top Coral Station to B", flipAlliance, false, false);
             waitToScore(2);
             follow("B to Top Coral Station", flipAlliance, false, false);
@@ -237,7 +236,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to C", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to C", flipAlliance, false, false);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
@@ -246,7 +245,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to D", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to D", flipAlliance, false, false);
             waitToScore(2);
             follow("D to Bottom Coral Station", flipAlliance, false, false);
@@ -255,7 +254,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to E", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to E", flipAlliance, false, false);
             waitToScore(2);
             follow("E to Bottom Coral Station", flipAlliance, false, false);
@@ -264,7 +263,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("3 to F", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
-            waitToScore(2);
+            // waitToScore(2);
             follow("Bottom Coral Station to F", flipAlliance, false, false);
             waitToScore(2);
             follow("F to Bottom Coral Station", flipAlliance, false, false);
@@ -273,19 +272,18 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
 }
 
 void Trajectory::waitToScore(int delaySeconds) {
+    delayTimer.Reset();
+    delayTimer.Start();
     mDrive.enableModules();
-    while (true) {
-        ChassisSpeeds speeds = mAlign.autoAlign(mLimelight, 1, 0);
+    while (delayTimer.Get().value() < delaySeconds) {
+        ChassisSpeeds speeds = mAlign.autoAlign(mLimelight, 0.6, -0.08);
         double vx = speeds.vxMetersPerSecond;
         double vy = speeds.vyMetersPerSecond;
         mDrive.Drive(
-            ChassisSpeeds(0, vy, 0),
+            ChassisSpeeds(vx, vy, 0),
             mGyro.getBoundedAngleCCW(),
             false, false);
         mDrive.updateOdometry();
-        //std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        frc::SmartDashboard::PutNumber("auto vx", vx);
-        frc::SmartDashboard::PutNumber("auto vy", vy);
     }
     mDrive.Drive(ChassisSpeeds(0, 0, 0), mGyro.getBoundedAngleCCW(), true, false);
 }

@@ -7,8 +7,8 @@
 
 class SwerveAlign {
 public: 
-    frc::PIDController forwardPID{8, 0, 0.1};
-    frc::PIDController strafePID{8, 0, 0.1};
+    frc::PIDController forwardPID{8.1, 0, 0.1};
+    frc::PIDController strafePID{8.1, 0, 0.1};
     
     double forwardSpeed = 0;
     double strafeSpeed = 0;
@@ -37,7 +37,10 @@ public:
         targetOffset = offsetSetpoint;
         forwardPID.SetTolerance(0.05, 0.01);
         strafePID.SetTolerance(0.05, 0.01);
-        if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
+        if (!limelight.isTargetDetected2()) {
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, 0, 0);
+        }
+        else if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
             speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0); //CHECK THIS

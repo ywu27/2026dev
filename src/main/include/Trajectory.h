@@ -28,12 +28,12 @@ using namespace pathplanner;
 class Trajectory
 {
 private:
-    
+    frc::Timer delayTimer;
     SwerveDrive &mDrive;
     // Superstructure &mSuperstructure; 
     SwerveAlign &mAlign;
     NavX &mGyro;
-    Limelight &mLimelight; 
+    Limelight& mLimelight;
     RobotConfig &config;
 
 public:
@@ -66,7 +66,7 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Limelight &limelight, SwerveAlign align, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, SwerveAlign &align, NavX &mGyroInput, RobotConfig &configInput) : mDrive(mDriveInput), 
                                                                                                                 mLimelight(limelight),
                                                                                                                 mAlign(align),
                                                                                                                 mGyro(mGyroInput),

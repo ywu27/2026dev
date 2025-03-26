@@ -29,6 +29,8 @@
 #include "Trajectory.h"
 #include "control/PowerModule.h"
 #include "sensors/FusedGyro.h"
+#include <ctre/phoenix6/Pigeon2.hpp>
+#include "sensors/Pigeon.h"
 
 class Robot : public frc::TimedRobot
 {
@@ -72,8 +74,11 @@ public:
   ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
   float busUtil = canInfo.BusUtilization;
 
+  // Pigeon
+  Pigeon pigeon{60};
+
   // Fused Gyro
-  FusedGyro mFsGyro; 
+  // FusedGyro mFsGyro; 
 
   // Teleop Controls
   float ctrPercent = 1.0;
