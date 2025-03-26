@@ -64,7 +64,7 @@ void Robot::AutonomousInit()
 
   align.forwardPID.Reset();
   align.strafePID.Reset();
-  mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
+  mDrive.resetPoseEstimator(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
   std::string start_pos = positionChooser.GetSelected();
   std::string reef_pos = reefChooser.GetSelected();
 
@@ -261,6 +261,8 @@ void Robot::TeleopPeriodic()
       fieldOriented,
       cleanDriveAccum);
   mDrive.updateOdometry();
+
+  mDrive.updatePoseEstimator(limelight1, frc::Timer::GetFPGATimestamp());
 
   // Brownouts
   // frc::SmartDashboard::PutNumber("Power Scaled?", currentScale);

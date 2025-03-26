@@ -30,7 +30,7 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
     double rot = -std::clamp(correction.omega.value()*0.52, -moduleMaxRot, moduleMaxRot);
 
     frc::SmartDashboard::PutNumber("autoHeading", state.heading.Degrees().value());
-    frc::SmartDashboard::PutNumber("auto odometry x", mDrive.mSwervePose.GetEstimatedPosition().X().value());
+    frc::SmartDashboard::PutNumber("auto odometry x", mDrive.GetPoseEstimatorPose().X().value());
     frc::SmartDashboard::PutNumber("autoVY", vy_feet);
     frc::SmartDashboard::PutNumber("autoVX", vx_feet);
     frc::SmartDashboard::PutNumber("autoRot", rot);
