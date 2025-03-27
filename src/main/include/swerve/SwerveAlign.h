@@ -4,6 +4,7 @@
 #include "ChassisSpeeds.h"
 #include "SwerveHeadingController.h"
 #include "SwerveDrive.h"
+#include "sensors/PhotonVision.h"
 
 class SwerveAlign {
 public: 
@@ -43,9 +44,35 @@ public:
         else if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
-            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0); //CHECK THIS
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0);
         }
         else {
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, 0, 0);
+        }
+        return speeds;
+    }
+
+    ChassisSpeeds autoAlign(PhotonVision& photon, double setpointDistance, double offsetSetpoint) {
+        ChassisSpeeds speeds;
+        auto result = photon.camera.GetLatestResult();
+        if (!result.HasTargets()) {
+            return ChassisSpeeds::fromRobotRelativeSpeeds(0, 0, 0);
+        }
+        
+        photon::PhotonTrackedTarget target = result.GetBestTarget();
+
+        double offset = photon.getTargetx(target);
+        double distanceToTag = photon.getDistanceToTarget(target); // FIX THIS: WHAT UNIT?
+        targetDistance = setpointDistance;
+        targetOffset = offsetSetpoint;
+        forwardPID.SetTolerance(0.05, 0.01);
+        strafePID.SetTolerance(0.05, 0.01);
+        
+        if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
+            double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
+            double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
+            speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0);
+        } else {
             speeds = ChassisSpeeds::fromRobotRelativeSpeeds(0, 0, 0);
         }
         return speeds;
