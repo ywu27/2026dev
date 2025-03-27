@@ -190,9 +190,11 @@ void SwerveDrive::updatePoseEstimator(Limelight &limelight, units::second_t time
          mBackRight.getModulePosition()});
 
     if (limelight.isTargetDetected2()) {
-        mSwervePose.AddVisionMeasurement(frc::Pose2d{units::foot_t(limelight.getRobotPoseFieldSpace().x * 3.281), 
-                                                    units::foot_t(limelight.getRobotPoseFieldSpace().y * 3.281), 
-                                                    units::degree_t(limelight.getRobotPoseFieldSpace().yaw)}, 
+        std::vector<double> pose = LimelightHelpers::getBotpose_wpiBlue(limelight.getName());
+
+        mSwervePose.AddVisionMeasurement(frc::Pose2d{units::foot_t(pose[0] * 3.281), 
+                                                    units::foot_t(pose[1] * 3.281), 
+                                                    units::degree_t(pose[5])}, 
                                                     timestamp);
     }
 }

@@ -61,6 +61,7 @@ void Robot::AutonomousInit()
 {
   mDrive.state = DriveState::Auto;
   mDrive.enableModules();
+  pigeon.pigeon.Reset();
 
   align.forwardPID.Reset();
   align.strafePID.Reset();

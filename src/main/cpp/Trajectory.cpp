@@ -25,9 +25,9 @@ void Trajectory::driveToState(PathPlannerTrajectoryState const &state)
     // Calculate x, y speeds from MPS
     double vy_feet = correction.vx.value() * 3.281;
     double vx_feet = correction.vy.value() * 3.281;
-// 
+    
     // Clamp rot speed to 2.0 since that is the max rot we allow
-    double rot = -std::clamp(correction.omega.value()*0.52, -moduleMaxRot, moduleMaxRot);
+    double rot = -std::clamp(correction.omega.value(), -moduleMaxRot, moduleMaxRot);
 
     frc::SmartDashboard::PutNumber("autoHeading", state.heading.Degrees().value());
     frc::SmartDashboard::PutNumber("auto odometry x", mDrive.GetPoseEstimatorPose().X().value());
@@ -62,34 +62,35 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
         // mDrive.resetOdometry(initialPose, units::angle::degree_t(startAngle));
         mDrive.resetPoseEstimator(initialPose, units::angle::degree_t(startAngle));
     }
+    if (mDrive.state == DriveState::Auto) {
+        frc::Timer trajTimer;
+        trajTimer.Start();
 
-    frc::Timer trajTimer;
-    trajTimer.Start();
-
-    while ((mDrive.state == DriveState::Auto) && (trajTimer.Get() <= traj.getTotalTime()))
-    {
-        if (intake)
+        while ((mDrive.state == DriveState::Auto) && (trajTimer.Get() <= traj.getTotalTime()))
         {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            if (intake)
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
+
+            auto currentTime = trajTimer.Get();
+            auto sample = traj.sample(currentTime);
+
+            driveToState(sample);
+            mDrive.updatePoseEstimator(mLimelight, frc::Timer::GetFPGATimestamp());
+
+            // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
+            // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
+            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+
+            using namespace std::chrono_literals;
+
+            // refresh rate of holonomic drive controller's PID controllers (edit if needed)
+            double delayStart = frc::Timer::GetFPGATimestamp().value();
+            while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - delayStart < 0.02) {
+            };
         }
-
-        auto currentTime = trajTimer.Get();
-        auto sample = traj.sample(currentTime);
-
-        driveToState(sample);
-        mDrive.updatePoseEstimator(mLimelight, frc::Timer::GetFPGATimestamp());
-
-        // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
-        // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
-        frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
-        frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
-
-        using namespace std::chrono_literals;
-
-        // refresh rate of holonomic drive controller's PID controllers (edit if needed)
-        double delayStart = frc::Timer::GetFPGATimestamp().value();
-        while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - delayStart < 0.02) {
-        };
     }
     mDrive.Drive(ChassisSpeeds(0, 0, 0), pigeon.getBoundedAngleCCW(), true, false);
 }
@@ -184,7 +185,7 @@ void Trajectory::followPath(Trajectory::autos autoTrajectory, bool flipAlliance)
             follow("2 to C", flipAlliance, false, true, 0.0);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);
-            // waitToScore(2);
+            waitToScore(2);
             follow("Bottom Coral Station to C", flipAlliance, false, false);
             waitToScore(2);
             follow("C to Bottom Coral Station", flipAlliance, false, false);

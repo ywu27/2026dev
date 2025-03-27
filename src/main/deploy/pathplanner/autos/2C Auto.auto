@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Coral Station to C"
+            "pathName": "Bottom Coral Station to E"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "C to Bottom Coral Station"
+            "pathName": "E to Bottom Coral Station"
           }
         }
       ]

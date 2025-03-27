@@ -22,6 +22,7 @@
 #include <frc/Timer.h>
 #include "sensors/Pigeon.h"
 #include <frc/DriverStation.h>
+#include <frc/controller/PIDController.h>
 
 using namespace pathplanner;
 
@@ -37,6 +38,7 @@ private:
     RobotConfig &config;
 
 public:
+    frc::PIDController rotController{3, 0, 0};
     Pose3d startPose = Pose3d();
     bool receivedPose;
     bool isRed = false;

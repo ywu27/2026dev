@@ -71,6 +71,10 @@ public:
         return LimelightHelpers::getTY(limelightName);
     }
 
+    std::string getName() {
+        return limelightName;
+    }
+
     TagType getTagType() {
         if(isTargetDetected2()) {
             int tagID = getTagID();
