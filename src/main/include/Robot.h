@@ -31,6 +31,7 @@
 #include "sensors/FusedGyro.h"
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include "sensors/Pigeon.h"
+#include "sensors/PhotonVision.h"
 
 class Robot : public frc::TimedRobot
 {
@@ -64,12 +65,15 @@ public:
   // Pigeon
   Pigeon pigeon{60};
 
+  //Vision
   SwerveDrive mDrive = SwerveDrive(pigeon);
   Limelight::Alliance alliance;
   Limelight limelight1 = Limelight("limelight-one");
   Limelight limelight2 = Limelight("limelight-two");
   float transY = 0.0;
   float transX = 0.0;
+  PhotonVision camera1 = PhotonVision("cameraFront");
+
 
   // For Auto Align
   SwerveAlign align;

@@ -52,17 +52,19 @@ public:
         return speeds;
     }
 
-    ChassisSpeeds autoAlign(PhotonVision& photon, double setpointDistance, double offsetSetpoint) {
+    ChassisSpeeds autoAlign2(PhotonVision& photon, double setpointDistance, double offsetSetpoint) {
         ChassisSpeeds speeds;
         auto result = photon.camera.GetLatestResult();
         if (!result.HasTargets()) {
             return ChassisSpeeds::fromRobotRelativeSpeeds(0, 0, 0);
         }
+
+        frc::SmartDashboard::PutBoolean("result target", result.HasTargets());
         
         photon::PhotonTrackedTarget target = result.GetBestTarget();
 
-        double offset = photon.getTargetx(target);
-        double distanceToTag = photon.getDistanceToTarget(target); // FIX THIS: WHAT UNIT?
+        double offset = photon.getTargety();
+        double distanceToTag = photon.getDistanceToTarget(); // FIX THIS: WHAT UNIT?
         targetDistance = setpointDistance;
         targetOffset = offsetSetpoint;
         forwardPID.SetTolerance(0.05, 0.01);

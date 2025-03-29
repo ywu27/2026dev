@@ -22,7 +22,7 @@ private:
 public:
     photon::PhotonCamera camera;
 
-    PhotonVision(std::string name) 
+    PhotonVision(std::string name)
         : camera(name),
           cameraPitchRadians(0.0),
           cameraHeightMeters(1.0), // FIX THIS
@@ -40,23 +40,27 @@ public:
         }
     }
 
-    double getTargetx(photon::PhotonTrackedTarget target) {
+    double getTargetx() {
+        auto result = camera.GetLatestResult();
+        photon::PhotonTrackedTarget target = result.GetBestTarget();
         return target.GetBestCameraToTarget().Translation().X().value();
     }
 
-    double getTargety(photon::PhotonTrackedTarget target) {
+    double getTargety() {
+        auto result = camera.GetLatestResult();
+        photon::PhotonTrackedTarget target = result.GetBestTarget();
         return target.GetBestCameraToTarget().Translation().Y().value();
     }
 
-    double getDistanceToTarget(photon::PhotonTrackedTarget target) {
+    double getDistanceToTarget() {
+        auto result = camera.GetLatestResult();
+        photon::PhotonTrackedTarget target = result.GetBestTarget();
         return target.GetBestCameraToTarget().Translation().Norm().value();
     }
 
-    double getDistanceToWall(photon::PhotonTrackedTarget target) {
-        return target.GetBestCameraToTarget().Translation().Z().value();
-    }
-
-    double getYaw(photon::PhotonTrackedTarget target) {
+    double getYaw() {
+        auto result = camera.GetLatestResult();
+        photon::PhotonTrackedTarget target = result.GetBestTarget();
         return target.GetBestCameraToTarget().Rotation().Z().value() * 180.0 / M_PI;
     }
 };
