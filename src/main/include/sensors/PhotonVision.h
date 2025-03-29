@@ -20,12 +20,10 @@ private:
     double cameraPositionOffsetyMeters;
 
 public:
-    
-    std::string cameraName;
     photon::PhotonCamera camera;
 
     PhotonVision(std::string name) 
-        : cameraName(name), camera(name),
+        : camera(name),
           cameraPitchRadians(0.0),
           cameraHeightMeters(1.0), // FIX THIS
           cameraPositionOffsetxMeters(0.0),
