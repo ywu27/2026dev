@@ -123,12 +123,23 @@ void SwerveDrive::enableModules() {
  * Disable every module's thread
  * Threads still exist, just on standby while loop
  */
-bool SwerveDrive::stopModules() {
+bool SwerveDrive::disableModules() {
     mFrontLeft.stopModule();
     mBackLeft.stopModule();
     mBackRight.stopModule();
     mFrontRight.stopModule();
     return true;
+}
+
+void SwerveDrive::stopModules() {
+    mFrontLeft.driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
+    mBackLeft.driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
+    mBackRight.driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
+    mFrontLeft.driveMotor.set(TalonFXMotor::VELOCITY, 0.0);
+    mFrontLeft.steerMotor.StopMotor();
+    mBackLeft.steerMotor.StopMotor();
+    mBackRight.steerMotor.StopMotor();
+    mFrontRight.steerMotor.StopMotor();
 }
 
 /**

@@ -92,7 +92,8 @@ public:
     void Drive(ChassisSpeeds desiredSpeeds, Rotation2d fieldRelativeGyro, bool useFieldOriented, bool cleanAccum = false);
     void initModules();
     void enableModules();
-    bool stopModules();
+    bool disableModules();
+    void stopModules();
     void resetOdometry(frc::Translation2d trans, frc::Rotation2d angle);
     frc::Pose2d getOdometryPose();
     void updateOdometry();

@@ -81,8 +81,8 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
 
             // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
             // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
-            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
-            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.GetPoseEstimatorPose().Translation().X().value());
+            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.GetPoseEstimatorPose().Translation().Y().value());
 
             using namespace std::chrono_literals;
 
@@ -119,8 +119,8 @@ void Trajectory::followTeleop(std::shared_ptr<pathplanner::PathPlannerPath> path
 
             // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
             // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
-            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
-            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.GetPoseEstimatorPose().Translation().X().value());
+            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.GetPoseEstimatorPose().Translation().Y().value());
 
             using namespace std::chrono_literals;
 
