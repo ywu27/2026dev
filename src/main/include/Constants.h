@@ -11,7 +11,8 @@
 #define ctrSlewRate 0.3
 
 // Module Constraints
-#define moduleMaxFPS 17.111 // feet per sec (5.450 m/s^2 for acceleration)
+#define moduleMaxFPS 17.111 // feet per sec 
+#define moduleMaxMPS 5.450
 #define moduleMaxRPM 6000 // RPM
 #define moduleMaxRot 2.0 // 9.678 / 2, Radians/sec
 

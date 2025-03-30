@@ -59,6 +59,8 @@ void Robot::RobotPeriodic()
   frc::SmartDashboard::PutNumber("VisTargetX", camera1.getTargetx());
   frc::SmartDashboard::PutNumber("VisTargetY", camera1.getTargety());
   frc::SmartDashboard::PutNumber("distan444ce", camera1.getDistanceToTarget());
+  
+  visionCache = camera1.returnPoseEstimate();
 }
 
 void Robot::AutonomousInit()
@@ -268,8 +270,34 @@ void Robot::TeleopPeriodic()
   if (ctr.GetCrossButtonReleased()) {
     pigeon.pigeon.Reset();
   }
-  if(ctr.GetTriangleButton()) {
-    mDrive.autoRot();
+  if(ctr.GetTriangleButtonPressed()) {
+    float x = 0.0;
+    float y = 0.0;
+    float rot = 0.0;
+    std::string reefSpot = reefChooser.GetSelected();
+
+    if (reefSpot == "A") {
+      x = 3.6082991803278692;
+      y = 5.6613217213114755;
+      rot = 118.44779815505238;
+    }
+    else if (reefSpot == "B") {
+      x = 5.305592086226851;
+      y = 5.2658087384259264;
+      rot = -119.99999999999999;
+    }
+    if (camera1.camera.GetLatestResult().HasTargets()) {
+      startPose = camera1.returnPoseEstimate();
+    }
+    else {
+      startPose = mDrive.GetPoseEstimatorPose();
+    }
+    frc::Pose2d endPose{units::meter_t(x), units::meter_t(y), units::degree_t(rot)};
+
+    path = mTeleopTraj.GeneratePath(startPose, endPose);
+  }
+  else if (ctr.GetTriangleButton()) {
+    mTrajectory.followTeleop(path, allianceIsRed);
   }
 
   // Drive function
@@ -278,8 +306,9 @@ void Robot::TeleopPeriodic()
       pigeon.getBoundedAngleCCW(),
       fieldOriented,
       cleanDriveAccum);
-  mDrive.updateOdometry();
 
+  // Pose Updates
+  mDrive.updateOdometry();
   mDrive.updatePoseEstimator(limelight1, frc::Timer::GetFPGATimestamp());
 
   // Brownouts

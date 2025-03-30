@@ -106,6 +106,14 @@
     "valarray": "cpp",
     "variant": "cpp",
     "hash_map": "cpp",
-    "*.inc": "cpp"
+    "*.inc": "cpp",
+    "charconv": "cpp",
+    "format": "cpp",
+    "locale": "cpp",
+    "xlocbuf": "cpp",
+    "xlocmes": "cpp",
+    "xlocmon": "cpp",
+    "xloctime": "cpp",
+    "xtree": "cpp"
   }
 }

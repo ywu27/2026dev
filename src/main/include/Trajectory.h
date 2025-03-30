@@ -13,6 +13,9 @@
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Pose2d.h"
 
+#include <frc/trajectory/TrajectoryConfig.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
+
 #include "units/velocity.h"
 #include "units/angle.h"
 #include "units/angular_acceleration.h"
@@ -23,6 +26,8 @@
 #include "sensors/Pigeon.h"
 #include <frc/DriverStation.h>
 #include <frc/controller/PIDController.h>
+
+#include <sensors/PhotonVision.h>
 
 using namespace pathplanner;
 
@@ -36,9 +41,9 @@ private:
     Pigeon &pigeon;
     Limelight& mLimelight;
     RobotConfig &config;
+    PhotonVision &camera;
 
 public:
-    frc::PIDController rotController{3, 0, 0};
     Pose3d startPose = Pose3d();
     bool receivedPose;
     bool isRed = false;
@@ -68,11 +73,12 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, SwerveAlign &align, Pigeon &pigeonInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, PhotonVision &cameraInput, SwerveAlign &align, Pigeon &pigeonInput, RobotConfig &configInput) : mDrive(mDriveInput), 
                                                                                                                 mLimelight(limelight),
                                                                                                                 mAlign(align),
                                                                                                                 pigeon(pigeonInput),
-                                                                                                                config(configInput) {};
+                                                                                                                config(configInput),
+                                                                                                                camera(cameraInput) {};
 
     void driveToState(PathPlannerTrajectoryState const &state);
 
@@ -87,4 +93,6 @@ public:
     void testHolonomic(frc::Pose2d const &target_pose,
                        units::velocity::meters_per_second_t const &velocity,
                        frc::Rotation2d const &target_rot);
+
+    void Trajectory::followTeleop(std::shared_ptr<pathplanner::PathPlannerPath> path, bool flipAlliance);
 };

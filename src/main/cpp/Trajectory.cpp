@@ -95,6 +95,44 @@ void Trajectory::follow(std::string const &traj_dir_file_path, bool flipAlliance
     mDrive.Drive(ChassisSpeeds(0, 0, 0), pigeon.getBoundedAngleCCW(), true, false);
 }
 
+void Trajectory::followTeleop(std::shared_ptr<pathplanner::PathPlannerPath> path, bool flipAlliance)
+{
+    // switches path to red alliance (mirrors it)
+    if (flipAlliance)
+    {
+        path = path->flipPath();
+    }
+
+    PathPlannerTrajectory traj = PathPlannerTrajectory(path, frc::ChassisSpeeds(), 0_rad, config);
+
+    if (mDrive.state == DriveState::Teleop) {
+        frc::Timer trajTimer;
+        trajTimer.Start();
+
+        while ((mDrive.state == DriveState::Teleop) && (trajTimer.Get() <= traj.getTotalTime()))
+        {
+            auto currentTime = trajTimer.Get();
+            auto sample = traj.sample(currentTime);
+
+            driveToState(sample);
+            mDrive.updatePoseEstimator(mLimelight, frc::Timer::GetFPGATimestamp());
+
+            // frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
+            // frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+            frc::SmartDashboard::PutNumber("curr pose x meters", mDrive.getOdometryPose().Translation().X().value());
+            frc::SmartDashboard::PutNumber("curr pose y meters", mDrive.getOdometryPose().Translation().Y().value());
+
+            using namespace std::chrono_literals;
+
+            // refresh rate of holonomic drive controller's PID controllers (edit if needed)
+            double delayStart = frc::Timer::GetFPGATimestamp().value();
+            while (mDrive.state == DriveState::Auto && frc::Timer::GetFPGATimestamp().value() - delayStart < 0.02) {
+            };
+        }
+    }
+    mDrive.Drive(ChassisSpeeds(0, 0, 0), pigeon.getBoundedAngleCCW(), true, false);
+}
+
 // EDIT LATER 
 /**
  * Calls sequences of follow functions for set paths

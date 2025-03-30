@@ -4,34 +4,38 @@
 
 #pragma once
 
+// FRC Libraries
 #include <frc/TimedRobot.h>
 #include <frc/PS5Controller.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SendableChooser.h>
 
-#include "util/ShuffleUI.h"
+// Utilies
 #include <thread>
-
-#include "util/ControlUtil.h"
-#include "sensors/NavX.h"
-#include "swerve/SwerveHeadingController.h"
-#include "util/TimeDelayedBool.h"
-#include <frc/Joystick.h>
-#include "sensors/Limelight.h"
 #include "util/SlewRateLimiter.h"
-#include <frc/GenericHID.h>
+#include "control/PowerModule.h"
+
+// Swerve 
 #include "SwerveDrive.h"
 #include "swerve/SwerveAlign.h"
-#include "util/TimeDelayButton.h"
+#include "swerve/SwerveHeadingController.h"
+
+// Sensors
 #include "sensors/Limelight.h"
-#include <ctre/phoenix6/CANBus.hpp>
-#include <frc/GenericHID.h>
-#include "Trajectory.h"
-#include "control/PowerModule.h"
-#include "sensors/FusedGyro.h"
-#include <ctre/phoenix6/Pigeon2.hpp>
 #include "sensors/Pigeon.h"
 #include "sensors/PhotonVision.h"
+#include "sensors/NavX.h"
+#include "sensors/Limelight.h"
+#include "sensors/FusedGyro.h"
+
+// Phoenix 6
+#include <ctre/phoenix6/CANBus.hpp>
+#include <ctre/phoenix6/Pigeon2.hpp>
+
+// Trajectory
+#include "Trajectory.h"
+#include "TeleopTrajectory.h"
+
 
 class Robot : public frc::TimedRobot
 {
@@ -73,12 +77,15 @@ public:
   float transY = 0.0;
   float transX = 0.0;
   PhotonVision camera1 = PhotonVision("cameraFront");
-
+  frc::Pose2d visionCache;
+  std::shared_ptr<pathplanner::PathPlannerPath> path;
+  frc::Pose2d startPose;
 
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory mTrajectory = Trajectory(mDrive, limelight1, align, pigeon, pathConfig);
+  Trajectory mTrajectory = Trajectory(mDrive, limelight1, camera1, align, pigeon, pathConfig);
+  TeleopTrajectory mTeleopTraj;
 
   // Fused Gyro
   // FusedGyro mFsGyro; 
@@ -87,7 +94,6 @@ public:
   float ctrPercent = 1.0;
   float boostPercent = 0.9;
   double ctrPercentAim = 0.3;
-  TimeDelayButton snapRobotToGoal;
   bool scoreAmp = false;
   bool liftElev = false;
   bool cleanDriveAccum = true;
