@@ -94,5 +94,5 @@ public:
                        units::velocity::meters_per_second_t const &velocity,
                        frc::Rotation2d const &target_rot);
 
-    void Trajectory::followTeleop(std::shared_ptr<pathplanner::PathPlannerPath> path, bool flipAlliance);
+    void followTeleop(std::shared_ptr<pathplanner::PathPlannerPath> path, bool flipAlliance);
 };

@@ -56,7 +56,7 @@ public:
     }
 
     float currentScale() {
-        frc::SmartDashboard::PutBoolean("Brownout?", underVoltage);
+        // frc::SmartDashboard::PutBoolean("Brownout?", underVoltage);
         if (frc::RobotController::GetBrownoutVoltage().value() > frc::RobotController::GetBatteryVoltage().value()) {
             underVoltage = true;
             float scale = (frc::RobotController::GetBatteryVoltage().value() - minVoltage) / (maxVoltage - minVoltage);
