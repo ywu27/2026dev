@@ -271,26 +271,41 @@ void Robot::TeleopPeriodic()
     pigeon.pigeon.Reset();
   }
   if(ctr.GetTriangleButtonPressed()) {
-    float x = 0.0;
-    float y = 0.0;
-    float rot = 0.0;
+    std::shared_ptr<pathplanner::PathPlannerPath> autoPath;
     std::string reefSpot = reefChooser.GetSelected();
 
+    // Spot on the reef 
     if (reefSpot == "A") {
-      x = 3.6082991803278692;
-      y = 5.6613217213114755;
-      rot = 118.44779815505238;
+      autoPath = PathPlannerPath::fromPathFile("1 to A");
     }
     else if (reefSpot == "B") {
-      x = 5.305592086226851;
-      y = 5.2658087384259264;
-      rot = -119.99999999999999;
+      autoPath = PathPlannerPath::fromPathFile("1 to B");
     }
+    else if (reefSpot == "C") {
+      autoPath = PathPlannerPath::fromPathFile("1 to C");
+    }
+    else if (reefSpot == "D") {
+      autoPath = PathPlannerPath::fromPathFile("1 to D");
+    }
+    else if (reefSpot == "E") {
+      autoPath = PathPlannerPath::fromPathFile("1 to E");
+    }
+    else if (reefSpot == "F") {
+      autoPath = PathPlannerPath::fromPathFile("1 to F");
+    }
+    
+    // Get goal end state 
+    PathPlannerTrajectory traj = PathPlannerTrajectory(path, frc::ChassisSpeeds(units::feet_per_second_t(vx), units::feet_per_second_t(vy), units::feet_per_second_t(rot)), mDrive.GetPoseEstimatorPose().Rotation().Radians(), pathConfig);
+    float x = traj.getEndState().pose.Translation().X().value();
+    float y = traj.getEndState().pose.Translation().Y().value();
+    float rot = traj.getEndState().pose.Rotation().Degrees().value();
+
+    // Choose photon or swervePoseEstimator pose2d value
     if (camera1.camera.GetLatestResult().HasTargets()) {
-      startPose = camera1.returnPoseEstimate();
+      startPose = camera1.returnPoseEstimate(); // in meters
     }
     else {
-      startPose = mDrive.GetPoseEstimatorPose();
+      startPose = mDrive.mSwervePose.GetEstimatedPosition(); // in meters
     }
     frc::Pose2d endPose{units::meter_t(x), units::meter_t(y), units::degree_t(rot)};
 
@@ -298,6 +313,9 @@ void Robot::TeleopPeriodic()
   }
   else if (ctr.GetTriangleButton()) {
     mTrajectory.followTeleop(path, allianceIsRed);
+  }
+  else if (ctr.GetTriangleButtonReleased()) {
+    mDrive.stopModules(); // Changed to just set drive motor to 0
   }
 
   // Drive function
@@ -327,7 +345,7 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit()
 {
   mDrive.state = DriveState::Disabled;
-  mDrive.stopModules();
+  mDrive.disableModules();
 }
 void Robot::DisabledPeriodic() {}
 
