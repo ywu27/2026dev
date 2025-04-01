@@ -8,8 +8,10 @@
 
 
 class SwerveHeadingController {
-private:
+public:
     frc::PIDController mPIDCtr {0, 0, 0};
+    frc::PIDController mRotCtr {0.5, 0, 0.01};
+    double rotSpeed = 0.0;
     double mSetpoint = 0.0;
     double outputMax;
     double outputMin;
@@ -97,5 +99,20 @@ public:
                 break;
         }
         return std::clamp(mPIDCtr.Calculate(current_angle, mSetpoint), outputMin, outputMax);
+    }
+
+    float rotateToTag(float angle, Pigeon &pigeon) {
+        mRotCtr.SetTolerance(1.0, 0.01);
+
+        if (!mRotCtr.AtSetpoint() && pigeon.getBoundedAngleCW().getDegrees() > 0.0) {
+            rotSpeed = std::clamp(mRotCtr.Calculate(pigeon.getBoundedAngleCCW().getDegrees(), angle), -1.0, 1.0);
+        }
+        else if (!mRotCtr.AtSetpoint() && pigeon.getBoundedAngleCW().getDegrees() < 0.0) {
+            rotSpeed = std::clamp(mRotCtr.Calculate(pigeon.getBoundedAngleCCW().getDegrees(), angle), -1.0, 1.0);
+        }
+        else {
+            rotSpeed = 0.0;
+        }
+        return rotSpeed;
     }
 };

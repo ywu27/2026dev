@@ -200,6 +200,7 @@ void Robot::TeleopPeriodic()
   if (ctr.GetR1ButtonPressed()) {
     align.forwardPID.Reset();
     align.strafePID.Reset();
+    mHeadingController.mRotCtr.Reset();
     // Pose3d robotPose = limelight1.getRobotPoseFieldSpace();
     // Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(); // In meters
     // float apriltagPoseFeetX = aprilTagPose.x; // Convert to feet
@@ -247,10 +248,13 @@ void Robot::TeleopPeriodic()
       ChassisSpeeds speeds = align.autoAlign2(camera1, targetDistance, offSet);
       vx = speeds.vxMetersPerSecond;
       vy = speeds.vyMetersPerSecond;
+      // vx = 0;
+      // vy = 0;
       fieldOriented = false;
-      mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      mHeadingController.setSetpoint(zeroSetpoint);
-      rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
+      rot = mHeadingController.rotateToTag(0, pigeon);
+      // mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+      // mHeadingController.setSetpoint(zeroSetpoint);
+      // rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees()
   }
   // else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
   //   zeroSetpoint = dPadOperator;
@@ -333,8 +337,10 @@ void Robot::TeleopPeriodic()
   // frc::SmartDashboard::PutNumber("Power Scaled?", currentScale);
   
   // Smart Dashboard Info
-  frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
+  // frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
   frc::SmartDashboard::PutNumber("Gyro Position", pigeon.getBoundedAngleCW().getDegrees());
+  frc::SmartDashboard::PutBoolean("At Setpoint Rot", mHeadingController.mRotCtr.AtSetpoint());
+  frc::SmartDashboard::PutNumber("rot speed", mHeadingController.rotateToTag(0, pigeon));
   frc::SmartDashboard::PutNumber("vx", vx);
   frc::SmartDashboard::PutNumber("vy", vy);
   frc::SmartDashboard::PutNumber("rot", rot);
