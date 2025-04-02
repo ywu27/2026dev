@@ -101,14 +101,17 @@ public:
         return std::clamp(mPIDCtr.Calculate(current_angle, mSetpoint), outputMin, outputMax);
     }
 
-    float rotateToTag(float angle, Pigeon &pigeon) {
+    double rotateToTag(double angle, Pigeon &pigeon) {
         mRotCtr.SetTolerance(1.0, 0.01);
+        double currentAngle = pigeon.getBoundedAngleCW().getDegrees();
+        rotSpeed = mRotCtr.Calculate(currentAngle, angle);
 
-        if (!mRotCtr.AtSetpoint() && pigeon.getBoundedAngleCW().getDegrees() > 0.0) {
-            rotSpeed = std::clamp(mRotCtr.Calculate(pigeon.getBoundedAngleCCW().getDegrees(), angle), -1.0, 1.0);
+        if (!mRotCtr.AtSetpoint() && currentAngle < 180.0) {
+            rotSpeed = std::clamp(rotSpeed, -0.35, 0.35);
         }
-        else if (!mRotCtr.AtSetpoint() && pigeon.getBoundedAngleCW().getDegrees() < 0.0) {
-            rotSpeed = std::clamp(mRotCtr.Calculate(pigeon.getBoundedAngleCCW().getDegrees(), angle), -1.0, 1.0);
+        else if (!mRotCtr.AtSetpoint() && currentAngle > 180.0) {
+            rotSpeed = std::clamp(mRotCtr.Calculate(pigeon.getBoundedAngleCCW().getDegrees(), angle), -0.35, 0.35);
+            rotSpeed = -rotSpeed;
         }
         else {
             rotSpeed = 0.0;

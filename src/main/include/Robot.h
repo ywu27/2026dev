@@ -98,6 +98,9 @@ public:
   bool liftElev = false;
   bool cleanDriveAccum = true;
   float speedLimiter = 1.0;
+  double angleSetpoint = 0.0;
+  std::string reefSide = "right";
+  bool flag = false;
 
   // Hold Timer for dPad hold
   frc::Timer holdTimer;

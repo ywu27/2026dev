@@ -58,9 +58,9 @@ void Robot::RobotPeriodic()
 
   frc::SmartDashboard::PutNumber("VisTargetX", camera1.getTargetx());
   frc::SmartDashboard::PutNumber("VisTargetY", camera1.getTargety());
-  frc::SmartDashboard::PutNumber("distan444ce", camera1.getDistanceToTarget());
+  frc::SmartDashboard::PutNumber("Tag ID", camera1.camera.GetLatestResult().GetBestTarget().GetFiducialId());
   
-  visionCache = camera1.returnPoseEstimate();
+  // visionCache = camera1.returnPoseEstimate();
 }
 
 void Robot::AutonomousInit()
@@ -186,6 +186,7 @@ void Robot::TeleopPeriodic()
   bool alignLimelight = ctr.GetR2Button();
 
   // Driving Modes
+  double currentAngle = 0;
   double offSet = 0;
   double targetDistance = 0; // CHECK THIS
   double zeroSetpoint = 0;
@@ -196,11 +197,19 @@ void Robot::TeleopPeriodic()
   frc::SmartDashboard::PutBoolean("At setpoint side", align.strafePID.AtSetpoint());
   // frc::SmartDashboard::PutNumber("desired setpoint", transY);
   frc::SmartDashboard::PutNumber("current setpoint", mDrive.getOdometryPose().Y().value());
+  frc::SmartDashboard::PutNumber("target yaw", camera1.camera.GetLatestResult().GetBestTarget().GetYaw());
+
+  if (ctr.GetSquareButtonPressed()) {
+    reefSide = "left";
+  }
+  else if (ctr.GetCircleButtonPressed()) {
+    reefSide = "right";
+  }
 
   if (ctr.GetR1ButtonPressed()) {
     align.forwardPID.Reset();
     align.strafePID.Reset();
-    mHeadingController.mRotCtr.Reset();
+    flag = false;
     // Pose3d robotPose = limelight1.getRobotPoseFieldSpace();
     // Pose3d aprilTagPose = limelight1.getTargetPoseRobotSpace(); // In meters
     // float apriltagPoseFeetX = aprilTagPose.x; // Convert to feet
@@ -241,27 +250,47 @@ void Robot::TeleopPeriodic()
   //   // } 
   // }
   else if (ctr.GetR1Button()) {
-      targetDistance = 1; //set this
-      zeroSetpoint = 0;
-      // zeroSetpoint = limelight1.getAngleSetpoint();
-      // ChassisSpeeds speeds = align.driveToSetpointY(transY, mDrive, pigeon);
-      ChassisSpeeds speeds = align.autoAlign2(camera1, targetDistance, offSet);
-      vx = speeds.vxMetersPerSecond;
-      vy = speeds.vyMetersPerSecond;
-      // vx = 0;
-      // vy = 0;
-      fieldOriented = false;
-      rot = mHeadingController.rotateToTag(0, pigeon);
-      // mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
-      // mHeadingController.setSetpoint(zeroSetpoint);
-      // rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees()
+      if (reefSide == "left") {
+        // offSet = -0.25;
+      }
+      else if (reefSide == "right") {
+        // offSet = -0.07876;
+      }
+      // double targetYaw = camera1.camera.GetLatestResult().GetBestTarget().GetYaw();
+      if (limelight1.isTargetDetected2()) {
+        if (limelight1.getTX()>0) {
+          zeroSetpoint = pigeon.getBoundedAngleCCW().getDegrees() + limelight1.getTX();
+        }
+        else if (limelight1.getTX()<0) {
+          zeroSetpoint = pigeon.getBoundedAngleCW().getDegrees() + limelight1.getTX();
+        }
+        
+        mHeadingController.setSetpoint(zeroSetpoint);
+        targetDistance = 0.6; //set this
+        ChassisSpeeds speeds = align.autoAlign(limelight1, targetDistance, offSet);
+        vx = speeds.vxMetersPerSecond;
+        vy = speeds.vyMetersPerSecond;
+        fieldOriented = false;
+        mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+        rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
+      }
+      else if (limelight2.isTargetDetected2() && !limelight1.isTargetDetected2()) {
+        if (limelight2.getTX()>0) {
+          zeroSetpoint = pigeon.getBoundedAngleCCW().getDegrees() + limelight2.getTX();
+        }
+        else if (limelight2.getTX()<0) {
+          zeroSetpoint = pigeon.getBoundedAngleCW().getDegrees() + limelight2.getTX();
+        }
+        mHeadingController.setSetpoint(zeroSetpoint);
+        targetDistance = 0.6; //set this
+        ChassisSpeeds speeds = align.autoAlign(limelight2, targetDistance, offSet);
+        vx = speeds.vxMetersPerSecond;
+        vy = speeds.vyMetersPerSecond;
+        fieldOriented = false;
+        mHeadingController.setHeadingControllerState(SwerveHeadingController::ALIGN);
+        rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
+      }
   }
-  // else if (dPadOperator!=-1) { // Snap mode, CHANGE BACK TO ELSEIF ONCE LL MOUNTED
-  //   zeroSetpoint = dPadOperator;
-  //   mHeadingController.setHeadingControllerState(SwerveHeadingController::SNAP);
-  //   mHeadingController.setSetpoint(zeroSetpoint);
-  //   rot = mHeadingController.calculate(pigeon.getBoundedAngleCW().getDegrees());
-  // }
   else // Normal driving mode
   {
     mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
@@ -274,53 +303,53 @@ void Robot::TeleopPeriodic()
   if (ctr.GetCrossButtonReleased()) {
     pigeon.pigeon.Reset();
   }
-  if(ctr.GetTriangleButtonPressed()) {
-    std::shared_ptr<pathplanner::PathPlannerPath> autoPath;
-    std::string reefSpot = reefChooser.GetSelected();
+  // if(ctr.GetTriangleButtonPressed()) {
+  //   std::shared_ptr<pathplanner::PathPlannerPath> autoPath;
+  //   std::string reefSpot = reefChooser.GetSelected();
 
-    // Spot on the reef 
-    if (reefSpot == "A") {
-      autoPath = PathPlannerPath::fromPathFile("1 to A");
-    }
-    else if (reefSpot == "B") {
-      autoPath = PathPlannerPath::fromPathFile("1 to B");
-    }
-    else if (reefSpot == "C") {
-      autoPath = PathPlannerPath::fromPathFile("1 to C");
-    }
-    else if (reefSpot == "D") {
-      autoPath = PathPlannerPath::fromPathFile("1 to D");
-    }
-    else if (reefSpot == "E") {
-      autoPath = PathPlannerPath::fromPathFile("1 to E");
-    }
-    else if (reefSpot == "F") {
-      autoPath = PathPlannerPath::fromPathFile("1 to F");
-    }
+  //   // Spot on the reef 
+  //   if (reefSpot == "A") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to A");
+  //   }
+  //   else if (reefSpot == "B") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to B");
+  //   }
+  //   else if (reefSpot == "C") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to C");
+  //   }
+  //   else if (reefSpot == "D") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to D");
+  //   }
+  //   else if (reefSpot == "E") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to E");
+  //   }
+  //   else if (reefSpot == "F") {
+  //     autoPath = PathPlannerPath::fromPathFile("1 to F");
+  //   }
     
-    // Get goal end state 
-    PathPlannerTrajectory traj = PathPlannerTrajectory(path, frc::ChassisSpeeds(units::feet_per_second_t(vx), units::feet_per_second_t(vy), units::feet_per_second_t(rot)), mDrive.GetPoseEstimatorPose().Rotation().Radians(), pathConfig);
-    float x = traj.getEndState().pose.Translation().X().value();
-    float y = traj.getEndState().pose.Translation().Y().value();
-    float rot = traj.getEndState().pose.Rotation().Degrees().value();
+  //   // Get goal end state 
+  //   PathPlannerTrajectory traj = PathPlannerTrajectory(path, frc::ChassisSpeeds(units::feet_per_second_t(vx), units::feet_per_second_t(vy), units::feet_per_second_t(rot)), mDrive.GetPoseEstimatorPose().Rotation().Radians(), pathConfig);
+  //   float x = traj.getEndState().pose.Translation().X().value();
+  //   float y = traj.getEndState().pose.Translation().Y().value();
+  //   float rot = traj.getEndState().pose.Rotation().Degrees().value();
 
-    // Choose photon or swervePoseEstimator pose2d value
-    if (camera1.camera.GetLatestResult().HasTargets()) {
-      startPose = camera1.returnPoseEstimate(); // in meters
-    }
-    else {
-      startPose = mDrive.mSwervePose.GetEstimatedPosition(); // in meters
-    }
-    frc::Pose2d endPose{units::meter_t(x), units::meter_t(y), units::degree_t(rot)};
+  //   // Choose photon or swervePoseEstimator pose2d value
+  //   if (camera1.camera.GetLatestResult().HasTargets()) {
+  //     startPose = camera1.returnPoseEstimate(); // in meters
+  //   }
+  //   else {
+  //     startPose = mDrive.mSwervePose.GetEstimatedPosition(); // in meters
+  //   }
+  //   frc::Pose2d endPose{units::meter_t(x), units::meter_t(y), units::degree_t(rot)};
 
-    path = mTeleopTraj.GeneratePath(startPose, endPose);
-  }
-  else if (ctr.GetTriangleButton()) {
-    mTrajectory.followTeleop(path, allianceIsRed);
-  }
-  else if (ctr.GetTriangleButtonReleased()) {
-    mDrive.stopModules(); // Changed to just set drive motor to 0
-  }
+  //   path = mTeleopTraj.GeneratePath(startPose, endPose);
+  // }
+  // else if (ctr.GetTriangleButton()) {
+  //   mTrajectory.followTeleop(path, allianceIsRed);
+  // }
+  // else if (ctr.GetTriangleButtonReleased()) {
+  //   mDrive.stopModules(); // Changed to just set drive motor to 0
+  // }
 
   // Drive function
   mDrive.Drive(
@@ -338,7 +367,10 @@ void Robot::TeleopPeriodic()
   
   // Smart Dashboard Info
   // frc::SmartDashboard::PutBoolean("Limelight get target", limelight1.isTargetDetected2());
-  frc::SmartDashboard::PutNumber("Gyro Position", pigeon.getBoundedAngleCW().getDegrees());
+  frc::SmartDashboard::PutNumber("Photon Target Y", camera1.camera.GetLatestResult().GetBestTarget().GetBestCameraToTarget().Y().value());
+  frc::SmartDashboard::PutNumber("Photon Target X", camera1.camera.GetLatestResult().GetBestTarget().GetBestCameraToTarget().X().value());
+  frc::SmartDashboard::PutNumber("Gyro Position CW", pigeon.getBoundedAngleCW().getDegrees());
+  frc::SmartDashboard::PutNumber("Gyro Position CCW", pigeon.getBoundedAngleCCW().getDegrees());
   frc::SmartDashboard::PutBoolean("At Setpoint Rot", mHeadingController.mRotCtr.AtSetpoint());
   frc::SmartDashboard::PutNumber("rot speed", mHeadingController.rotateToTag(0, pigeon));
   frc::SmartDashboard::PutNumber("vx", vx);

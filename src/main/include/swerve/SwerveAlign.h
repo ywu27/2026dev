@@ -63,7 +63,7 @@ public:
         
         photon::PhotonTrackedTarget target = result.GetBestTarget();
 
-        double offset = photon.getTargety();
+        double offset = photon.getStrafeDistancetoTarget();
         double distanceToTag = photon.getDistanceToTarget(); // FIX THIS: WHAT UNIT?
         targetDistance = setpointDistance;
         targetOffset = offsetSetpoint;

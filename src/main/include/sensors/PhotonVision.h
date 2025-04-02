@@ -86,15 +86,17 @@ public:
     }
 
     double getDistanceToTarget() {
-        auto result = camera.GetLatestResult();
-        photon::PhotonTrackedTarget target = result.GetBestTarget();
-        return target.GetBestCameraToTarget().Translation().Norm().value();
+        return camera.GetLatestResult().GetBestTarget().GetBestCameraToTarget().X().value();
+    }
+
+    double getStrafeDistancetoTarget() {
+        return camera.GetLatestResult().GetBestTarget().GetBestCameraToTarget().Y().value();
     }
 
     double getYaw() {
         auto result = camera.GetLatestResult();
         photon::PhotonTrackedTarget target = result.GetBestTarget();
-        return target.GetBestCameraToTarget().Rotation().Z().value() * 180.0 / M_PI;
+        return target.GetYaw();
     }
 
     frc::Pose2d returnPoseEstimate() {
