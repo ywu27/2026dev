@@ -62,21 +62,19 @@ public:
   frc::PS5Controller ctrOperator = frc::PS5Controller(1);
 
   //CANivore
-  ctre::phoenix6::CANBus canbus{"Drivetrain"};
-  ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
-  float busUtil = canInfo.BusUtilization;
+  // ctre::phoenix6::CANBus canbus{"Drivetrain"};
+  // ctre::phoenix6::CANBus::CANBusStatus canInfo = canbus.GetStatus();
+  // float busUtil = canInfo.BusUtilization;
 
   // Pigeon
   Pigeon pigeon{60};
 
   //Vision
   SwerveDrive mDrive = SwerveDrive(pigeon);
-  Limelight::Alliance alliance;
-  Limelight limelight1 = Limelight("limelight-one");
-  Limelight limelight2 = Limelight("limelight-two");
   float transY = 0.0;
   float transX = 0.0;
   PhotonVision camera1 = PhotonVision("cameraFront");
+  PhotonVision camera2 = PhotonVision("cameraBack");
   frc::Pose2d visionCache;
   std::shared_ptr<pathplanner::PathPlannerPath> path;
   frc::Pose2d startPose;
@@ -84,7 +82,7 @@ public:
   // For Auto Align
   SwerveAlign align;
   pathplanner::RobotConfig pathConfig = pathplanner::RobotConfig::fromGUISettings();
-  Trajectory mTrajectory = Trajectory(mDrive, limelight1, camera1, align, pigeon, pathConfig);
+  Trajectory mTrajectory = Trajectory(mDrive, camera2, camera1, align, pigeon, pathConfig);
   TeleopTrajectory mTeleopTraj;
 
   // Fused Gyro

@@ -39,9 +39,9 @@ private:
     // Superstructure &mSuperstructure; 
     SwerveAlign &mAlign;
     Pigeon &pigeon;
-    Limelight& mLimelight;
     RobotConfig &config;
     PhotonVision &camera;
+    PhotonVision &camera1;
 
 public:
     Pose3d startPose = Pose3d();
@@ -73,8 +73,8 @@ public:
         auto_3F 
     };
 
-    Trajectory(SwerveDrive &mDriveInput, Limelight& limelight, PhotonVision &cameraInput, SwerveAlign &align, Pigeon &pigeonInput, RobotConfig &configInput) : mDrive(mDriveInput), 
-                                                                                                                mLimelight(limelight),
+    Trajectory(SwerveDrive &mDriveInput, PhotonVision &camera1Input, PhotonVision &cameraInput, SwerveAlign &align, Pigeon &pigeonInput, RobotConfig &configInput) : mDrive(mDriveInput), 
+                                                                                                                camera1(camera1Input),
                                                                                                                 mAlign(align),
                                                                                                                 pigeon(pigeonInput),
                                                                                                                 config(configInput),

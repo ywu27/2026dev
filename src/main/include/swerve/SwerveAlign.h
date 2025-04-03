@@ -23,9 +23,12 @@ public:
     double prevErrorX = 0;
     double prevErrorY = 0;
 
-    bool isAligned(Limelight& limelight) {
-        if (abs(limelight.getTargetPoseRobotSpace().x-targetOffset)<0.05 && abs(targetDistance-limelight.getDistanceToWall())<0.05) {
-            return true;
+    bool isAligned(PhotonVision& photonCamera) {
+
+        if (photonCamera.isTargetDetected()) {
+            if (fabs(photonCamera.getStrafeDistancetoTarget()) < 0.05 && fabs(photonCamera.getDistanceToTarget()) < 0.6) {
+                return true;
+            }
         }
         return false;
     }
@@ -44,6 +47,8 @@ public:
         else if (!forwardPID.AtSetpoint() || !strafePID.AtSetpoint()) {
             double forwardSpeed = forwardPID.Calculate(distanceToTag, setpointDistance);
             double strafeSpeed = strafePID.Calculate(offset, offsetSetpoint);
+            strafeSpeed = std::clamp(strafeSpeed, -4.0, 4.0);
+            forwardSpeed = std::clamp(forwardSpeed, -4.0, 4.0);
             speeds = ChassisSpeeds::fromRobotRelativeSpeeds(strafeSpeed, -forwardSpeed, 0);
         }
         else {

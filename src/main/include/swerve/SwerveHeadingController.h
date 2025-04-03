@@ -82,6 +82,7 @@ public:
     }
 
     double calculate(double current_angle) {
+        mPIDCtr.SetTolerance(1.0, kEpsilon);
         current_angle = normalizeAngle(current_angle);
         mSetpoint = normalizeAngle(mSetpoint);
         
