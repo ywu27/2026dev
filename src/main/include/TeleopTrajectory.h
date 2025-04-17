@@ -8,6 +8,14 @@
 
 #include "Constants.h"
 
+
+// nlohmann json
+#include "util/json.hpp"
+#include <iostream>
+#include <fstream>
+
+using json = nlohmann::json;
+
 class TeleopTrajectory {
 private:
     units::meters_per_second_t maxVelocity = 5.450_mps;
@@ -41,5 +49,27 @@ public:
         std::shared_ptr<pathplanner::PathPlannerPath> path = std::make_shared<pathplanner::PathPlannerPath>(pathWaypoints, constraints, std::nullopt, pathplanner::GoalEndState(0.0_mps, frc::Rotation2d(endPose.Rotation())));
 
         return path;
+    }
+
+    void manipulatePathFile(const std::string& inputFile, const std::string& outputFile, double newX, double newY) {
+        std::ifstream inFile(inputFile);
+        json pathData;
+        inFile >> pathData;
+        inFile.close();
+
+        if (pathData.contains("waypoints") && pathData["waypoints"].is_array() && !pathData["waypoints"].empty()) {
+            if (pathData["waypoints"][0].contains("anchor") && pathData["waypoints"][0]["anchor"].is_object()) {
+                pathData["waypoints"][0]["anchor"]["x"] = newX;
+                pathData["waypoints"][0]["anchor"]["y"] = newY;
+            } else {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        std::ofstream outFile(outputFile);
+        outFile << pathData.dump(4); 
+        outFile.close();
     }
 }; 

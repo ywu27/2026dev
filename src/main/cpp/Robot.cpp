@@ -137,7 +137,7 @@ void Robot::TeleopInit()
   mDrive.state = DriveState::Teleop;
   pigeon.pigeon.Reset();
   mDrive.enableModules();
-  mDrive.resetOdometry(frc::Translation2d(0_m, 0_m), frc::Rotation2d(0_rad));
+  mDrive.resetOdometry(mDrive.GetPoseEstimatorPose().Translation(), mDrive.GetPoseEstimatorPose().Rotation());
   holdTimer.Reset();
 
   mHeadingController.setHeadingControllerState(SwerveHeadingController::OFF);
@@ -269,53 +269,43 @@ void Robot::TeleopPeriodic()
   if (ctr.GetCrossButtonReleased()) {
     pigeon.pigeon.Reset();
   }
-  // if(ctr.GetTriangleButtonPressed()) {
-  //   std::shared_ptr<pathplanner::PathPlannerPath> autoPath;
-  //   std::string reefSpot = reefChooser.GetSelected();
+  if(ctr.GetTriangleButtonPressed()) {
+    std::shared_ptr<pathplanner::PathPlannerPath> autoPath;
+    std::string reefSpot = reefChooser.GetSelected();
+    std::string pathFile = "output.path";
 
-  //   // Spot on the reef 
-  //   if (reefSpot == "A") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to A");
-  //   }
-  //   else if (reefSpot == "B") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to B");
-  //   }
-  //   else if (reefSpot == "C") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to C");
-  //   }
-  //   else if (reefSpot == "D") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to D");
-  //   }
-  //   else if (reefSpot == "E") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to E");
-  //   }
-  //   else if (reefSpot == "F") {
-  //     autoPath = PathPlannerPath::fromPathFile("1 to F");
-  //   }
-    
-  //   // Get goal end state 
-  //   PathPlannerTrajectory traj = PathPlannerTrajectory(path, frc::ChassisSpeeds(units::feet_per_second_t(vx), units::feet_per_second_t(vy), units::feet_per_second_t(rot)), mDrive.GetPoseEstimatorPose().Rotation().Radians(), pathConfig);
-  //   float x = traj.getEndState().pose.Translation().X().value();
-  //   float y = traj.getEndState().pose.Translation().Y().value();
-  //   float rot = traj.getEndState().pose.Rotation().Degrees().value();
-
-  //   // Choose photon or swervePoseEstimator pose2d value
-  //   if (camera1.camera.GetLatestResult().HasTargets()) {
-  //     startPose = camera1.returnPoseEstimate(); // in meters
-  //   }
-  //   else {
-  //     startPose = mDrive.mSwervePose.GetEstimatedPosition(); // in meters
-  //   }
-  //   frc::Pose2d endPose{units::meter_t(x), units::meter_t(y), units::degree_t(rot)};
-
-  //   path = mTeleopTraj.GeneratePath(startPose, endPose);
-  // }
-  // else if (ctr.GetTriangleButton()) {
-  //   mTrajectory.followTeleop(path, allianceIsRed);
-  // }
-  // else if (ctr.GetTriangleButtonReleased()) {
-  //   mDrive.stopModules(); // Changed to just set drive motor to 0
-  // }
+    // Spot on the reef 
+    if (reefSpot == "A") {
+      mTeleopTraj.manipulatePathFile("1 to A.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    else if (reefSpot == "B") {
+      
+      mTeleopTraj.manipulatePathFile("1 to B.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    else if (reefSpot == "C") {
+      
+      mTeleopTraj.manipulatePathFile("1 to C.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    else if (reefSpot == "D") {
+      
+      mTeleopTraj.manipulatePathFile("1 to D.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    else if (reefSpot == "E") {
+      
+      mTeleopTraj.manipulatePathFile("1 to E.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    else if (reefSpot == "F") {
+      
+      mTeleopTraj.manipulatePathFile("1 to F.path", pathFile, mDrive.GetPoseEstimatorPose().X().value(), mDrive.GetPoseEstimatorPose().Y().value());
+    }
+    path = PathPlannerPath::fromPathFile(pathFile);
+  }
+  else if (ctr.GetTriangleButton()) {
+    mTrajectory.followTeleop(path, allianceIsRed);
+  }
+  else if (ctr.GetTriangleButtonReleased()) {
+    mDrive.stopModules(); // Changed to just set drive motor to 0
+  }
 
   // Drive function
   mDrive.Drive(
